@@ -1,7 +1,8 @@
-import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { questionService } from "@/lib/services/question.service";
 import { searchQuestionsSchema, createQuestionSchema } from "@/lib/validations/question.schema";
+import { apiSuccess, apiUnknownError, ApiErrors } from "@/lib/api/api-response";
+import { ZodError } from "zod";
 
 // GET /api/questions - Search questions
 export async function GET(request: Request) {
@@ -22,21 +23,9 @@ export async function GET(request: Request) {
     const validatedParams = searchQuestionsSchema.parse(params);
     const result = await questionService.search(validatedParams, session?.user?.id);
 
-    return NextResponse.json(result);
+    return apiSuccess(result);
   } catch (error) {
-    console.error("Error searching questions:", error);
-
-    if (error instanceof Error && error.name === "ZodError") {
-      return NextResponse.json(
-        { error: "Parametri non validi", details: error },
-        { status: 400 }
-      );
-    }
-
-    return NextResponse.json(
-      { error: "Errore nella ricerca delle domande" },
-      { status: 500 }
-    );
+    return apiUnknownError(error, "Errore nella ricerca delle domande");
   }
 }
 
@@ -45,7 +34,7 @@ export async function POST(request: Request) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
+      return ApiErrors.unauthorized();
     }
 
     const body = await request.json();
@@ -53,27 +42,16 @@ export async function POST(request: Request) {
 
     const question = await questionService.create(validatedData, session.user.id);
 
-    return NextResponse.json(question, { status: 201 });
+    return apiSuccess(question, 201);
   } catch (error) {
-    console.error("Error creating question:", error);
-
-    if (error instanceof Error && error.name === "ZodError") {
-      // Extract the first error message from ZodError
-      const zodError = error as unknown as { errors: Array<{ message: string }> };
-      const firstError = zodError.errors?.[0]?.message || "Dati non validi";
-      return NextResponse.json(
-        { error: firstError },
-        { status: 400 }
-      );
+    if (error instanceof ZodError) {
+      return apiUnknownError(error);
     }
 
     if (error instanceof Error && error.message.includes("non trovato")) {
-      return NextResponse.json({ error: error.message }, { status: 404 });
+      return ApiErrors.notFound("Esame");
     }
 
-    return NextResponse.json(
-      { error: "Errore nella creazione della domanda" },
-      { status: 500 }
-    );
+    return apiUnknownError(error, "Errore nella creazione della domanda");
   }
 }

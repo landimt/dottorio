@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,8 +27,10 @@ import {
   X,
   MessageSquare,
   Bookmark,
+  Loader2,
 } from "lucide-react";
 import Link from "next/link";
+import { useQuestions } from "@/lib/query";
 
 interface Subject {
   id: string;
@@ -97,7 +99,6 @@ const subjectStyles: Record<string, { icon: string; color: string }> = {
 };
 
 export function SearchClient({ subjects, professors, universities, channels }: SearchClientProps) {
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   const [filters, setFilters] = useState({
@@ -111,15 +112,29 @@ export function SearchClient({ subjects, professors, universities, channels }: S
 
   const [isFiltersExpanded, setIsFiltersExpanded] = useState(false);
   const [isFabOpen, setIsFabOpen] = useState(false);
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [showResults, setShowResults] = useState(false);
-  const [pagination, setPagination] = useState({
-    page: 1,
-    limit: 20,
-    total: 0,
-    totalPages: 0,
-  });
+  const [page, setPage] = useState(1);
+
+  // Build query params for TanStack Query
+  const queryParams = useMemo(() => {
+    if (!showResults) return null;
+    return {
+      query: filters.query || undefined,
+      subjectId: filters.subjectId || undefined,
+      professorId: filters.professorId || undefined,
+      universityId: filters.universityId || undefined,
+      channelId: filters.channelId || undefined,
+      difficulty: filters.difficulty || undefined,
+      page: String(page),
+      limit: "20",
+    };
+  }, [showResults, filters, page]);
+
+  // Use TanStack Query for fetching questions
+  const { data, isLoading, isFetching } = useQuestions(queryParams ?? {});
+
+  const questions = data?.questions ?? [];
+  const pagination = data?.pagination ?? { page: 1, limit: 20, total: 0, totalPages: 0 };
 
   const hasActiveFilters = Object.values(filters).some((v) => v);
 
@@ -127,34 +142,14 @@ export function SearchClient({ subjects, professors, universities, channels }: S
     setFilters((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSearch = async () => {
-    setIsLoading(true);
+  const handleSearch = () => {
+    setPage(1);
     setShowResults(true);
-
-    const params = new URLSearchParams();
-    if (filters.query) params.set("query", filters.query);
-    if (filters.subjectId) params.set("subjectId", filters.subjectId);
-    if (filters.professorId) params.set("professorId", filters.professorId);
-    if (filters.universityId) params.set("universityId", filters.universityId);
-    if (filters.channelId) params.set("channelId", filters.channelId);
-    if (filters.difficulty) params.set("difficulty", filters.difficulty);
-    params.set("page", String(pagination.page));
-    params.set("limit", String(pagination.limit));
-
-    try {
-      const res = await fetch(`/api/questions?${params.toString()}`);
-      const data = await res.json();
-      setQuestions(data.questions || []);
-      setPagination(data.pagination || pagination);
-    } catch (error) {
-      console.error("Error searching questions:", error);
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   const handleSubjectClick = (subjectId: string) => {
     setFilters((prev) => ({ ...prev, subjectId }));
+    setPage(1);
     setShowResults(true);
   };
 
@@ -167,16 +162,9 @@ export function SearchClient({ subjects, professors, universities, channels }: S
       channelId: "",
       difficulty: "",
     });
+    setPage(1);
     setShowResults(false);
-    setQuestions([]);
   };
-
-  useEffect(() => {
-    if (showResults) {
-      handleSearch();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters.subjectId, pagination.page]);
 
   const getFilterDescription = () => {
     const parts = [];
@@ -394,11 +382,15 @@ export function SearchClient({ subjects, professors, universities, channels }: S
               <div className="flex flex-col sm:flex-row gap-2 pt-2">
                 <Button
                   onClick={handleSearch}
-                  disabled={isLoading}
+                  disabled={isLoading || isFetching}
                   className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-200 group h-9"
                 >
-                  <Search className="w-4 h-4 mr-2 transition-transform duration-300 group-hover:scale-110" />
-                  {isLoading ? "Cercando..." : "Cerca Domande"}
+                  {(isLoading || isFetching) ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <Search className="w-4 h-4 mr-2 transition-transform duration-300 group-hover:scale-110" />
+                  )}
+                  {(isLoading || isFetching) ? "Cercando..." : "Cerca Domande"}
                 </Button>
 
                 {hasActiveFilters && (
@@ -463,9 +455,14 @@ export function SearchClient({ subjects, professors, universities, channels }: S
           <div className="space-y-6">
             <div className="text-center">
               <p className="text-muted-foreground">
-                {isLoading
-                  ? "Cercando..."
-                  : `${questions.length} domanda/e trovata/e`}
+                {(isLoading || isFetching) ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Cercando...
+                  </span>
+                ) : (
+                  `${pagination.total} domanda/e trovata/e`
+                )}
               </p>
             </div>
 
@@ -497,18 +494,6 @@ export function SearchClient({ subjects, professors, universities, channels }: S
                           >
                             {question.exam.university.shortName}
                           </Badge>
-                          {question.difficulty && (
-                            <Badge
-                              variant="outline"
-                              className="border-border text-muted-foreground"
-                            >
-                              {question.difficulty === "easy"
-                                ? "Facile"
-                                : question.difficulty === "medium"
-                                  ? "Media"
-                                  : "Difficile"}
-                            </Badge>
-                          )}
                         </div>
 
                         <div className="flex items-center justify-between text-sm">
@@ -537,7 +522,7 @@ export function SearchClient({ subjects, professors, universities, channels }: S
               ))}
             </div>
 
-            {!isLoading && questions.length === 0 && (
+            {!isLoading && !isFetching && questions.length === 0 && (
               <Card className="bg-card border-border text-center">
                 <CardContent className="p-12">
                   <div className="w-16 h-16 mx-auto mb-4 bg-muted rounded-full flex items-center justify-center">
@@ -565,22 +550,18 @@ export function SearchClient({ subjects, professors, universities, channels }: S
               <div className="flex justify-center gap-2">
                 <Button
                   variant="outline"
-                  disabled={pagination.page === 1}
-                  onClick={() =>
-                    setPagination((p) => ({ ...p, page: p.page - 1 }))
-                  }
+                  disabled={page === 1 || isFetching}
+                  onClick={() => setPage((p) => p - 1)}
                 >
                   Precedente
                 </Button>
                 <span className="flex items-center px-4 text-muted-foreground">
-                  Pagina {pagination.page} di {pagination.totalPages}
+                  Pagina {page} di {pagination.totalPages}
                 </span>
                 <Button
                   variant="outline"
-                  disabled={pagination.page === pagination.totalPages}
-                  onClick={() =>
-                    setPagination((p) => ({ ...p, page: p.page + 1 }))
-                  }
+                  disabled={page === pagination.totalPages || isFetching}
+                  onClick={() => setPage((p) => p + 1)}
                 >
                   Successiva
                 </Button>

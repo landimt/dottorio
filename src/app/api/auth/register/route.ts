@@ -1,14 +1,14 @@
-import { NextResponse } from "next/server";
 import { hash } from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import { apiSuccess, apiError, apiUnknownError } from "@/lib/api/api-response";
 
 const registerSchema = z.object({
-  name: z.string().min(2, "Nome deve ter no mínimo 2 caracteres"),
-  email: z.string().email("Email inválido"),
-  password: z.string().min(6, "Password deve ter no mínimo 6 caracteres"),
-  universityId: z.string().uuid("Universidade inválida"),
-  year: z.number().int().min(1).max(6, "Anno deve essere tra 1 e 6"),
+  name: z.string().min(2, "Il nome deve avere almeno 2 caratteri"),
+  email: z.string().email("Email non valida"),
+  password: z.string().min(6, "La password deve avere almeno 6 caratteri"),
+  universityId: z.string().uuid("Università non valida"),
+  year: z.number().int().min(1).max(6, "L'anno deve essere tra 1 e 6"),
   channelId: z.string().uuid().optional().nullable(),
   isRepresentative: z.boolean().default(false),
 });
@@ -24,10 +24,7 @@ export async function POST(request: Request) {
     });
 
     if (existingUser) {
-      return NextResponse.json(
-        { error: "Email già registrata" },
-        { status: 400 }
-      );
+      return apiError("Email già registrata", 400, "EMAIL_EXISTS");
     }
 
     // Check if university exists
@@ -36,10 +33,7 @@ export async function POST(request: Request) {
     });
 
     if (!university) {
-      return NextResponse.json(
-        { error: "Università non trovata" },
-        { status: 400 }
-      );
+      return apiError("Università non trovata", 400, "UNIVERSITY_NOT_FOUND");
     }
 
     // Hash password
@@ -63,19 +57,8 @@ export async function POST(request: Request) {
       },
     });
 
-    return NextResponse.json(user, { status: 201 });
+    return apiSuccess(user, 201);
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: error.issues[0].message },
-        { status: 400 }
-      );
-    }
-
-    console.error("Register error:", error);
-    return NextResponse.json(
-      { error: "Errore durante la registrazione" },
-      { status: 500 }
-    );
+    return apiUnknownError(error, "Errore durante la registrazione");
   }
 }

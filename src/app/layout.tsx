@@ -4,6 +4,7 @@ import { getLocale, getMessages } from "next-intl/server";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { LocaleProvider } from "@/components/providers/locale-provider";
+import { QueryProvider } from "@/lib/query";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -40,7 +41,9 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <LocaleProvider locale={locale} messages={messages}>
-            {children}
+            <QueryProvider>
+              {children}
+            </QueryProvider>
             <Toaster position="top-center" />
           </LocaleProvider>
         </ThemeProvider>
