@@ -496,7 +496,9 @@ export function QuestionDetail({
                   }
                 >
                   <SelectTrigger className="h-8 text-xs">
-                    <SelectValue />
+                    <SelectValue>
+                      {questionFilter === "all" ? "Tutte" : "Solo salvate"}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Tutte</SelectItem>
@@ -511,10 +513,12 @@ export function QuestionDetail({
                   }
                 >
                   <SelectTrigger className="h-8 text-xs">
-                    <SelectValue />
+                    <SelectValue>
+                      {questionSort === "views" ? "Più chieste" : "Recenti"}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="views">Più visualizzate</SelectItem>
+                    <SelectItem value="views">Più chieste</SelectItem>
                     <SelectItem value="recent">Recenti</SelectItem>
                   </SelectContent>
                 </Select>
@@ -602,7 +606,9 @@ export function QuestionDetail({
                   }
                 >
                   <SelectTrigger className="h-9 text-sm border-2">
-                    <SelectValue placeholder="Tutte" />
+                    <SelectValue>
+                      {questionFilter === "all" ? "Tutte" : "Solo salvate"}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Tutte</SelectItem>
@@ -617,7 +623,9 @@ export function QuestionDetail({
                   }
                 >
                   <SelectTrigger className="h-9 text-sm border-2">
-                    <SelectValue placeholder="Più chieste" />
+                    <SelectValue>
+                      {questionSort === "views" ? "Più chieste" : "Recenti"}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="views">Più chieste</SelectItem>
@@ -1188,7 +1196,9 @@ export function QuestionDetail({
                 onValueChange={(v) => setSortBy(v as "likes" | "recent")}
               >
                 <SelectTrigger className="h-9 text-sm border-2">
-                  <SelectValue />
+                  <SelectValue>
+                    {sortBy === "likes" ? "Più apprezzati" : "Più recenti"}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="likes">Più apprezzati</SelectItem>
@@ -1338,7 +1348,9 @@ function CommentsSection({
           </div>
           <Select value={sortBy} onValueChange={(v) => setSortBy(v as "likes" | "recent")}>
             <SelectTrigger className="w-[140px] h-8 text-xs">
-              <SelectValue />
+              <SelectValue>
+                {sortBy === "likes" ? "Più apprezzati" : "Più recenti"}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="likes">Più apprezzati</SelectItem>
