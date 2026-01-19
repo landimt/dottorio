@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
+import { getLocale, getMessages } from "next-intl/server";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { LocaleProvider } from "@/components/providers/locale-provider";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -20,13 +22,16 @@ export const metadata: Metadata = {
   keywords: ["medicina", "esami", "università", "studenti", "Italia", "domande"],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang="it" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <body className={`${poppins.variable} font-sans antialiased`}>
         <ThemeProvider
           attribute="class"
@@ -34,8 +39,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
-          <Toaster position="top-center" />
+          <LocaleProvider locale={locale} messages={messages}>
+            {children}
+            <Toaster position="top-center" />
+          </LocaleProvider>
         </ThemeProvider>
       </body>
     </html>

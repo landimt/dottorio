@@ -1,11 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { signOut, useSession } from "next-auth/react";
-import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,42 +9,43 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { LocaleSwitcher } from "@/components/ui/locale-switcher";
+import { UserAvatar } from "@/components/ui/user-avatar";
 import {
-  Home,
-  Search,
-  Plus,
-  User,
-  Settings,
-  LogOut,
-  GraduationCap,
-  BookOpen,
   Bell,
-  Sun,
+  BookOpen,
+  GraduationCap,
+  Home,
+  LogOut,
   Moon,
+  Plus,
+  Search,
+  Settings,
+  Sun,
+  User,
 } from "lucide-react";
-
-const navigationItems = [
-  { id: "dashboard", href: "/dashboard", icon: Home, label: "Home" },
-  { id: "search", href: "/search", icon: Search, label: "Cerca" },
-  { id: "notebooks", href: "/notebooks", icon: BookOpen, label: "Cadernos" },
-  { id: "add", href: "/exams/new", icon: Plus, label: "Aggiungi" },
-];
+import { signOut, useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
+import { useTheme } from "next-themes";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export function Header() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const { theme, setTheme } = useTheme();
+  const t = useTranslations("navigation");
+  const tHeader = useTranslations("header");
+  const tAuth = useTranslations("auth");
+
+  const navigationItems = [
+    { id: "dashboard", href: "/dashboard", icon: Home, label: t("home") },
+    { id: "search", href: "/search", icon: Search, label: t("search") },
+    { id: "notebooks", href: "/notebooks", icon: BookOpen, label: t("notebooks") },
+    { id: "add", href: "/exams/new", icon: Plus, label: t("add") },
+  ];
 
   const user = session?.user;
-
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
-  };
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
@@ -97,7 +93,7 @@ export function Header() {
               size="sm"
               onClick={toggleTheme}
               className="w-10 h-10 p-0 text-muted-foreground hover:text-foreground hover:bg-muted transition-all duration-200"
-              title={theme === "dark" ? "Modo Chiaro" : "Modo Scuro"}
+              title={theme === "dark" ? tHeader("lightMode") : tHeader("darkMode")}
             >
               {theme === "dark" ? (
                 <Sun className="w-5 h-5 transition-transform duration-300 hover:rotate-12" />
@@ -123,16 +119,11 @@ export function Header() {
                   variant="ghost"
                   className="flex items-center space-x-3 h-auto py-2 px-3 hover:bg-muted/50 rounded-lg"
                 >
-                  <Avatar className="h-10 w-10 ring-2 ring-border">
-                    <AvatarImage
-                      src={user?.image || undefined}
-                      alt={user?.name || ""}
-                      className="object-cover"
-                    />
-                    <AvatarFallback className="bg-primary/20 text-primary font-medium">
-                      {user?.name ? getInitials(user.name) : "?"}
-                    </AvatarFallback>
-                  </Avatar>
+                  <UserAvatar 
+                    name={user?.name} 
+                    image={user?.image} 
+                    size="sm"
+                  />
                   <div className="hidden lg:block text-left">
                     <p className="font-medium leading-tight text-foreground">{user?.name}</p>
                     <p className="text-xs text-muted-foreground leading-tight">
@@ -143,14 +134,14 @@ export function Header() {
               </DropdownMenuTrigger>
 
               <DropdownMenuContent align="end" className="w-64">
-                <DropdownMenuLabel>Il Mio Account</DropdownMenuLabel>
+                <DropdownMenuLabel>{tHeader("myAccount")}</DropdownMenuLabel>
                 <div className="px-2 py-1.5">
                   <p className="text-sm font-medium">{user?.name}</p>
                   <p className="text-xs text-muted-foreground">{user?.email}</p>
                   <div className="flex items-center gap-2 mt-2">
                     <span className="text-xs text-muted-foreground flex items-center gap-1">
                       <GraduationCap className="w-3 h-3" />
-                      {user?.year}º Anno
+                      {tHeader("year", { year: user?.year ?? 1 })}
                     </span>
                     {user?.channelName && (
                       <span className="text-xs text-muted-foreground">• {user.channelName}</span>
@@ -160,17 +151,24 @@ export function Header() {
 
                 <DropdownMenuSeparator />
 
+                {/* Language Switcher */}
+                <div className="px-2 py-1.5">
+                  <LocaleSwitcher />
+                </div>
+
+                <DropdownMenuSeparator />
+
                 <DropdownMenuItem asChild>
                   <Link href="/profile" className="cursor-pointer">
                     <User className="mr-2 h-4 w-4" />
-                    <span>Il Mio Profilo</span>
+                    <span>{tHeader("myProfile")}</span>
                   </Link>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem asChild>
                   <Link href="/settings" className="cursor-pointer">
                     <Settings className="mr-2 h-4 w-4" />
-                    <span>Impostazioni</span>
+                    <span>{tHeader("settings")}</span>
                   </Link>
                 </DropdownMenuItem>
 
@@ -181,7 +179,7 @@ export function Header() {
                   className="text-destructive focus:text-destructive"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>Esci</span>
+                  <span>{tAuth("logout")}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -203,7 +201,7 @@ export function Header() {
               size="sm"
               onClick={toggleTheme}
               className="h-9 w-9 p-0 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all"
-              title={theme === "dark" ? "Modo Chiaro" : "Modo Scuro"}
+              title={theme === "dark" ? tHeader("lightMode") : tHeader("darkMode")}
             >
               {theme === "dark" ? (
                 <Sun className="w-5 h-5" />
@@ -224,21 +222,16 @@ export function Header() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="h-9 w-9 p-0 rounded-full">
-                  <Avatar className="h-9 w-9 ring-2 ring-border">
-                    <AvatarImage
-                      src={user?.image || undefined}
-                      alt={user?.name || ""}
-                      className="object-cover"
-                    />
-                    <AvatarFallback className="bg-primary/20 text-primary text-sm">
-                      {user?.name ? getInitials(user.name) : "?"}
-                    </AvatarFallback>
-                  </Avatar>
+                  <UserAvatar 
+                    name={user?.name} 
+                    image={user?.image} 
+                    size="sm"
+                  />
                 </Button>
               </DropdownMenuTrigger>
 
               <DropdownMenuContent align="end" className="w-64">
-                <DropdownMenuLabel>Il Mio Account</DropdownMenuLabel>
+                <DropdownMenuLabel>{tHeader("myAccount")}</DropdownMenuLabel>
                 <div className="px-2 py-1.5">
                   <p className="text-sm font-medium">{user?.name}</p>
                   <p className="text-xs text-muted-foreground">{user?.email}</p>
@@ -246,10 +239,17 @@ export function Header() {
 
                 <DropdownMenuSeparator />
 
+                {/* Language Switcher Mobile */}
+                <div className="px-2 py-1.5">
+                  <LocaleSwitcher />
+                </div>
+
+                <DropdownMenuSeparator />
+
                 <DropdownMenuItem asChild>
                   <Link href="/profile" className="cursor-pointer">
                     <User className="mr-2 h-4 w-4" />
-                    <span>Il Mio Profilo</span>
+                    <span>{tHeader("myProfile")}</span>
                   </Link>
                 </DropdownMenuItem>
 
@@ -260,7 +260,7 @@ export function Header() {
                   className="text-destructive focus:text-destructive"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>Esci</span>
+                  <span>{tAuth("logout")}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

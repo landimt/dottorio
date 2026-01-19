@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useSession } from "next-auth/react";
+import { useTranslations, useLocale } from "next-intl";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,10 +28,14 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { locales, localeNames, localeFlags, type Locale } from "@/i18n/config";
 
 export default function SettingsPage() {
   const { data: session } = useSession();
   const user = session?.user;
+  const t = useTranslations();
+  const currentLocale = useLocale();
+  const router = useRouter();
 
   const [isLoading, setIsLoading] = useState(false);
   const [notifications, setNotifications] = useState({
@@ -48,6 +54,16 @@ export default function SettingsPage() {
     toast.success("Impostazioni salvate con successo!");
   };
 
+  const handleLocaleChange = (newLocale: string) => {
+    document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000`;
+    router.refresh();
+    toast.success(
+      newLocale === "it" 
+        ? "Lingua cambiata in Italiano" 
+        : "Language changed to English"
+    );
+  };
+
   return (
     <div className="container max-w-3xl mx-auto px-4 py-8">
       {/* Header */}
@@ -58,7 +74,7 @@ export default function SettingsPage() {
           </Button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold">Impostazioni</h1>
+          <h1 className="text-2xl font-bold">{t("navigation.settings")}</h1>
           <p className="text-muted-foreground">
             Gestisci le tue preferenze e il tuo account
           </p>
@@ -66,6 +82,41 @@ export default function SettingsPage() {
       </div>
 
       <div className="space-y-6">
+        {/* Language - Moved to top for easy testing */}
+        <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Globe className="w-5 h-5 text-primary" />
+              Lingua / Language
+            </CardTitle>
+            <CardDescription>
+              Seleziona la lingua dell&apos;interfaccia / Select interface language
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Select value={currentLocale} onValueChange={handleLocaleChange}>
+              <SelectTrigger className="w-full md:w-[250px]">
+                <SelectValue>
+                  {localeFlags[currentLocale as Locale]} {localeNames[currentLocale as Locale]}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {locales.map((locale) => (
+                  <SelectItem key={locale} value={locale}>
+                    <span className="flex items-center gap-2">
+                      <span className="text-lg">{localeFlags[locale]}</span>
+                      <span>{localeNames[locale]}</span>
+                    </span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground mt-3">
+              🔄 La pagina si aggiornerà automaticamente dopo il cambio lingua
+            </p>
+          </CardContent>
+        </Card>
+
         {/* Profile Settings */}
         <Card>
           <CardHeader>
@@ -202,32 +253,6 @@ export default function SettingsPage() {
                 }
               />
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Language */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Globe className="w-5 h-5" />
-              Lingua
-            </CardTitle>
-            <CardDescription>
-              Seleziona la lingua dell&apos;interfaccia
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Select defaultValue="it">
-              <SelectTrigger className="w-full md:w-[200px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="it">Italiano</SelectItem>
-                <SelectItem value="en" disabled>
-                  English (coming soon)
-                </SelectItem>
-              </SelectContent>
-            </Select>
           </CardContent>
         </Card>
 

@@ -469,10 +469,10 @@ export function SearchClient({ subjects, professors, universities, channels }: S
               </p>
             </div>
 
-            <div className="space-y-4">
+            <div className="flex flex-col gap-4">
               {questions.map((question) => (
-                <Link key={question.id} href={`/questions/${question.id}`}>
-                  <Card className="cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:border-accent/50 bg-card border-border">
+                <Link key={question.id} href={`/questions/${question.id}`} className="block">
+                  <Card className="cursor-pointer transition-all duration-200 hover:scale-[1.01] hover:border-primary/50 hover:shadow-md bg-card border-border">
                     <CardContent className="p-6">
                       <div className="space-y-4">
                         <p className="font-medium text-foreground leading-relaxed">

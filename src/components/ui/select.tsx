@@ -6,6 +6,7 @@ interface SelectContextValue {
   onValueChange: (value: string) => void;
   open: boolean;
   setOpen: (open: boolean) => void;
+  disabled: boolean;
 }
 
 const SelectContext = React.createContext<SelectContextValue | undefined>(undefined);
@@ -22,10 +23,11 @@ interface SelectProps {
   value?: string;
   onValueChange?: (value: string) => void;
   defaultValue?: string;
+  disabled?: boolean;
   children: React.ReactNode;
 }
 
-function Select({ value: controlledValue, onValueChange, defaultValue = "", children }: SelectProps) {
+function Select({ value: controlledValue, onValueChange, defaultValue = "", disabled = false, children }: SelectProps) {
   const [internalValue, setInternalValue] = React.useState(defaultValue);
   const [open, setOpen] = React.useState(false);
   
@@ -33,7 +35,7 @@ function Select({ value: controlledValue, onValueChange, defaultValue = "", chil
   const handleValueChange = onValueChange || setInternalValue;
 
   return (
-    <SelectContext.Provider value={{ value, onValueChange: handleValueChange, open, setOpen }}>
+    <SelectContext.Provider value={{ value, onValueChange: handleValueChange, open, setOpen, disabled }}>
       <div className="relative inline-block w-full">
         {children}
       </div>
@@ -47,10 +49,17 @@ function SelectGroup({ children, ...props }: React.HTMLAttributes<HTMLDivElement
 
 interface SelectValueProps {
   placeholder?: string;
+  children?: React.ReactNode;
 }
 
-function SelectValue({ placeholder }: SelectValueProps) {
+function SelectValue({ placeholder, children }: SelectValueProps) {
   const { value } = useSelectContext();
+  
+  // Se children for fornecido, renderiza children, senão usa value ou placeholder
+  if (children) {
+    return <span data-slot="select-value">{children}</span>;
+  }
+  
   return <span data-slot="select-value">{value || placeholder}</span>;
 }
 
@@ -64,7 +73,7 @@ function SelectTrigger({
   children,
   ...props
 }: SelectTriggerProps) {
-  const { open, setOpen } = useSelectContext();
+  const { open, setOpen, disabled } = useSelectContext();
   
   const sizeClasses = {
     default: "h-9",
@@ -75,12 +84,13 @@ function SelectTrigger({
     <button
       type="button"
       data-slot="select-trigger"
-      onClick={() => setOpen(!open)}
-      className={`flex w-full items-center justify-between gap-2 rounded-md border border-input bg-input-background px-3 py-2 text-sm whitespace-nowrap transition-all outline-none focus-visible:ring-[3px] focus-visible:border-ring focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 ${sizeClasses[size]} ${className}`}
+      onClick={() => !disabled && setOpen(!open)}
+      disabled={disabled}
+      className={`flex w-full items-center justify-between gap-2 rounded-md border border-border bg-background px-3 py-2 text-sm whitespace-nowrap transition-all outline-none hover:border-primary/50 focus-visible:ring-[3px] focus-visible:border-ring focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted disabled:hover:border-border ${sizeClasses[size]} ${className}`}
       {...props}
     >
       {children}
-      <ChevronDownIcon className={`w-4 h-4 transition-transform ${open ? 'rotate-180' : ''}`} />
+      <ChevronDownIcon className={`w-4 h-4 opacity-50 transition-transform ${open ? 'rotate-180' : ''}`} />
     </button>
   );
 }
@@ -124,10 +134,10 @@ function SelectContent({
     <div
       ref={contentRef}
       data-slot="select-content"
-      className={`absolute z-50 min-w-[8rem] w-full overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md animate-scale-in mt-1 max-h-60 overflow-y-auto ${className}`}
+      className={`absolute z-50 min-w-[8rem] w-full overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-lg animate-scale-in mt-1 max-h-60 overflow-y-auto ${className}`}
       {...props}
     >
-      <div className="p-1">
+      <div className="p-1.5">
         {children}
       </div>
     </div>
@@ -158,12 +168,12 @@ function SelectItem({
     <button
       type="button"
       data-slot="select-item"
-      className={`relative flex w-full cursor-default items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none select-none transition-colors focus:bg-accent focus:text-accent-foreground hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50 ${className}`}
+      className={`relative flex w-full cursor-pointer items-center rounded-md py-2 pl-8 pr-3 text-sm outline-none select-none transition-colors focus:bg-muted focus:text-foreground hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-50 ${className}`}
       onClick={handleClick}
       {...props}
     >
       <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-        {isSelected && <CheckIcon className="h-4 w-4" />}
+        {isSelected && <CheckIcon className="h-4 w-4 text-primary" />}
       </span>
       {children}
     </button>
