@@ -101,7 +101,10 @@ model User {
   channelId        String?  @map("channel_id")
   year             Int      @db.SmallInt // 1, 2, 3, 4, 5, 6
   isRepresentative Boolean  @default(false) @map("is_representative")
+  role             String   @default("student") @db.VarChar(30) // student, representative, admin, super_admin
+  status           String   @default("active") @db.VarChar(30) // active, suspended, banned
   avatarUrl        String?  @map("avatar_url")
+  lastLoginAt      DateTime? @map("last_login_at")
   createdAt        DateTime @default(now()) @map("created_at")
   updatedAt        DateTime @updatedAt @map("updated_at")
 
@@ -115,9 +118,14 @@ model User {
   commentLikes   CommentLike[]
   savedQuestions SavedQuestion[]
   aiRatings      AiRating[]
+  auditLogs      AuditLog[]
+  reportedFlags  ContentFlag[]    @relation("FlagReportedBy")
+  reviewedFlags  ContentFlag[]    @relation("FlagReviewedBy")
 
   @@index([universityId])
   @@index([channelId])
+  @@index([role])
+  @@index([status])
   @@map("users")
 }
 
@@ -165,6 +173,11 @@ model Question {
   views      Int      @default(0)
   createdAt  DateTime @default(now()) @map("created_at")
 
+  // Question Variations System
+  groupId     String?  @map("group_id")
+  isCanonical Boolean  @default(true) @map("is_canonical")
+  canonicalId String?  @map("canonical_id")
+
   // Relations
   exam           Exam            @relation(fields: [examId], references: [id], onDelete: Cascade)
   aiAnswer       AiAnswer?
@@ -172,7 +185,13 @@ model Question {
   comments       Comment[]
   savedBy        SavedQuestion[]
 
+  // Self-relation for variations
+  canonical  Question?  @relation("QuestionVariations", fields: [canonicalId], references: [id])
+  variations Question[] @relation("QuestionVariations")
+
   @@index([examId])
+  @@index([groupId])
+  @@index([canonicalId])
   @@map("questions")
 }
 
@@ -295,4 +314,49 @@ model AiRating {
 
   @@unique([aiAnswerId, userId])
   @@map("ai_ratings")
+}
+
+// ============================================
+// ADMIN - AUDITORIA E MODERAÇÃO
+// ============================================
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  adminId    String   @map("admin_id")
+  action     String   @db.VarChar(50) // create, update, delete, suspend, etc
+  entityType String   @db.VarChar(50) @map("entity_type") // user, exam, question, etc
+  entityId   String?  @db.VarChar(50) @map("entity_id")
+  changes    String?  @db.Text // JSON das mudanças (old -> new)
+  reason     String?  @db.Text
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relations
+  admin User @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@index([adminId])
+  @@index([createdAt])
+  @@index([entityType])
+  @@map("audit_logs")
+}
+
+model ContentFlag {
+  id         String    @id @default(uuid())
+  type       String    @db.VarChar(30) // question, answer, comment
+  entityId   String    @db.VarChar(50) @map("entity_id")
+  reason     String    @db.VarChar(255) // spam, offensive, inaccurate, etc
+  reportedBy String    @map("reported_by")
+  status     String    @default("pending") @db.VarChar(30) // pending, reviewed, dismissed, deleted
+  reviewedBy String?   @map("reviewed_by")
+  reviewedAt DateTime? @map("reviewed_at")
+  action     String?   @db.VarChar(50) // deleted, merged, approved, etc
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  reporter User  @relation("FlagReportedBy", fields: [reportedBy], references: [id])
+  reviewer User? @relation("FlagReviewedBy", fields: [reviewedBy], references: [id])
+
+  @@index([entityId])
+  @@index([status])
+  @@index([type])
+  @@map("content_flags")
 }

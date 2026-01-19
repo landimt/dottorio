@@ -190,32 +190,96 @@ async function main() {
 
   console.log(`✅ Created ${subjects.length} subjects`);
 
-  // Test user (Sofia Marchetti)
-  const passwordHash = await hash("password123", 12);
+  // Hash password (demo123)
+  const passwordHash = await hash("demo123", 12);
 
   // Get the Canale A for Sapienza
   const sapienzaChannelA = createdChannels.find(
     (ch) => ch.universityId === "uni-sapienza" && ch.name === "Canale A"
   );
 
+  // Create ADMIN user
+  const adminUser = await prisma.user.upsert({
+    where: { email: "admin@dottorio.it" },
+    update: {
+      role: "admin",
+      status: "active",
+    },
+    create: {
+      email: "admin@dottorio.it",
+      passwordHash,
+      name: "Admin Dottorio",
+      universityId: "uni-sapienza",
+      year: 6,
+      channelId: null,
+      isRepresentative: false,
+      role: "admin",
+      status: "active",
+      avatarUrl: null,
+    },
+  });
+
+  console.log(`✅ Created ADMIN user: ${adminUser.email} (password: demo123)`);
+
+  // Create test user (Sofia - Representative)
   const testUser = await prisma.user.upsert({
     where: { email: "sofia@sapienza.it" },
-    update: {},
+    update: {
+      role: "representative",
+      status: "active",
+    },
     create: {
       email: "sofia@sapienza.it",
       passwordHash,
       name: "Sofia Marchetti",
       universityId: "uni-sapienza",
-      year: 3, // Now a number (3º Anno)
+      year: 3,
       channelId: sapienzaChannelA?.id || null,
       isRepresentative: true,
+      role: "representative",
+      status: "active",
       avatarUrl: null,
     },
   });
 
-  console.log(`✅ Created test user: ${testUser.email}`);
+  console.log(`✅ Created test user: ${testUser.email} (password: demo123)`);
 
-  // Create some professors
+  // Create more students
+  const student1 = await prisma.user.upsert({
+    where: { email: "marco.ferrari@sapienza.it" },
+    update: {},
+    create: {
+      email: "marco.ferrari@sapienza.it",
+      passwordHash,
+      name: "Marco Ferrari",
+      universityId: "uni-sapienza",
+      year: 2,
+      channelId: sapienzaChannelA?.id || null,
+      isRepresentative: false,
+      role: "student",
+      status: "active",
+    },
+  });
+
+  const student2 = await prisma.user.upsert({
+    where: { email: "giulia.romano@sapienza.it" },
+    update: {},
+    create: {
+      email: "giulia.romano@sapienza.it",
+      passwordHash,
+      name: "Giulia Romano",
+      universityId: "uni-sapienza",
+      year: 3,
+      channelId: sapienzaChannelA?.id || null,
+      isRepresentative: false,
+      role: "student",
+      status: "active",
+    },
+  });
+
+  console.log("✅ Created additional students (password: demo123)");
+
+  // Create professors
   const professors = await Promise.all([
     prisma.professor.upsert({
       where: { id: "prof-rossi" },
@@ -244,44 +308,107 @@ async function main() {
         universityId: "uni-sapienza",
       },
     }),
+    prisma.professor.upsert({
+      where: { id: "prof-colombo" },
+      update: {},
+      create: {
+        id: "prof-colombo",
+        name: "Prof.ssa Laura Colombo",
+        universityId: "uni-sapienza",
+      },
+    }),
+    prisma.professor.upsert({
+      where: { id: "prof-marino" },
+      update: {},
+      create: {
+        id: "prof-marino",
+        name: "Prof. Francesco Marino",
+        universityId: "uni-sapienza",
+      },
+    }),
+    prisma.professor.upsert({
+      where: { id: "prof-conti" },
+      update: {},
+      create: {
+        id: "prof-conti",
+        name: "Prof.ssa Elena Conti",
+        universityId: "uni-bologna",
+      },
+    }),
   ]);
 
   console.log(`✅ Created ${professors.length} professors`);
 
   // Link professors to subjects
-  await prisma.professorSubject.upsert({
-    where: { id: "ps-rossi-anatomia" },
-    update: {},
-    create: {
-      id: "ps-rossi-anatomia",
-      professorId: "prof-rossi",
-      subjectId: "sub-anatomia1",
-    },
-  });
-
-  await prisma.professorSubject.upsert({
-    where: { id: "ps-bianchi-fisiologia" },
-    update: {},
-    create: {
-      id: "ps-bianchi-fisiologia",
-      professorId: "prof-bianchi",
-      subjectId: "sub-fisiologia",
-    },
-  });
-
-  await prisma.professorSubject.upsert({
-    where: { id: "ps-verdi-cardiologia" },
-    update: {},
-    create: {
-      id: "ps-verdi-cardiologia",
-      professorId: "prof-verdi",
-      subjectId: "sub-cardiologia",
-    },
-  });
+  await Promise.all([
+    prisma.professorSubject.upsert({
+      where: { id: "ps-rossi-anatomia1" },
+      update: {},
+      create: {
+        id: "ps-rossi-anatomia1",
+        professorId: "prof-rossi",
+        subjectId: "sub-anatomia1",
+      },
+    }),
+    prisma.professorSubject.upsert({
+      where: { id: "ps-rossi-anatomia2" },
+      update: {},
+      create: {
+        id: "ps-rossi-anatomia2",
+        professorId: "prof-rossi",
+        subjectId: "sub-anatomia2",
+      },
+    }),
+    prisma.professorSubject.upsert({
+      where: { id: "ps-bianchi-fisiologia" },
+      update: {},
+      create: {
+        id: "ps-bianchi-fisiologia",
+        professorId: "prof-bianchi",
+        subjectId: "sub-fisiologia",
+      },
+    }),
+    prisma.professorSubject.upsert({
+      where: { id: "ps-verdi-cardiologia" },
+      update: {},
+      create: {
+        id: "ps-verdi-cardiologia",
+        professorId: "prof-verdi",
+        subjectId: "sub-cardiologia",
+      },
+    }),
+    prisma.professorSubject.upsert({
+      where: { id: "ps-colombo-biochimica" },
+      update: {},
+      create: {
+        id: "ps-colombo-biochimica",
+        professorId: "prof-colombo",
+        subjectId: "sub-biochimica",
+      },
+    }),
+    prisma.professorSubject.upsert({
+      where: { id: "ps-marino-farmacologia" },
+      update: {},
+      create: {
+        id: "ps-marino-farmacologia",
+        professorId: "prof-marino",
+        subjectId: "sub-farmacologia",
+      },
+    }),
+    prisma.professorSubject.upsert({
+      where: { id: "ps-conti-neurologia" },
+      update: {},
+      create: {
+        id: "ps-conti-neurologia",
+        professorId: "prof-conti",
+        subjectId: "sub-neurologia",
+      },
+    }),
+  ]);
 
   console.log("✅ Linked professors to subjects");
 
-  // Create sample exams
+  // Create exams
   const exam1 = await prisma.exam.upsert({
     where: { id: "exam-anatomia-jan" },
     update: {},
@@ -290,42 +417,141 @@ async function main() {
       subjectId: "sub-anatomia1",
       professorId: "prof-rossi",
       universityId: "uni-sapienza",
-      year: 1, // Now a number (1º Anno)
+      year: 1,
       channelId: sapienzaChannelA?.id || null,
       examDate: new Date("2026-01-15"),
       examType: "orale",
       academicYear: "2025/2026",
+      description: "Esame orale di Anatomia I - Gennaio 2026",
       createdBy: testUser.id,
     },
   });
 
-  // Create sample questions
-  await prisma.question.upsert({
-    where: { id: "q1-anatomia" },
+  const exam2 = await prisma.exam.upsert({
+    where: { id: "exam-fisiologia-feb" },
     update: {},
     create: {
-      id: "q1-anatomia",
+      id: "exam-fisiologia-feb",
+      subjectId: "sub-fisiologia",
+      professorId: "prof-bianchi",
+      universityId: "uni-sapienza",
+      year: 2,
+      channelId: sapienzaChannelA?.id || null,
+      examDate: new Date("2026-02-10"),
+      examType: "scritto",
+      academicYear: "2025/2026",
+      description: "Esame scritto di Fisiologia - Febbraio 2026",
+      createdBy: testUser.id,
+    },
+  });
+
+  const exam3 = await prisma.exam.upsert({
+    where: { id: "exam-cardiologia-mar" },
+    update: {},
+    create: {
+      id: "exam-cardiologia-mar",
+      subjectId: "sub-cardiologia",
+      professorId: "prof-verdi",
+      universityId: "uni-sapienza",
+      year: 4,
+      channelId: sapienzaChannelA?.id || null,
+      examDate: new Date("2026-03-20"),
+      examType: "orale",
+      academicYear: "2025/2026",
+      description: "Esame orale di Cardiologia - Marzo 2026",
+      createdBy: student1.id,
+    },
+  });
+
+  console.log("✅ Created 3 exams");
+
+  // Create questions with groupId and canonical system
+  const groupId1 = "grp-cuore-struttura";
+  const groupId2 = "grp-arterie-cervello";
+
+  // Question Group 1: Cuore e struttura (canonical + 2 variations)
+  const q1canonical = await prisma.question.upsert({
+    where: { id: "q1-anatomia-canonical" },
+    update: {},
+    create: {
+      id: "q1-anatomia-canonical",
       examId: exam1.id,
       text: "Descriva la struttura e la funzione del cuore, con particolare attenzione alle camere cardiache.",
       order: 1,
-      timesAsked: 5,
-      views: 47,
+      timesAsked: 8,
+      views: 127,
+      groupId: groupId1,
+      isCanonical: true,
+      canonicalId: null,
     },
   });
 
   await prisma.question.upsert({
-    where: { id: "q2-anatomia" },
+    where: { id: "q1-anatomia-var1" },
     update: {},
     create: {
-      id: "q2-anatomia",
+      id: "q1-anatomia-var1",
       examId: exam1.id,
-      text: "Quali sono le principali arterie che irrorano il cervello?",
+      text: "Mi parli dell'anatomia del cuore e delle sue camere.",
       order: 2,
       timesAsked: 3,
-      views: 32,
+      views: 45,
+      groupId: groupId1,
+      isCanonical: false,
+      canonicalId: q1canonical.id,
     },
   });
 
+  await prisma.question.upsert({
+    where: { id: "q1-anatomia-var2" },
+    update: {},
+    create: {
+      id: "q1-anatomia-var2",
+      examId: exam1.id,
+      text: "Quali sono le caratteristiche anatomiche del cuore e come funzionano gli atri e i ventricoli?",
+      order: 3,
+      timesAsked: 5,
+      views: 68,
+      groupId: groupId1,
+      isCanonical: false,
+      canonicalId: q1canonical.id,
+    },
+  });
+
+  // Question Group 2: Arterie del cervello (canonical + 1 variation)
+  const q2canonical = await prisma.question.upsert({
+    where: { id: "q2-anatomia-canonical" },
+    update: {},
+    create: {
+      id: "q2-anatomia-canonical",
+      examId: exam1.id,
+      text: "Quali sono le principali arterie che irrorano il cervello?",
+      order: 4,
+      timesAsked: 6,
+      views: 89,
+      groupId: groupId2,
+      isCanonical: true,
+      canonicalId: null,
+    },
+  });
+
+  await prisma.question.upsert({
+    where: { id: "q2-anatomia-var1" },
+    update: {},
+    create: {
+      id: "q2-anatomia-var1",
+      examId: exam1.id,
+      text: "Mi descriva il circolo arterioso cerebrale.",
+      order: 5,
+      timesAsked: 4,
+      views: 52,
+      groupId: groupId2,
+      isCanonical: false,
+      canonicalId: q2canonical.id,
+    },
+  });
+
+  // More standalone questions
   await prisma.question.upsert({
     where: { id: "q3-anatomia" },
     update: {},
@@ -333,15 +559,189 @@ async function main() {
       id: "q3-anatomia",
       examId: exam1.id,
       text: "Descriva il percorso del sangue nel sistema circolatorio.",
-      order: 3,
-      timesAsked: 4,
-      views: 28,
+      order: 6,
+      timesAsked: 7,
+      views: 103,
+      groupId: null,
+      isCanonical: true,
     },
   });
 
-  console.log("✅ Created sample exam with questions");
+  await prisma.question.upsert({
+    where: { id: "q4-anatomia" },
+    update: {},
+    create: {
+      id: "q4-anatomia",
+      examId: exam1.id,
+      text: "Quali sono le differenze tra arterie e vene?",
+      order: 7,
+      timesAsked: 4,
+      views: 67,
+      groupId: null,
+      isCanonical: true,
+    },
+  });
 
-  console.log("🎉 Seeding completed!");
+  // Fisiologia questions
+  await prisma.question.upsert({
+    where: { id: "q1-fisiologia" },
+    update: {},
+    create: {
+      id: "q1-fisiologia",
+      examId: exam2.id,
+      text: "Spieghi il meccanismo di contrazione muscolare.",
+      order: 1,
+      timesAsked: 5,
+      views: 78,
+      groupId: null,
+      isCanonical: true,
+    },
+  });
+
+  await prisma.question.upsert({
+    where: { id: "q2-fisiologia" },
+    update: {},
+    create: {
+      id: "q2-fisiologia",
+      examId: exam2.id,
+      text: "Come funziona il sistema nervoso autonomo?",
+      order: 2,
+      timesAsked: 6,
+      views: 92,
+      groupId: null,
+      isCanonical: true,
+    },
+  });
+
+  await prisma.question.upsert({
+    where: { id: "q3-fisiologia" },
+    update: {},
+    create: {
+      id: "q3-fisiologia",
+      examId: exam2.id,
+      text: "Descriva il processo di respirazione cellulare.",
+      order: 3,
+      timesAsked: 4,
+      views: 61,
+      groupId: null,
+      isCanonical: true,
+    },
+  });
+
+  // Cardiologia questions
+  await prisma.question.upsert({
+    where: { id: "q1-cardiologia" },
+    update: {},
+    create: {
+      id: "q1-cardiologia",
+      examId: exam3.id,
+      text: "Quali sono le cause più comuni di infarto miocardico?",
+      order: 1,
+      timesAsked: 8,
+      views: 134,
+      groupId: null,
+      isCanonical: true,
+    },
+  });
+
+  await prisma.question.upsert({
+    where: { id: "q2-cardiologia" },
+    update: {},
+    create: {
+      id: "q2-cardiologia",
+      examId: exam3.id,
+      text: "Come si diagnostica e tratta l'insufficienza cardiaca?",
+      order: 2,
+      timesAsked: 6,
+      views: 97,
+      groupId: null,
+      isCanonical: true,
+    },
+  });
+
+  console.log("✅ Created 12 questions (with canonical system)");
+
+  // Add student answers
+  await prisma.studentAnswer.upsert({
+    where: { id: "ans-1" },
+    update: {},
+    create: {
+      id: "ans-1",
+      questionId: "q1-anatomia-canonical",
+      userId: testUser.id,
+      content: "Il cuore è un organo muscolare diviso in quattro camere: due atri superiori e due ventricoli inferiori. L'atrio destro riceve sangue venoso dalla vena cava, il ventricolo destro lo pompa ai polmoni. L'atrio sinistro riceve sangue ossigenato dai polmoni e il ventricolo sinistro lo distribuisce al corpo attraverso l'aorta.",
+      isPublic: true,
+    },
+  });
+
+  await prisma.studentAnswer.upsert({
+    where: { id: "ans-2" },
+    update: {},
+    create: {
+      id: "ans-2",
+      questionId: "q2-anatomia-canonical",
+      userId: student1.id,
+      content: "Le principali arterie cerebrali sono: arterie carotidi interne, arterie vertebrali che formano il circolo di Willis, arteria cerebrale anteriore, media e posteriore. Queste assicurano l'irrorazione costante del tessuto nervoso.",
+      isPublic: true,
+    },
+  });
+
+  console.log("✅ Created student answers");
+
+  // Add comments
+  await prisma.comment.upsert({
+    where: { id: "comm-1" },
+    update: {},
+    create: {
+      id: "comm-1",
+      questionId: "q1-anatomia-canonical",
+      userId: student2.id,
+      content: "Questa domanda è uscita anche al mio esame! Il prof ha apprezzato molto quando ho parlato del setto interventricolare.",
+    },
+  });
+
+  await prisma.comment.upsert({
+    where: { id: "comm-2" },
+    update: {},
+    create: {
+      id: "comm-2",
+      questionId: "q1-cardiologia",
+      userId: testUser.id,
+      content: "Importante menzionare aterosclerosi coronarica, trombosi e spasmo coronarico. Il prof chiede sempre i fattori di rischio!",
+    },
+  });
+
+  console.log("✅ Created comments");
+
+  // Add some saved questions
+  await prisma.savedQuestion.upsert({
+    where: { id: "saved-1" },
+    update: {},
+    create: {
+      id: "saved-1",
+      userId: testUser.id,
+      questionId: "q1-anatomia-canonical",
+    },
+  });
+
+  await prisma.savedQuestion.upsert({
+    where: { id: "saved-2" },
+    update: {},
+    create: {
+      id: "saved-2",
+      userId: testUser.id,
+      questionId: "q1-cardiologia",
+    },
+  });
+
+  console.log("✅ Created saved questions");
+
+  console.log("\n🎉 Seeding completed!");
+  console.log("\n📋 Login credentials:");
+  console.log("   Admin:  admin@dottorio.it / demo123");
+  console.log("   Sofia:  sofia@sapienza.it / demo123");
+  console.log("   Marco:  marco.ferrari@sapienza.it / demo123");
+  console.log("   Giulia: giulia.romano@sapienza.it / demo123");
 }
 
 main()
