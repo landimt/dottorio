@@ -24,6 +24,12 @@ async function getQuestion(id: string, userId?: string) {
           },
         },
       },
+      canonical: {
+        select: {
+          id: true,
+          text: true,
+        },
+      },
       aiAnswer: true,
       studentAnswers: {
         where: { isPublic: true },
@@ -148,6 +154,33 @@ async function getRelatedQuestions(questionId: string, examId: string) {
   });
 }
 
+// Get question variations (questions with same groupId)
+async function getQuestionVariations(groupId: string | null, currentQuestionId: string) {
+  if (!groupId) return [];
+
+  return prisma.question.findMany({
+    where: {
+      groupId,
+      id: { not: currentQuestionId },
+    },
+    include: {
+      exam: {
+        include: {
+          professor: true,
+          university: true,
+        },
+      },
+      _count: {
+        select: {
+          studentAnswers: { where: { isPublic: true } },
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+    take: 20,
+  });
+}
+
 export default async function QuestionDetailPage({ params }: PageProps) {
   const { id } = await params;
   const session = await auth();
@@ -159,7 +192,11 @@ export default async function QuestionDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  const relatedQuestions = await getRelatedQuestions(id, question.examId);
+  // Fetch variations and related questions in parallel
+  const [variations, relatedQuestions] = await Promise.all([
+    getQuestionVariations(question.groupId, id),
+    getRelatedQuestions(id, question.examId),
+  ]);
 
   // Increment view count
   await prisma.question.update({
@@ -169,8 +206,14 @@ export default async function QuestionDetailPage({ params }: PageProps) {
 
   return (
     <QuestionDetail
-      question={question}
+      question={{
+        ...question,
+        groupId: question.groupId,
+        isCanonical: question.isCanonical,
+        canonical: question.canonical,
+      }}
       relatedQuestions={relatedQuestions}
+      variations={variations}
       userId={userId}
     />
   );

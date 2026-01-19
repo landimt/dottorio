@@ -49,6 +49,9 @@ interface Question {
   views: number;
   examId: string;
   isSaved: boolean;
+  groupId: string | null;
+  isCanonical: boolean;
+  canonical: { id: string; text: string } | null;
   exam: {
     id: string;
     subject: { id: string; name: string; emoji: string | null };
@@ -71,6 +74,19 @@ interface Question {
     studentAnswers: number;
     comments: number;
     savedBy: number;
+  };
+}
+
+interface QuestionVariation {
+  id: string;
+  text: string;
+  createdAt: Date;
+  exam: {
+    professor: { name: string } | null;
+    university: { name: string };
+  };
+  _count: {
+    studentAnswers: number;
   };
 }
 
@@ -119,12 +135,14 @@ interface RelatedQuestion {
 interface QuestionDetailProps {
   question: Question;
   relatedQuestions: RelatedQuestion[];
+  variations: QuestionVariation[];
   userId?: string;
 }
 
 export function QuestionDetail({
   question,
   relatedQuestions,
+  variations,
   userId,
 }: QuestionDetailProps) {
   const router = useRouter();
@@ -195,23 +213,9 @@ export function QuestionDetail({
     return filtered;
   };
 
-  // Mock variations for the dialog
-  const questionVariations = [
-    {
-      id: "var-1",
-      text: "Spiega le principali differenze tra arterie e vene",
-      professor: "Prof. Rossi",
-      date: "2024-01-15",
-      timesAsked: 8,
-    },
-    {
-      id: "var-2",
-      text: "Confronta il sistema arterioso e venoso",
-      professor: "Prof. Bianchi",
-      date: "2024-01-10",
-      timesAsked: 6,
-    },
-  ];
+  // Total variations count (including current question)
+  const variationsCount = variations.length + 1;
+  const hasVariations = variations.length > 0;
 
   const handleToggleSave = async () => {
     if (!userId) {
@@ -665,18 +669,30 @@ export function QuestionDetail({
                   </div>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <span>{q.professor}</span>
-                    <span>•</span>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsVariationsDialogOpen(true);
-                      }}
-                      className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#005A9C]/10 text-[#005A9C] hover:bg-[#005A9C]/20 hover:scale-105 transition-all duration-200 border border-[#005A9C]/30 hover:border-[#005A9C]"
-                      title="Vedi variazioni della domanda"
-                    >
-                      <GitBranch className="w-3 h-3" />
-                      <span className="font-medium">6x</span>
-                    </button>
+                    {hasVariations && q.isCurrent && (
+                      <>
+                        <span>•</span>
+                        <span
+                          role="button"
+                          tabIndex={0}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsVariationsDialogOpen(true);
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.stopPropagation();
+                              setIsVariationsDialogOpen(true);
+                            }
+                          }}
+                          className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#005A9C]/10 text-[#005A9C] hover:bg-[#005A9C]/20 hover:scale-105 transition-all duration-200 border border-[#005A9C]/30 hover:border-[#005A9C] cursor-pointer"
+                          title="Vedi variazioni della domanda"
+                        >
+                          <GitBranch className="w-3 h-3" />
+                          <span className="font-medium">{variationsCount}x</span>
+                        </span>
+                      </>
+                    )}
                   </div>
                 </button>
               ))}
@@ -1236,17 +1252,29 @@ export function QuestionDetail({
               Variazioni della Domanda
             </DialogTitle>
             <DialogDescription className="text-muted-foreground">
-              Questa domanda è stata posta {questionVariations.length + 1} volte
-              in forme diverse
+              Questa domanda è stata posta {variationsCount} volte in forme
+              diverse da professori e università differenti
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-3 py-4">
-            {/* Current Question */}
-            <Card className="p-4 border-2 border-[#005A9C] bg-[#005A9C]/5">
+            {/* Current Question - show if it's the canonical */}
+            <Card
+              className={`p-4 ${
+                question.isCanonical
+                  ? "border-2 border-[#005A9C] bg-[#005A9C]/5"
+                  : "border border-border"
+              }`}
+            >
               <div className="flex items-start gap-3">
-                <Badge className="bg-[#005A9C] text-white shrink-0">
-                  Attuale
+                <Badge
+                  className={
+                    question.isCanonical
+                      ? "bg-[#005A9C] text-white shrink-0"
+                      : "bg-muted text-muted-foreground shrink-0"
+                  }
+                >
+                  {question.isCanonical ? "Principale" : "Attuale"}
                 </Badge>
                 <div className="flex-1 space-y-2">
                   <p className="text-sm font-medium text-foreground">
@@ -1255,43 +1283,89 @@ export function QuestionDetail({
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <span>{question.exam.professor?.name || "N/A"}</span>
                     <span>•</span>
-                    <span>{new Date().toLocaleDateString("it-IT")}</span>
+                    <span>{question.exam.university.name}</span>
                   </div>
                 </div>
               </div>
             </Card>
 
-            {/* Variations */}
-            {questionVariations.map((variation, index) => (
+            {/* If current is not canonical, show the canonical question */}
+            {!question.isCanonical && question.canonical && (
               <Card
-                key={variation.id}
-                className="p-4 border border-border hover:border-[#005A9C]/50 hover:bg-muted/30 transition-all cursor-pointer"
+                className="p-4 border-2 border-[#005A9C] bg-[#005A9C]/5 cursor-pointer hover:bg-[#005A9C]/10 transition-colors"
+                onClick={() => router.push(`/questions/${question.canonical!.id}`)}
               >
                 <div className="flex items-start gap-3">
-                  <Badge
-                    variant="outline"
-                    className="shrink-0 border-border text-muted-foreground"
-                  >
-                    #{index + 1}
+                  <Badge className="bg-[#005A9C] text-white shrink-0">
+                    Principale
                   </Badge>
                   <div className="flex-1 space-y-2">
-                    <p className="text-sm text-foreground">{variation.text}</p>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <span>{variation.professor}</span>
-                      <span>•</span>
-                      <span>
-                        {new Date(variation.date).toLocaleDateString("it-IT")}
-                      </span>
-                      <span>•</span>
-                      <div className="flex items-center gap-1">
-                        <GitBranch className="w-3 h-3" />
-                        <span>{variation.timesAsked}x chiesta</span>
-                      </div>
-                    </div>
+                    <p className="text-sm font-medium text-foreground">
+                      {question.canonical.text}
+                    </p>
+                    <p className="text-xs text-[#005A9C]">
+                      Clicca per vedere la versione principale →
+                    </p>
                   </div>
                 </div>
               </Card>
-            ))}
+            )}
+
+            {/* Other Variations */}
+            {variations.length > 0 && (
+              <div className="pt-2">
+                <p className="text-xs text-muted-foreground mb-3 font-medium uppercase tracking-wide">
+                  Altre variazioni
+                </p>
+                <div className="space-y-2">
+                  {variations.map((variation, index) => (
+                    <Card
+                      key={variation.id}
+                      className="p-4 border border-border hover:border-[#005A9C]/50 hover:bg-muted/30 transition-all cursor-pointer"
+                      onClick={() => router.push(`/questions/${variation.id}`)}
+                    >
+                      <div className="flex items-start gap-3">
+                        <Badge
+                          variant="outline"
+                          className="shrink-0 border-border text-muted-foreground"
+                        >
+                          #{index + 1}
+                        </Badge>
+                        <div className="flex-1 space-y-2">
+                          <p className="text-sm text-foreground">
+                            {variation.text}
+                          </p>
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground flex-wrap">
+                            <span>
+                              {variation.exam.professor?.name || "N/A"}
+                            </span>
+                            <span>•</span>
+                            <span>{variation.exam.university.name}</span>
+                            <span>•</span>
+                            <span>
+                              {new Date(variation.createdAt).toLocaleDateString(
+                                "it-IT"
+                              )}
+                            </span>
+                            {variation._count.studentAnswers > 0 && (
+                              <>
+                                <span>•</span>
+                                <div className="flex items-center gap-1">
+                                  <Users className="w-3 h-3" />
+                                  <span>
+                                    {variation._count.studentAnswers} risposte
+                                  </span>
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="flex justify-end pt-4 border-t border-border">

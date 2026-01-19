@@ -199,10 +199,16 @@ export const questionService = {
       throw new Error("Esame non trovato o non autorizzato");
     }
 
+    // Generate a unique ID for the question first, so we can use it as groupId
+    const questionId = crypto.randomUUID();
+
     return prisma.question.create({
       data: {
+        id: questionId,
         examId: data.examId,
         text: data.text,
+        groupId: questionId, // Set groupId to own ID (canonical question)
+        isCanonical: true,
       },
       include: {
         exam: {

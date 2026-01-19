@@ -58,8 +58,11 @@ export async function POST(request: Request) {
     console.error("Error creating question:", error);
 
     if (error instanceof Error && error.name === "ZodError") {
+      // Extract the first error message from ZodError
+      const zodError = error as unknown as { errors: Array<{ message: string }> };
+      const firstError = zodError.errors?.[0]?.message || "Dati non validi";
       return NextResponse.json(
-        { error: "Dati non validi", details: error },
+        { error: firstError },
         { status: 400 }
       );
     }

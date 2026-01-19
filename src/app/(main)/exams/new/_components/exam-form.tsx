@@ -29,8 +29,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { CheckCircle, ArrowLeft, Plus, X, Link2, Copy } from "lucide-react";
+import { CheckCircle, ArrowLeft, Plus, X, Link2, Copy, Search, GitBranch, BookOpen, Users, Sparkles } from "lucide-react";
 import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
 
 interface Subject {
   id: string;
@@ -51,6 +52,20 @@ interface Channel {
   id: string;
   name: string;
   universityId: string;
+}
+
+interface CanonicalQuestion {
+  id: string;
+  text: string;
+  groupId: string;
+  variationsCount: number;
+  subject: string;
+  professor: string | null;
+}
+
+interface CreatedQuestion {
+  id: string;
+  text: string;
 }
 
 interface ExamFormProps {
@@ -87,6 +102,18 @@ export function ExamForm({ subjects, professors, universities, channels }: ExamF
   const [showSuccess, setShowSuccess] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [shareableLink, setShareableLink] = useState("");
+
+  // Question Linking States
+  const [createdQuestions, setCreatedQuestions] = useState<CreatedQuestion[]>([]);
+  const [currentLinkingIndex, setCurrentLinkingIndex] = useState(0);
+  const [showLinkModal, setShowLinkModal] = useState(false);
+  const [isLinking, setIsLinking] = useState(false);
+
+  // Manual search states
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<CanonicalQuestion[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [selectedCanonical, setSelectedCanonical] = useState<CanonicalQuestion | null>(null);
 
   // Update form if prefillData changes
   useEffect(() => {
@@ -178,30 +205,130 @@ export function ExamForm({ subjects, professors, universities, channels }: ExamF
 
       const exam = await examResponse.json();
 
-      // Then, create all questions for this exam
-      const questionPromises = filledQuestions.map((text) =>
-        fetch("/api/questions", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            examId: exam.id,
-            text,
-          }),
+      // Then, create all questions for this exam and capture the responses
+      const questionResponses = await Promise.all(
+        filledQuestions.map(async (text) => {
+          const response = await fetch("/api/questions", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              examId: exam.id,
+              text,
+            }),
+          });
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || "Errore nella creazione della domanda");
+          }
+          const data = await response.json();
+          return { id: data.id, text };
         })
       );
 
-      await Promise.all(questionPromises);
+      // Store created questions for potential linking
+      setCreatedQuestions(questionResponses);
 
-      setShowSuccess(true);
-      setTimeout(() => {
-        router.push("/dashboard");
-      }, 2000);
+      // Show linking modal for all questions (manual search)
+      if (questionResponses.length > 0) {
+        setCurrentLinkingIndex(0);
+        setSearchQuery("");
+        setSearchResults([]);
+        setSelectedCanonical(null);
+        setShowLinkModal(true);
+      } else {
+        setShowSuccess(true);
+        setTimeout(() => {
+          router.push("/dashboard");
+        }, 2000);
+      }
     } catch (error) {
       console.error("Error submitting questions:", error);
       toast.error("Errore durante l'invio delle domande");
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // Search canonical questions
+  const handleSearchCanonical = async (query: string) => {
+    setSearchQuery(query);
+
+    if (query.length < 2) {
+      setSearchResults([]);
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const currentQuestion = createdQuestions[currentLinkingIndex];
+      const response = await fetch(
+        `/api/questions/canonical?q=${encodeURIComponent(query)}&excludeId=${currentQuestion?.id || ""}&limit=10`
+      );
+      const data = await response.json();
+      setSearchResults(data.questions || []);
+    } catch (error) {
+      console.error("Error searching canonical questions:", error);
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  // Handle linking the selected question
+  const handleLinkSelected = async () => {
+    if (!selectedCanonical || currentLinkingIndex >= createdQuestions.length) return;
+
+    const currentQuestion = createdQuestions[currentLinkingIndex];
+    setIsLinking(true);
+
+    try {
+      const response = await fetch(`/api/questions/${currentQuestion.id}/link`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ canonicalId: selectedCanonical.id }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Errore nel collegamento");
+      }
+
+      const data = await response.json();
+      toast.success(`Domanda collegata! Ora fa parte di un gruppo con ${data.group.totalQuestions} domande`);
+
+      // Move to next question or finish
+      moveToNextQuestion();
+    } catch (error) {
+      console.error("Error linking question:", error);
+      toast.error("Errore nel collegamento della domanda");
+    } finally {
+      setIsLinking(false);
+    }
+  };
+
+  // Skip linking current question and move to next
+  const handleSkipLinking = () => {
+    moveToNextQuestion();
+  };
+
+  // Move to next question or finish the flow
+  const moveToNextQuestion = () => {
+    const nextIndex = currentLinkingIndex + 1;
+
+    if (nextIndex >= createdQuestions.length) {
+      // All questions processed
+      setShowLinkModal(false);
+      setShowSuccess(true);
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 2000);
+      return;
+    }
+
+    // Reset search state and move to next question
+    setCurrentLinkingIndex(nextIndex);
+    setSearchQuery("");
+    setSearchResults([]);
+    setSelectedCanonical(null);
   };
 
   // Generate shareable link (only for class representatives)
@@ -794,6 +921,165 @@ export function ExamForm({ subjects, professors, universities, channels }: ExamF
                 </div>
               </div>
             </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Question Linking Modal */}
+      <Dialog open={showLinkModal} onOpenChange={(open) => !open && handleSkipLinking()}>
+        <DialogContent className="sm:max-w-2xl bg-card border-border max-h-[90vh] overflow-hidden flex flex-col">
+          {/* Header */}
+          <div className="relative -mx-6 -mt-6 p-6 bg-gradient-to-br from-[#F0FDF4] via-[#DCFCE7] to-[#BBF7D0] dark:from-green-900/20 dark:via-green-900/10 dark:to-green-900/5 border-b border-green-500/20">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/10 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl" />
+
+            <div className="relative">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center">
+                  <Link2 className="w-6 h-6 text-green-600 dark:text-green-400" />
+                </div>
+                <div>
+                  <DialogTitle className="text-foreground text-xl flex items-center gap-2">
+                    Vincolare Domanda
+                  </DialogTitle>
+                  <DialogDescription className="text-green-700/80 dark:text-green-400/80">
+                    {currentLinkingIndex + 1} di {createdQuestions.length} domande
+                  </DialogDescription>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex-1 overflow-y-auto space-y-4 p-1">
+            {/* Current question being processed */}
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <p className="text-xs text-muted-foreground mb-2 flex items-center gap-2">
+                <BookOpen className="w-3.5 h-3.5" />
+                La tua domanda:
+              </p>
+              <p className="text-foreground font-medium">
+                {createdQuestions[currentLinkingIndex]?.text}
+              </p>
+            </div>
+
+            {/* Explanation */}
+            <div className="bg-[#EFF6FF] dark:bg-[#005A9C]/10 rounded-lg p-3 border-l-4 border-[#005A9C]">
+              <p className="text-sm text-foreground leading-relaxed m-0">
+                🔗 Questa domanda è uguale o simile a una già esistente? Cerca e collega per unire statistiche e risposte.
+              </p>
+            </div>
+
+            {/* Search Input */}
+            <div className="space-y-3">
+              <Label className="text-sm font-medium">Cerca domanda esistente:</Label>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  type="text"
+                  placeholder="Digita per cercare..."
+                  value={searchQuery}
+                  onChange={(e) => handleSearchCanonical(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+
+              {/* Search Results */}
+              {isSearching && (
+                <div className="flex items-center justify-center py-4">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary" />
+                  <span className="ml-2 text-sm text-muted-foreground">Cercando...</span>
+                </div>
+              )}
+
+              {!isSearching && searchQuery.length >= 2 && searchResults.length === 0 && (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  Nessuna domanda trovata
+                </p>
+              )}
+
+              {!isSearching && searchResults.length > 0 && (
+                <div className="space-y-2 max-h-[250px] overflow-y-auto">
+                  {searchResults.map((question) => (
+                    <button
+                      key={question.id}
+                      onClick={() => setSelectedCanonical(question)}
+                      className={`w-full text-left p-3 rounded-lg border transition-all ${
+                        selectedCanonical?.id === question.id
+                          ? "border-primary bg-primary/10"
+                          : "border-border bg-card hover:border-primary/50 hover:bg-primary/5"
+                      }`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                          selectedCanonical?.id === question.id
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted"
+                        }`}>
+                          <GitBranch className="w-4 h-4" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-foreground text-sm line-clamp-2">
+                            {question.text}
+                          </p>
+                          <div className="flex items-center gap-2 mt-1">
+                            {question.variationsCount > 0 && (
+                              <Badge variant="secondary" className="text-xs">
+                                <Users className="w-3 h-3 mr-1" />
+                                {question.variationsCount + 1}x chiesta
+                              </Badge>
+                            )}
+                            <span className="text-xs text-muted-foreground">
+                              {question.professor && `${question.professor} • `}{question.subject}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Selected Question Preview */}
+              {selectedCanonical && (
+                <div className="p-3 rounded-lg border border-green-500/50 bg-green-50 dark:bg-green-900/20">
+                  <p className="text-xs text-green-700 dark:text-green-400 mb-1 font-medium">
+                    Domanda selezionata:
+                  </p>
+                  <p className="text-sm text-foreground line-clamp-2">
+                    {selectedCanonical.text}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="border-t border-border pt-4 mt-4 flex justify-between items-center gap-3">
+            <Button
+              variant="ghost"
+              onClick={handleSkipLinking}
+              disabled={isLinking}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              {currentLinkingIndex + 1 >= createdQuestions.length ? "Termina senza collegare" : "Salta"}
+            </Button>
+            <Button
+              onClick={handleLinkSelected}
+              disabled={!selectedCanonical || isLinking}
+              className="bg-primary hover:bg-primary/90"
+            >
+              {isLinking ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                  Collegando...
+                </>
+              ) : (
+                <>
+                  <Link2 className="w-4 h-4 mr-2" />
+                  Collega
+                </>
+              )}
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
