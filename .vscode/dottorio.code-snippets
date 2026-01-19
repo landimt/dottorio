@@ -1,0 +1,141 @@
+{
+  // React Components
+  "React Server Component": {
+    "prefix": "rsc",
+    "body": [
+      "export default async function ${1:ComponentName}() {",
+      "  return (",
+      "    <div>",
+      "      $0",
+      "    </div>",
+      "  );",
+      "}"
+    ],
+    "description": "React Server Component (Next.js 15)"
+  },
+  "React Client Component": {
+    "prefix": "rcc",
+    "body": [
+      "\"use client\";",
+      "",
+      "export default function ${1:ComponentName}() {",
+      "  return (",
+      "    <div>",
+      "      $0",
+      "    </div>",
+      "  );",
+      "}"
+    ],
+    "description": "React Client Component"
+  },
+  "React Client Component with State": {
+    "prefix": "rccs",
+    "body": [
+      "\"use client\";",
+      "",
+      "import { useState } from \"react\";",
+      "",
+      "export default function ${1:ComponentName}() {",
+      "  const [${2:state}, set${2/(.*)/${1:/capitalize}/}] = useState<${3:string}>($4);",
+      "",
+      "  return (",
+      "    <div>",
+      "      $0",
+      "    </div>",
+      "  );",
+      "}"
+    ],
+    "description": "React Client Component with useState"
+  },
+
+  // Next.js API Routes
+  "Next.js API Route GET": {
+    "prefix": "naget",
+    "body": [
+      "import { NextResponse } from \"next/server\";",
+      "",
+      "export async function GET() {",
+      "  try {",
+      "    $0",
+      "    return NextResponse.json({ data: null });",
+      "  } catch (error) {",
+      "    return NextResponse.json({ error: \"Internal Server Error\" }, { status: 500 });",
+      "  }",
+      "}"
+    ],
+    "description": "Next.js API Route Handler - GET"
+  },
+  "Next.js API Route POST": {
+    "prefix": "napost",
+    "body": [
+      "import { NextRequest, NextResponse } from \"next/server\";",
+      "",
+      "export async function POST(request: NextRequest) {",
+      "  try {",
+      "    const body = await request.json();",
+      "    $0",
+      "    return NextResponse.json({ data: null });",
+      "  } catch (error) {",
+      "    return NextResponse.json({ error: \"Internal Server Error\" }, { status: 500 });",
+      "  }",
+      "}"
+    ],
+    "description": "Next.js API Route Handler - POST"
+  },
+
+  // Prisma
+  "Prisma Query": {
+    "prefix": "pquery",
+    "body": [
+      "const ${1:result} = await prisma.${2:model}.${3|findMany,findUnique,findFirst,create,update,delete|}({",
+      "  $0",
+      "});"
+    ],
+    "description": "Prisma query"
+  },
+
+  // Shadcn/UI imports
+  "Import Button": {
+    "prefix": "ibtn",
+    "body": "import { Button } from \"@/components/ui/button\";",
+    "description": "Import Button component"
+  },
+  "Import Card": {
+    "prefix": "icard",
+    "body": "import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from \"@/components/ui/card\";",
+    "description": "Import Card components"
+  },
+  "Import Dialog": {
+    "prefix": "idialog",
+    "body": "import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from \"@/components/ui/dialog\";",
+    "description": "Import Dialog components"
+  },
+  "Import Input": {
+    "prefix": "iinput",
+    "body": "import { Input } from \"@/components/ui/input\";",
+    "description": "Import Input component"
+  },
+
+  // Utility
+  "Console Log": {
+    "prefix": "cl",
+    "body": "console.log(\"$1:\", $1);$0",
+    "description": "Console log with label"
+  },
+  "Try Catch": {
+    "prefix": "tc",
+    "body": [
+      "try {",
+      "  $0",
+      "} catch (error) {",
+      "  console.error(error);",
+      "}"
+    ],
+    "description": "Try-catch block"
+  },
+  "cn className": {
+    "prefix": "ccn",
+    "body": "className={cn(\"$1\"$0)}",
+    "description": "className with cn utility"
+  }
+}

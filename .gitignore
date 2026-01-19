@@ -41,9 +41,10 @@ next-env.d.ts
 
 # IDE
 .idea
-.vscode
+# .vscode - mantemos versionado para compartilhar config do time
 *.swp
 *.swo
+.cursor/
 
 # Prisma
 prisma/migrations/*
@@ -57,3 +58,22 @@ logs
 Thumbs.db
 
 /src/generated/prisma
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Scraped data (comentar se quiser versionar)
+# data/*.json
+
+# Cache
+.turbo
+.eslintcache
+.parcel-cache
+
+# Temporary files
+*.tmp
+*.temp
+.temp/
+.tmp/
