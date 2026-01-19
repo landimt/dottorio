@@ -1,0 +1,3600 @@
+{
+  "scrapedAt": "2026-01-19T10:10:49.236Z",
+  "university": "Sapienza Università di Roma",
+  "courses": [
+    {
+      "code": "33452",
+      "name": "Medicina e chirurgia \"A\"",
+      "location": "Roma Policlinico Umberto I",
+      "academicYear": "2025/2026",
+      "subjects": [
+        {
+          "code": "10621692",
+          "name": "FISICA",
+          "ssd": [
+            "FIS/07",
+            "FIS/07"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 6,
+          "professors": [
+            {
+              "name": "LUCA MARINO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "RICCARDO FACCINI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "MAURO MIGLIORATI",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "GIULIO CARACCIOLO",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "LUCA DIGIACOMO",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "DANIELA POZZI",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "DANIELA POZZI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "LUCIANO DE SIO",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "LUCA DIGIACOMO",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "GIULIO CARACCIOLO",
+              "channel": "Canale 7"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33452/attendance/lesson/129a9793-2074-4535-8fa8-70059b360e37/1/1/f72acf6d-55c2-42fd-8a85-a69f52f2650f",
+          "isModule": false
+        },
+        {
+          "code": "10621694",
+          "name": "BIOLOGIA",
+          "ssd": [
+            "BIO/13"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 6,
+          "professors": [
+            {
+              "name": "LAURA AMICONE",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "DARIO BENELLI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "CLAUDIA CARISSIMI",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "ALESSANDRA MARCHETTI",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "CATERINA CATALANOTTO",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "CARLA CICCHINI",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "ROSSELLA MAIONE",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "LUCIA STEFANINI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "LAURA STRONATI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "CARMINE MANCONE",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "ILARIA LAUDADIO",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "ROBERTO CARNEVALE",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "VITTORIA CAMMISOTTO",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "CARLO COGONI",
+              "channel": "Canale 8"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33452/attendance/lesson/129a9793-2074-4535-8fa8-70059b360e37/1/1/845ef7bd-6319-49b8-9f3c-1dc62bc3e36b",
+          "isModule": false
+        },
+        {
+          "code": "10622049",
+          "name": "CHIMICA E PROPEDEUTICA BIOCHIMICA",
+          "ssd": [
+            "BIO/10"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 6,
+          "professors": [
+            {
+              "name": "BEATRICE VALLONE",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "PAOLA BAIOCCO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ANDREA BELLELLI",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "ANNARITA FIORILLO",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "ELENA FORTE",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "ANNARITA FIORILLO",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "CARLO TRAVAGLINI ALLOCATELLI",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "STEFANO GIANNI",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "ANDREA BELLELLI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "PAOLA BAIOCCO",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "MARZIA ARESE",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "FRANCESCO FIORENTINO",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "ALESSIO PAONE",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "EUGENIO LENDARO",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "VALERIO CONSALVI",
+              "channel": "Canale 8"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33452/attendance/lesson/129a9793-2074-4535-8fa8-70059b360e37/1/1/e0e2b3a5-0911-4104-9d4f-09bcf84b77cd",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33452/attendance/lesson/129a9793-2074-4535-8fa8-70059b360e37/1/2/2036ecd6-d688-48f2-b239-168532fd4f17",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33452/attendance/lesson/129a9793-2074-4535-8fa8-70059b360e37/2/1/83b0d22f-2edc-40c4-920c-a73dc775ecfb",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33452/attendance/lesson/129a9793-2074-4535-8fa8-70059b360e37/2/2/26c1f292-37a4-4217-adce-9c3a1d7449f6",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33452/attendance/lesson/129a9793-2074-4535-8fa8-70059b360e37/3/2/5c0b2d8b-2b03-4db2-9e28-14c7348cb2e8",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33452/attendance/lesson/129a9793-2074-4535-8fa8-70059b360e37/4/1/b3f32687-82f0-41bb-90d2-9fb303385665",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33452/attendance/lesson/129a9793-2074-4535-8fa8-70059b360e37/4/2/b702d61f-313b-4d8e-842e-5ffc065f3645",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33452/attendance/lesson/129a9793-2074-4535-8fa8-70059b360e37/5/2/a5e134b3-75ab-4133-9262-d687a6df8e34",
+          "isModule": false
+        },
+        {
+          "code": "10596558",
+          "name": "METODOLOGIA MEDICO SCIENTIFICA MEDICINA LEGALE -",
+          "ssd": [
+            "MED/43",
+            "MED/43"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 4,
+          "professors": [
+            {
+              "name": "GIORGIO BOLINO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ANIELLO MAIESE",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33452/attendance/lesson/129a9793-2074-4535-8fa8-70059b360e37/6/2/5d2d0eff-c4cb-45dd-99f2-f6f8d085cba4",
+          "isModule": false
+        },
+        {
+          "code": "AAF1016",
+          "name": "PROVA FINALE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 18,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33452/attendance/lesson/129a9793-2074-4535-8fa8-70059b360e37/6/2/2b1efe85-316b-4b24-b7d5-b5e8063e0b83",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33452/attendance/lesson/129a9793-2074-4535-8fa8-70059b360e37/6/2/2ed58b34-d55b-497f-aa7d-ab9da01043e5",
+          "isModule": false
+        }
+      ]
+    },
+    {
+      "code": "33559",
+      "name": "Medicina e chirurgia \"B\"",
+      "location": "Roma Policlinico Umberto I",
+      "academicYear": "2025/2026",
+      "subjects": [
+        {
+          "code": "10622049",
+          "name": "CHIMICA E PROPEDEUTICA BIOCHIMICA",
+          "ssd": [
+            "BIO/10"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 6,
+          "professors": [
+            {
+              "name": "ANDREA BELLELLI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ANNARITA FIORILLO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "BEATRICE VALLONE",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "PAOLA BAIOCCO",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "ELENA FORTE",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "ANNARITA FIORILLO",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "CARLO TRAVAGLINI ALLOCATELLI",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "STEFANO GIANNI",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "ANDREA BELLELLI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "PAOLA BAIOCCO",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "MARZIA ARESE",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "FRANCESCO FIORENTINO",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "ALESSIO PAONE",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "EUGENIO LENDARO",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "VALERIO CONSALVI",
+              "channel": "Canale 8"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33559/attendance/lesson/922b3b4c-781a-41cb-ab83-f465c072acb5/1/1/515c936f-999f-409c-9a7f-58623350db87",
+          "isModule": false
+        },
+        {
+          "code": "10621692",
+          "name": "FISICA",
+          "ssd": [
+            "FIS/07"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 6,
+          "professors": [
+            {
+              "name": "MAURO MIGLIORATI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "LUCA MARINO",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "RICCARDO FACCINI",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "GIULIO CARACCIOLO",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "LUCA DIGIACOMO",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "DANIELA POZZI",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "DANIELA POZZI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "LUCIANO DE SIO",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "LUCA DIGIACOMO",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "GIULIO CARACCIOLO",
+              "channel": "Canale 7"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33559/attendance/lesson/922b3b4c-781a-41cb-ab83-f465c072acb5/1/1/b7c54b26-bcde-492c-b2db-d5b2cb41792d",
+          "isModule": false
+        },
+        {
+          "code": "10621694",
+          "name": "BIOLOGIA",
+          "ssd": [
+            "BIO/13"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 6,
+          "professors": [
+            {
+              "name": "CLAUDIA CARISSIMI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "LAURA AMICONE",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "DARIO BENELLI",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "ALESSANDRA MARCHETTI",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "CATERINA CATALANOTTO",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "CARLA CICCHINI",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "ROSSELLA MAIONE",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "LUCIA STEFANINI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "LAURA STRONATI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "CARMINE MANCONE",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "ILARIA LAUDADIO",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "ROBERTO CARNEVALE",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "VITTORIA CAMMISOTTO",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "CARLO COGONI",
+              "channel": "Canale 8"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33559/attendance/lesson/922b3b4c-781a-41cb-ab83-f465c072acb5/1/1/eccd6ee2-2987-46dd-bd58-7dd2558d54a5",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [
+            {
+              "name": "ANTONIO MUSARO'",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ELENA DE SANTIS",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "KONSTANTINOS GIANNAKAKIS",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "VALERIA RICCIERI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "VITO D'ANDREA",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "SIMONA GABRIELLI",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33559/attendance/lesson/922b3b4c-781a-41cb-ab83-f465c072acb5/1/2/c537dc3b-97b0-449b-ad04-804012751d36",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [
+            {
+              "name": "ANTONIO MUSARO'",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ELENA DE SANTIS",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "KONSTANTINOS GIANNAKAKIS",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "VALERIA RICCIERI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "VITO D'ANDREA",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "SIMONA GABRIELLI",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33559/attendance/lesson/922b3b4c-781a-41cb-ab83-f465c072acb5/2/2/95bdaae7-0ee1-4a3b-9daa-f09db163dfa9",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [
+            {
+              "name": "ANTONIO MUSARO'",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ELENA DE SANTIS",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "KONSTANTINOS GIANNAKAKIS",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "VALERIA RICCIERI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "VITO D'ANDREA",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "SIMONA GABRIELLI",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33559/attendance/lesson/922b3b4c-781a-41cb-ab83-f465c072acb5/3/2/b246e4d9-214a-43e1-b286-aac954a6730f",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [
+            {
+              "name": "ANTONIO MUSARO'",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ELENA DE SANTIS",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "KONSTANTINOS GIANNAKAKIS",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "VALERIA RICCIERI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "VITO D'ANDREA",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "SIMONA GABRIELLI",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33559/attendance/lesson/922b3b4c-781a-41cb-ab83-f465c072acb5/4/1/ee99ea2a-37d6-4230-a159-09554e28d70a",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [
+            {
+              "name": "ANTONIO MUSARO'",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ELENA DE SANTIS",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "KONSTANTINOS GIANNAKAKIS",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "VALERIA RICCIERI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "VITO D'ANDREA",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "SIMONA GABRIELLI",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33559/attendance/lesson/922b3b4c-781a-41cb-ab83-f465c072acb5/5/2/23c621fb-712f-446a-869c-64468e724e2d",
+          "isModule": false
+        },
+        {
+          "code": "10596601",
+          "name": "GINECOLOGIA E OSTETRICIA",
+          "ssd": [
+            "MED/40",
+            "MED/40"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 5,
+          "professors": [
+            {
+              "name": "LUDOVICO MUZII",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "GIORGIA PERNIOLA",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "VIOLANTE DI DONATO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "DANIELE DI MASCIO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ANTONELLA GIANCOTTI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "FEDERICA TOMAO",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33559/attendance/lesson/922b3b4c-781a-41cb-ab83-f465c072acb5/6/1/db6bad01-80d4-4550-80a9-ba136983e293",
+          "isModule": false
+        },
+        {
+          "code": "AAF1016",
+          "name": "PROVA FINALE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 18,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33559/attendance/lesson/922b3b4c-781a-41cb-ab83-f465c072acb5/6/1/414cf197-e8a2-4e3d-8fbb-72a8100a8cfe",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [
+            {
+              "name": "ANTONIO MUSARO'",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ELENA DE SANTIS",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "KONSTANTINOS GIANNAKAKIS",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "VALERIA RICCIERI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "VITO D'ANDREA",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "SIMONA GABRIELLI",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33559/attendance/lesson/922b3b4c-781a-41cb-ab83-f465c072acb5/6/1/b0803c41-4e87-4704-a4e0-11043b4dc739",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [
+            {
+              "name": "ANTONIO MUSARO'",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ELENA DE SANTIS",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "KONSTANTINOS GIANNAKAKIS",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "VALERIA RICCIERI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "VITO D'ANDREA",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "SIMONA GABRIELLI",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33559/attendance/lesson/922b3b4c-781a-41cb-ab83-f465c072acb5/6/2/23361fb2-30a2-4204-be6c-497b1b405c5d",
+          "isModule": false
+        }
+      ]
+    },
+    {
+      "code": "33560",
+      "name": "Medicina e chirurgia \"C\"",
+      "location": "Roma Policlinico Umberto I",
+      "academicYear": "2025/2026",
+      "subjects": [
+        {
+          "code": "10621692",
+          "name": "FISICA",
+          "ssd": [
+            "FIS/07"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 6,
+          "professors": [
+            {
+              "name": "GIULIO CARACCIOLO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "LUCA DIGIACOMO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "LUCA MARINO",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "RICCARDO FACCINI",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "MAURO MIGLIORATI",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "DANIELA POZZI",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "DANIELA POZZI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "LUCIANO DE SIO",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "LUCA DIGIACOMO",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "GIULIO CARACCIOLO",
+              "channel": "Canale 7"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33560/attendance/lesson/9b31039e-9d27-4830-8ad3-91da3f67285f/1/1/c758cea1-9f22-49e5-a497-6ef69f37766c",
+          "isModule": false
+        },
+        {
+          "code": "10621694",
+          "name": "BIOLOGIA",
+          "ssd": [
+            "BIO/13"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 6,
+          "professors": [
+            {
+              "name": "ALESSANDRA MARCHETTI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "CATERINA CATALANOTTO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "LAURA AMICONE",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "DARIO BENELLI",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "CLAUDIA CARISSIMI",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "CARLA CICCHINI",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "ROSSELLA MAIONE",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "LUCIA STEFANINI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "LAURA STRONATI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "CARMINE MANCONE",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "ILARIA LAUDADIO",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "ROBERTO CARNEVALE",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "VITTORIA CAMMISOTTO",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "CARLO COGONI",
+              "channel": "Canale 8"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33560/attendance/lesson/9b31039e-9d27-4830-8ad3-91da3f67285f/1/1/f6c63a92-1169-41f0-9777-4df11236b64f",
+          "isModule": false
+        },
+        {
+          "code": "10622049",
+          "name": "CHIMICA E PROPEDEUTICA BIOCHIMICA",
+          "ssd": [
+            "BIO/10"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 6,
+          "professors": [
+            {
+              "name": "ELENA FORTE",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ANNARITA FIORILLO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "BEATRICE VALLONE",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "PAOLA BAIOCCO",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "ANDREA BELLELLI",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "ANNARITA FIORILLO",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "CARLO TRAVAGLINI ALLOCATELLI",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "STEFANO GIANNI",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "ANDREA BELLELLI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "PAOLA BAIOCCO",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "MARZIA ARESE",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "FRANCESCO FIORENTINO",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "ALESSIO PAONE",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "EUGENIO LENDARO",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "VALERIO CONSALVI",
+              "channel": "Canale 8"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33560/attendance/lesson/9b31039e-9d27-4830-8ad3-91da3f67285f/1/1/b91bd4fa-b0f7-4ab6-985b-99c2b37cde42",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [
+            {
+              "name": "ROBERTA MISASI",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33560/attendance/lesson/9b31039e-9d27-4830-8ad3-91da3f67285f/1/2/225b6c66-e3f2-4f97-b258-d61b0c2b0520",
+          "isModule": false
+        },
+        {
+          "code": "1056163",
+          "name": "METODOLOGIA MEDICO SCIENTIFICA PRE-CLINICA - EPISTEMOLOGIA E STORIA DELLA MEDICIONA",
+          "ssd": [
+            "MED/02",
+            "MED/02",
+            "MED/02"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 6,
+          "professors": [
+            {
+              "name": "MARIA CONFORTI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "GILBERTO CORBELLINI",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33560/attendance/lesson/9b31039e-9d27-4830-8ad3-91da3f67285f/2/1/cc19dc39-c810-44df-a814-6c1785eba81d",
+          "isModule": true
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [
+            {
+              "name": "ROBERTA MISASI",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33560/attendance/lesson/9b31039e-9d27-4830-8ad3-91da3f67285f/4/2/51907629-a211-4fac-b95f-67766fd8e9a1",
+          "isModule": false
+        },
+        {
+          "code": "1026696",
+          "name": "FARMACOLOGIA E TOSSICOLOGIA",
+          "ssd": [
+            "BIO/14",
+            "BIO/14",
+            "BIO/14",
+            "BIO/14"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 7,
+          "professors": [
+            {
+              "name": "DANIELA MELCHIORRI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ALESSANDRA SEBASTIANA MARIA CARUSO",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33560/attendance/lesson/9b31039e-9d27-4830-8ad3-91da3f67285f/5/1/9156448d-e0c0-4e03-bf2f-4c037d4fa76d",
+          "isModule": false
+        },
+        {
+          "code": "1026697",
+          "name": "ANATOMIA PATOLOGICA E CORRELAZIONI ANATOMO CLINICHE",
+          "ssd": [
+            "MED/08",
+            "MED/08",
+            "MED/08",
+            "MED/08"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 10,
+          "professors": [
+            {
+              "name": "GIULIA D'AMATI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "CARLO DELLA ROCCA",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "CIRA ROSARIA TIZIANA DI GIOIA",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "BRUNA CERBELLI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "CARLA GIORDANO",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33560/attendance/lesson/9b31039e-9d27-4830-8ad3-91da3f67285f/5/2/98b032df-9dbb-4817-887e-1f67148044ca",
+          "isModule": false
+        },
+        {
+          "code": "1025598",
+          "name": "DIAGNOSTICA PER IMMAGINI",
+          "ssd": [
+            "MED/36",
+            "MED/36",
+            "MED/36"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 5,
+          "professors": [
+            {
+              "name": "PAOLO RICCI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "FEDERICA PEDICONI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "DANIELA MESSINEO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "LUCIA MANGANARO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "VIVIANA FRANTELLIZZI",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33560/attendance/lesson/9b31039e-9d27-4830-8ad3-91da3f67285f/5/2/286ff6c6-db19-4d7d-b1b9-1b1e1d50174a",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [
+            {
+              "name": "ROBERTA MISASI",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33560/attendance/lesson/9b31039e-9d27-4830-8ad3-91da3f67285f/6/2/d21a2817-ef96-4089-9ba4-55cc714e5f63",
+          "isModule": false
+        },
+        {
+          "code": "AAF1016",
+          "name": "PROVA FINALE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 18,
+          "professors": [
+            {
+              "name": "ROBERTA MISASI",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33560/attendance/lesson/9b31039e-9d27-4830-8ad3-91da3f67285f/6/2/97caa086-c84e-46c2-b8c9-0950577a2887",
+          "isModule": false
+        }
+      ]
+    },
+    {
+      "code": "33561",
+      "name": "Medicina e chirurgia \"D\"",
+      "location": "Roma Policlinico Umberto I",
+      "academicYear": "2025/2026",
+      "subjects": [
+        {
+          "code": "10621692",
+          "name": "FISICA",
+          "ssd": [
+            "FIS/07"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 6,
+          "professors": [
+            {
+              "name": "DANIELA POZZI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "LUCA MARINO",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "RICCARDO FACCINI",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "MAURO MIGLIORATI",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "GIULIO CARACCIOLO",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "LUCA DIGIACOMO",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "DANIELA POZZI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "LUCIANO DE SIO",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "LUCA DIGIACOMO",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "GIULIO CARACCIOLO",
+              "channel": "Canale 7"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33561/attendance/lesson/3552b159-0255-4bf2-93c3-02f047664389/1/1/2590845f-5804-4728-b6db-cb0e7a5ee700",
+          "isModule": false
+        },
+        {
+          "code": "10622049",
+          "name": "CHIMICA E PROPEDEUTICA BIOCHIMICA",
+          "ssd": [
+            "BIO/10"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 6,
+          "professors": [
+            {
+              "name": "CARLO TRAVAGLINI ALLOCATELLI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "STEFANO GIANNI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "BEATRICE VALLONE",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "PAOLA BAIOCCO",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "ANDREA BELLELLI",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "ANNARITA FIORILLO",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "ELENA FORTE",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "ANNARITA FIORILLO",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "ANDREA BELLELLI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "PAOLA BAIOCCO",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "MARZIA ARESE",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "FRANCESCO FIORENTINO",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "ALESSIO PAONE",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "EUGENIO LENDARO",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "VALERIO CONSALVI",
+              "channel": "Canale 8"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33561/attendance/lesson/3552b159-0255-4bf2-93c3-02f047664389/1/1/b97e93a7-1d64-4677-8467-ba00ab030430",
+          "isModule": false
+        },
+        {
+          "code": "10621694",
+          "name": "BIOLOGIA",
+          "ssd": [
+            "BIO/13"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 6,
+          "professors": [
+            {
+              "name": "CARLA CICCHINI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ROSSELLA MAIONE",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "LAURA AMICONE",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "DARIO BENELLI",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "CLAUDIA CARISSIMI",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "ALESSANDRA MARCHETTI",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "CATERINA CATALANOTTO",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "LUCIA STEFANINI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "LAURA STRONATI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "CARMINE MANCONE",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "ILARIA LAUDADIO",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "ROBERTO CARNEVALE",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "VITTORIA CAMMISOTTO",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "CARLO COGONI",
+              "channel": "Canale 8"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33561/attendance/lesson/3552b159-0255-4bf2-93c3-02f047664389/1/1/00eacc06-c35b-4999-86b0-25c1ba0212ba",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33561/attendance/lesson/3552b159-0255-4bf2-93c3-02f047664389/1/2/885d3c1e-b971-4da8-b231-0bac4d36a0a2",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33561/attendance/lesson/3552b159-0255-4bf2-93c3-02f047664389/2/2/33c5b7b4-8ba1-46a4-87ff-01d04c4ea0f2",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33561/attendance/lesson/3552b159-0255-4bf2-93c3-02f047664389/3/2/65bbf7f2-382a-4d99-abad-e8d520e0b3d8",
+          "isModule": false
+        },
+        {
+          "code": "10596564",
+          "name": "DIAGNOSTICA PER IMMAGINI",
+          "ssd": [
+            "MED/36",
+            "MED/36"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 4,
+          "professors": [
+            {
+              "name": "FRANCESCA MACCIONI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "GIUSEPPE DE VINCENTIS",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "LUCIA MANGANARO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "FRANCESCA DE FELICE",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "NICOLA GALEA",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "VITO CANTISANI",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33561/attendance/lesson/3552b159-0255-4bf2-93c3-02f047664389/4/2/7fd58be8-95f3-4fd4-aa44-3db25f2a20ee",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33561/attendance/lesson/3552b159-0255-4bf2-93c3-02f047664389/4/2/36430328-c053-40d9-97e7-e7e60e4b2bb4",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33561/attendance/lesson/3552b159-0255-4bf2-93c3-02f047664389/5/2/2c1a736f-1771-45b1-837c-3a387fc632b9",
+          "isModule": false
+        },
+        {
+          "code": "10596566",
+          "name": "GINECOLOGIA E OSTETRICIA - GINECOLOGIA",
+          "ssd": [
+            "MED/40"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 4,
+          "professors": [
+            {
+              "name": "MARIA GRAZIA PORPORA",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "MARIA GRAZIA PICCIONI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "PAOLA GALOPPI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "GIORGIA PERNIOLA",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "FEDERICA TOMAO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ORIANA CAPRI",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33561/attendance/lesson/3552b159-0255-4bf2-93c3-02f047664389/6/1/b142ccd1-5ddb-4465-9def-9a722a6081a0",
+          "isModule": true,
+          "parentSubject": "DIAGNOSTICA PER IMMAGINI"
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [
+            {
+              "name": "CINZIA MARCHESE",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33561/attendance/lesson/3552b159-0255-4bf2-93c3-02f047664389/6/2/c524d533-ae1a-460c-b092-89a9f30bb1e7",
+          "isModule": false
+        },
+        {
+          "code": "AAF1016",
+          "name": "PROVA FINALE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 18,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33561/attendance/lesson/3552b159-0255-4bf2-93c3-02f047664389/6/2/8aea8ef3-ad3a-4ff1-beb1-5d603c698ce3",
+          "isModule": false
+        }
+      ]
+    },
+    {
+      "code": "33453",
+      "name": "Medicina e chirurgia \"E\"",
+      "location": "Polo Pontino",
+      "academicYear": "2025/2026",
+      "subjects": [
+        {
+          "code": "10621692",
+          "name": "FISICA",
+          "ssd": [
+            "FIS/07"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 6,
+          "professors": [
+            {
+              "name": "LUCIANO DE SIO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "LUCA DIGIACOMO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "LUCA MARINO",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "RICCARDO FACCINI",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "MAURO MIGLIORATI",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "GIULIO CARACCIOLO",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "LUCA DIGIACOMO",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "DANIELA POZZI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "DANIELA POZZI",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "GIULIO CARACCIOLO",
+              "channel": "Canale 7"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33453/attendance/lesson/802837bb-bdd6-4517-b3a7-c22acf55fcf8/1/1/2f49e3a1-82c1-48dd-b13d-f1a421f64e08",
+          "isModule": false
+        },
+        {
+          "code": "10621694",
+          "name": "BIOLOGIA",
+          "ssd": [
+            "BIO/13"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 6,
+          "professors": [
+            {
+              "name": "ROBERTO CARNEVALE",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "VITTORIA CAMMISOTTO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "LAURA AMICONE",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "DARIO BENELLI",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "CLAUDIA CARISSIMI",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "ALESSANDRA MARCHETTI",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "CATERINA CATALANOTTO",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "CARLA CICCHINI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "ROSSELLA MAIONE",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "LUCIA STEFANINI",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "LAURA STRONATI",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "CARMINE MANCONE",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "ILARIA LAUDADIO",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "CARLO COGONI",
+              "channel": "Canale 8"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33453/attendance/lesson/802837bb-bdd6-4517-b3a7-c22acf55fcf8/1/1/1031436d-6f08-4f1b-85c3-9f66e308198a",
+          "isModule": false
+        },
+        {
+          "code": "10622049",
+          "name": "CHIMICA E PROPEDEUTICA BIOCHIMICA",
+          "ssd": [
+            "BIO/10"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 6,
+          "professors": [
+            {
+              "name": "ALESSIO PAONE",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "EUGENIO LENDARO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "BEATRICE VALLONE",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "PAOLA BAIOCCO",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "ANDREA BELLELLI",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "ANNARITA FIORILLO",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "ELENA FORTE",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "ANNARITA FIORILLO",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "CARLO TRAVAGLINI ALLOCATELLI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "STEFANO GIANNI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "ANDREA BELLELLI",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "PAOLA BAIOCCO",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "MARZIA ARESE",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "FRANCESCO FIORENTINO",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "VALERIO CONSALVI",
+              "channel": "Canale 8"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33453/attendance/lesson/802837bb-bdd6-4517-b3a7-c22acf55fcf8/1/1/ab01da9f-cf16-43c5-9618-67b64f4c938e",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33453/attendance/lesson/802837bb-bdd6-4517-b3a7-c22acf55fcf8/1/2/4697a789-a3a8-44c0-9181-ef263d0fdb90",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33453/attendance/lesson/802837bb-bdd6-4517-b3a7-c22acf55fcf8/2/2/c8c13b58-987a-469d-8349-47b95d1babb7",
+          "isModule": false
+        },
+        {
+          "code": "1027124",
+          "name": "IMMUNOLOGIA ED IMMUNOPATOLOGIA",
+          "ssd": [
+            "MED/04"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [
+            {
+              "name": "GIORGIO MANGINO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "Giovanna Romeo",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33453/attendance/lesson/802837bb-bdd6-4517-b3a7-c22acf55fcf8/3/1/81cb95d3-0eb0-4c54-b46c-ceb75c4535ff",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33453/attendance/lesson/802837bb-bdd6-4517-b3a7-c22acf55fcf8/3/2/070b0b5b-8361-40c5-8c93-0a8ab9da1745",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33453/attendance/lesson/802837bb-bdd6-4517-b3a7-c22acf55fcf8/4/2/b6a1a112-c1ea-46b2-a84f-db38ea17163e",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33453/attendance/lesson/802837bb-bdd6-4517-b3a7-c22acf55fcf8/5/2/351912cc-8a06-4bfb-9031-aced172d6dc8",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33453/attendance/lesson/802837bb-bdd6-4517-b3a7-c22acf55fcf8/6/2/0bf72dfe-d84d-4427-90d9-c91e5b3965fc",
+          "isModule": false
+        },
+        {
+          "code": "AAF1016",
+          "name": "PROVA FINALE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 18,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33453/attendance/lesson/802837bb-bdd6-4517-b3a7-c22acf55fcf8/6/2/34c1ab16-72cb-42f8-b18d-e03016cf9e87",
+          "isModule": false
+        }
+      ]
+    },
+    {
+      "code": "33454",
+      "name": "Medicina e chirurgia \"F\"",
+      "location": "Roma (English)",
+      "lang": "ENG",
+      "academicYear": "2025/2026",
+      "subjects": [
+        {
+          "code": "10620868",
+          "name": "CHEMISTRY AND INTRODUCTION TO BIOCHEMISTRY",
+          "ssd": [
+            "BIO/10"
+          ],
+          "language": "ENG",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [
+            {
+              "name": "BEATRICE VALLONE",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "FRANCESCO FIORENTINO",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33454/attendance/lesson/0231812a-8255-4613-a50a-303a88fdbad8/1/1/199a526e-ccb6-4e55-b0ae-1a815a4ab769",
+          "isModule": false
+        },
+        {
+          "code": "1037598",
+          "name": "MEDICAL PHYSICS",
+          "ssd": [
+            "FIS/07"
+          ],
+          "language": "ENG",
+          "year": 1,
+          "semester": 1,
+          "cfu": 6,
+          "professors": [
+            {
+              "name": "LUCIANO DE SIO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "LUCA DIGIACOMO",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33454/attendance/lesson/0231812a-8255-4613-a50a-303a88fdbad8/1/1/2284400a-fffe-4570-a287-fac765a1c1b0",
+          "isModule": false
+        },
+        {
+          "code": "1037600",
+          "name": "HISTOLOGY AND EMBRYOLOGY",
+          "ssd": [
+            "BIO/17",
+            "BIO/17",
+            "BIO/17"
+          ],
+          "language": "ENG",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [
+            {
+              "name": "DARIO COLETTI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "MAURILIO SAMPAOLESI",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33454/attendance/lesson/0231812a-8255-4613-a50a-303a88fdbad8/1/2/a7cf4c51-35d8-4287-b04f-04b51e9c2b0f",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33454/attendance/lesson/0231812a-8255-4613-a50a-303a88fdbad8/1/2/5317463c-4ddd-4668-87e2-55ab58f4b964",
+          "isModule": false
+        },
+        {
+          "code": "AAF2627",
+          "name": "ADDITIONAL LANGUAGE SKILLS_ITALIAN LANGUAGE",
+          "ssd": [],
+          "language": "ENG",
+          "year": 1,
+          "semester": 1,
+          "cfu": 2,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33454/attendance/lesson/0231812a-8255-4613-a50a-303a88fdbad8/1/2/043104d5-e2ee-491f-9198-2e08e0c84dfb",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33454/attendance/lesson/0231812a-8255-4613-a50a-303a88fdbad8/2/1/baf3ab7f-deca-4478-8a56-307167c779d5",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33454/attendance/lesson/0231812a-8255-4613-a50a-303a88fdbad8/2/2/6a736ce0-2359-4ae2-9c6e-658ee8287359",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33454/attendance/lesson/0231812a-8255-4613-a50a-303a88fdbad8/3/2/b24dfecd-67b3-4c99-9b61-ae3cb6a369b4",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33454/attendance/lesson/0231812a-8255-4613-a50a-303a88fdbad8/4/1/faa5d389-f3a9-4365-8d18-03bf9685a9e7",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33454/attendance/lesson/0231812a-8255-4613-a50a-303a88fdbad8/4/2/33e29ecb-5a4d-4ad9-98d0-5e2c8b7cf924",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33454/attendance/lesson/0231812a-8255-4613-a50a-303a88fdbad8/5/2/b16fddc3-1bcf-4f64-9400-05ab91fb81e3",
+          "isModule": false
+        },
+        {
+          "code": "1038563",
+          "name": "MEDICAL SCIENTIFIC METHODS: FORENSIC MEDICINE  MEDICINE AND THE LAW",
+          "ssd": [
+            "MED/43",
+            "MED/43"
+          ],
+          "language": "ENG",
+          "year": 1,
+          "semester": 1,
+          "cfu": 5,
+          "professors": [
+            {
+              "name": "STEFANO FERRACUTI",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33454/attendance/lesson/0231812a-8255-4613-a50a-303a88fdbad8/6/2/c7ca007f-649d-46ca-9ad9-9ee3e5fc99d6",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33454/attendance/lesson/0231812a-8255-4613-a50a-303a88fdbad8/6/2/ad44b7ac-ee34-4337-9729-3dfcf30283ba",
+          "isModule": false
+        },
+        {
+          "code": "AAF1016",
+          "name": "PROVA FINALE",
+          "ssd": [],
+          "language": "ENG",
+          "year": 1,
+          "semester": 1,
+          "cfu": 18,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33454/attendance/lesson/0231812a-8255-4613-a50a-303a88fdbad8/6/2/78b89dad-8155-480d-bf8e-a0cfc4e1135c",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33454/attendance/lesson/0231812a-8255-4613-a50a-303a88fdbad8/6/2/7334c595-069c-4f18-a489-71aa36f44840",
+          "isModule": false
+        }
+      ]
+    },
+    {
+      "code": "32925",
+      "name": "Medicina e chirurgia \"G\"",
+      "location": "Polo di Rieti",
+      "academicYear": "2025/2026",
+      "subjects": [
+        {
+          "code": "10621692",
+          "name": "FISICA",
+          "ssd": [
+            "FIS/07"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 6,
+          "professors": [
+            {
+              "name": "LUCA MARINO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "RICCARDO FACCINI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "MAURO MIGLIORATI",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "GIULIO CARACCIOLO",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "LUCA DIGIACOMO",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "DANIELA POZZI",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "DANIELA POZZI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "LUCIANO DE SIO",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "LUCA DIGIACOMO",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "GIULIO CARACCIOLO",
+              "channel": "Canale 7"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/32925/attendance/lesson/e83f2a19-dd62-402b-b925-7c4912ac1273/1/1/e7e435fb-d16b-4520-901d-279a8eba6cb5",
+          "isModule": false
+        },
+        {
+          "code": "10621694",
+          "name": "BIOLOGIA",
+          "ssd": [
+            "BIO/13"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 6,
+          "professors": [
+            {
+              "name": "LAURA AMICONE",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "DARIO BENELLI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "CLAUDIA CARISSIMI",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "ALESSANDRA MARCHETTI",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "CATERINA CATALANOTTO",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "CARLA CICCHINI",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "ROSSELLA MAIONE",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "LUCIA STEFANINI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "LAURA STRONATI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "CARMINE MANCONE",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "ILARIA LAUDADIO",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "ROBERTO CARNEVALE",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "VITTORIA CAMMISOTTO",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "CARLO COGONI",
+              "channel": "Canale 8"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/32925/attendance/lesson/e83f2a19-dd62-402b-b925-7c4912ac1273/1/1/0ede421f-da1e-4bdb-b12f-0c8b9d00f455",
+          "isModule": false
+        },
+        {
+          "code": "10622049",
+          "name": "CHIMICA E PROPEDEUTICA BIOCHIMICA",
+          "ssd": [
+            "BIO/10"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 6,
+          "professors": [
+            {
+              "name": "BEATRICE VALLONE",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "PAOLA BAIOCCO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ANDREA BELLELLI",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "ANNARITA FIORILLO",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "ELENA FORTE",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "ANNARITA FIORILLO",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "CARLO TRAVAGLINI ALLOCATELLI",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "STEFANO GIANNI",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "ANDREA BELLELLI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "PAOLA BAIOCCO",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "MARZIA ARESE",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "FRANCESCO FIORENTINO",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "ALESSIO PAONE",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "EUGENIO LENDARO",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "VALERIO CONSALVI",
+              "channel": "Canale 8"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/32925/attendance/lesson/e83f2a19-dd62-402b-b925-7c4912ac1273/1/1/4868d1c8-e763-489c-9525-0348dbe0604e",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/32925/attendance/lesson/e83f2a19-dd62-402b-b925-7c4912ac1273/1/2/e9a90c04-6391-49a8-8175-cb175f01c9f6",
+          "isModule": false
+        },
+        {
+          "code": "10616265",
+          "name": "ISTOLOGIA ED EMBRIOLOGIA",
+          "ssd": [
+            "BIO/17"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 7,
+          "professors": [
+            {
+              "name": "FRANCESCO FAZI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "SILVIA MASCIARELLI",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/32925/attendance/lesson/e83f2a19-dd62-402b-b925-7c4912ac1273/1/2/d4ebba79-c90c-44f3-ab6e-5c29b25be012",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/32925/attendance/lesson/e83f2a19-dd62-402b-b925-7c4912ac1273/2/1/a5cb3077-2235-4422-9c72-7082b625184c",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/32925/attendance/lesson/e83f2a19-dd62-402b-b925-7c4912ac1273/2/2/5c221c67-c09b-4b94-8651-753349731110",
+          "isModule": false
+        }
+      ]
+    },
+    {
+      "code": "33562",
+      "name": "Medicina e chirurgia HT",
+      "location": "Roma",
+      "academicYear": "2025/2026",
+      "subjects": [
+        {
+          "code": "10621692",
+          "name": "FISICA",
+          "ssd": [
+            "FIS/07"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 6,
+          "professors": [
+            {
+              "name": "DANIELA POZZI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "LUCA MARINO",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "RICCARDO FACCINI",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "MAURO MIGLIORATI",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "GIULIO CARACCIOLO",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "LUCA DIGIACOMO",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "DANIELA POZZI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "LUCIANO DE SIO",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "LUCA DIGIACOMO",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "GIULIO CARACCIOLO",
+              "channel": "Canale 7"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33562/attendance/lesson/22f7537f-e25b-4c28-85ea-f69184be0781/1/1/170dbc1c-68dd-4e13-92e1-d1c0350c00c2",
+          "isModule": false
+        },
+        {
+          "code": "10621694",
+          "name": "BIOLOGIA",
+          "ssd": [
+            "BIO/13"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 6,
+          "professors": [
+            {
+              "name": "LUCIA STEFANINI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "LAURA STRONATI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "LAURA AMICONE",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "DARIO BENELLI",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "CLAUDIA CARISSIMI",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "ALESSANDRA MARCHETTI",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "CATERINA CATALANOTTO",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "CARLA CICCHINI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "ROSSELLA MAIONE",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "CARMINE MANCONE",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "ILARIA LAUDADIO",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "ROBERTO CARNEVALE",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "VITTORIA CAMMISOTTO",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "CARLO COGONI",
+              "channel": "Canale 8"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33562/attendance/lesson/22f7537f-e25b-4c28-85ea-f69184be0781/1/1/4a158f82-eeb1-4df9-8d4e-e7c789de5bbc",
+          "isModule": false
+        },
+        {
+          "code": "10622049",
+          "name": "CHIMICA E PROPEDEUTICA BIOCHIMICA",
+          "ssd": [
+            "BIO/10"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 6,
+          "professors": [
+            {
+              "name": "ANDREA BELLELLI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "PAOLA BAIOCCO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "BEATRICE VALLONE",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "PAOLA BAIOCCO",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "ANDREA BELLELLI",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "ANNARITA FIORILLO",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "ELENA FORTE",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "ANNARITA FIORILLO",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "CARLO TRAVAGLINI ALLOCATELLI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "STEFANO GIANNI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "MARZIA ARESE",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "FRANCESCO FIORENTINO",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "ALESSIO PAONE",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "EUGENIO LENDARO",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "VALERIO CONSALVI",
+              "channel": "Canale 8"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33562/attendance/lesson/22f7537f-e25b-4c28-85ea-f69184be0781/1/1/2ae9b2ba-9597-415b-be15-2a95088ea079",
+          "isModule": false
+        },
+        {
+          "code": "10595429",
+          "name": "ISTOLOGIA E EMBRIOLOGIA",
+          "ssd": [
+            "BIO/17",
+            "BIO/17"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [
+            {
+              "name": "FRANCESCO FAZI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ANGIOLINA CATIZONE",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "GABRIELLA DOBROWOLNY",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33562/attendance/lesson/22f7537f-e25b-4c28-85ea-f69184be0781/1/2/8bde9fde-064a-4b62-a709-80246936adfd",
+          "isModule": false
+        },
+        {
+          "code": "1019010",
+          "name": "IMMUNOLOGIA",
+          "ssd": [
+            "MED/04"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 6,
+          "professors": [
+            {
+              "name": "SILVIA PICONESE",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "RICCIARDA GALANDRINI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "GABRIELLA PALMIERI",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33562/attendance/lesson/22f7537f-e25b-4c28-85ea-f69184be0781/3/1/d34e681d-a3fd-4301-97d6-11f6877127eb",
+          "isModule": false
+        },
+        {
+          "code": "AAF2004",
+          "name": "TIROCINIO ABILITANTE PER L'ESAME DI STATO - AMBITI CHIRURGICI",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 5,
+          "professors": [
+            {
+              "name": "PAOLO SAPIENZA",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ANDREA POLISTENA",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "GIANLUCA MENNINI",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "DANIELE CROCETTI",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "OMBRETTA MARTINELLI",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "MARIARITA TARALLO",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "GIOVANNI CASELLA",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "QUIRINO LAI",
+              "channel": "Canale 4"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33562/attendance/lesson/22f7537f-e25b-4c28-85ea-f69184be0781/5/1/d80a31c6-adf9-415d-a13c-ea3da16f60d3",
+          "isModule": true,
+          "parentSubject": "IMMUNOLOGIA"
+        },
+        {
+          "code": "AAF2005",
+          "name": "TIROCINIO ABILITANTE PER L'ESAME DI STATO - AMBITI MEDICI",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 5,
+          "professors": [
+            {
+              "name": "STEFANIA BASILI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "MARCELLA VISENTINI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ROBERTO CANGEMI",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "MILVIA CASATO",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "GIOVAMBATTISTA DESIDERI",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "GIOACCHINO GALARDO",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "VALERIA RAPARELLI",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "ANTONIETTA GIGANTE",
+              "channel": "Canale 4"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33562/attendance/lesson/22f7537f-e25b-4c28-85ea-f69184be0781/5/1/ff887b45-d458-4a33-ae9a-03d589b3a097",
+          "isModule": true,
+          "parentSubject": "IMMUNOLOGIA"
+        },
+        {
+          "code": "AAF2004",
+          "name": "TIROCINIO ABILITANTE PER L'ESAME DI STATO - AMBITI CHIRURGICI",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 5,
+          "professors": [
+            {
+              "name": "PAOLO SAPIENZA",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ANDREA POLISTENA",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "GIANLUCA MENNINI",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "DANIELE CROCETTI",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "OMBRETTA MARTINELLI",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "MARIARITA TARALLO",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "GIOVANNI CASELLA",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "QUIRINO LAI",
+              "channel": "Canale 4"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33562/attendance/lesson/22f7537f-e25b-4c28-85ea-f69184be0781/5/2/a8b712ae-f35a-4baa-82ce-1c5086b0c819",
+          "isModule": true,
+          "parentSubject": "IMMUNOLOGIA"
+        },
+        {
+          "code": "AAF2005",
+          "name": "TIROCINIO ABILITANTE PER L'ESAME DI STATO - AMBITI MEDICI",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 5,
+          "professors": [
+            {
+              "name": "STEFANIA BASILI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "MARCELLA VISENTINI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ROBERTO CANGEMI",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "MILVIA CASATO",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "GIOVAMBATTISTA DESIDERI",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "GIOACCHINO GALARDO",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "VALERIA RAPARELLI",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "ANTONIETTA GIGANTE",
+              "channel": "Canale 4"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33562/attendance/lesson/22f7537f-e25b-4c28-85ea-f69184be0781/5/2/9c1cebc8-ac71-4c14-a8b2-35a9189d2464",
+          "isModule": true,
+          "parentSubject": "IMMUNOLOGIA"
+        },
+        {
+          "code": "AAF2004",
+          "name": "TIROCINIO ABILITANTE PER L'ESAME DI STATO - AMBITI CHIRURGICI",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 5,
+          "professors": [
+            {
+              "name": "GIANLUCA MENNINI",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "DANIELE CROCETTI",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "PASQUALINO SIRIGNANO",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "GIOIA BRACHINI",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "GIOVANNI CASELLA",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "QUIRINO LAI",
+              "channel": "Canale 4"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33562/attendance/lesson/22f7537f-e25b-4c28-85ea-f69184be0781/6/1/349cffb1-1ea9-43d7-bb34-4ea6fcb635be",
+          "isModule": true,
+          "parentSubject": "IMMUNOLOGIA"
+        },
+        {
+          "code": "AAF2005",
+          "name": "TIROCINIO ABILITANTE PER L'ESAME DI STATO - AMBITI MEDICI",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 5,
+          "professors": [
+            {
+              "name": "STEFANIA BASILI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "MARCELLA VISENTINI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ROBERTO CANGEMI",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "GIORGIO SESTI",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "GIOVAMBATTISTA DESIDERI",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "GIOACCHINO GALARDO",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "VALERIA RAPARELLI",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "ANTONIETTA GIGANTE",
+              "channel": "Canale 4"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33562/attendance/lesson/22f7537f-e25b-4c28-85ea-f69184be0781/6/1/55a738b8-01c2-4555-8c8c-6f90a40de1cf",
+          "isModule": true,
+          "parentSubject": "IMMUNOLOGIA"
+        },
+        {
+          "code": "AAF2003",
+          "name": "TIROCINIO ABILITANTE PER L'ESAME DI STATO - MEDICINA GENERALE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 5,
+          "professors": [
+            {
+              "name": "SILVIA IORIO",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "SELENIA MIGLIETTA",
+              "channel": "Canale 2"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33562/attendance/lesson/22f7537f-e25b-4c28-85ea-f69184be0781/6/1/fc802eb9-19b4-465a-9886-2d73f3dd5eac",
+          "isModule": true,
+          "parentSubject": "IMMUNOLOGIA"
+        },
+        {
+          "code": "AAF2004",
+          "name": "TIROCINIO ABILITANTE PER L'ESAME DI STATO - AMBITI CHIRURGICI",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 5,
+          "professors": [
+            {
+              "name": "PAOLO SAPIENZA",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ANDREA POLISTENA",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "GIANLUCA MENNINI",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "DANIELE CROCETTI",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "LUCA DI MARZO",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "ALESSIA DI GIROLAMO",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "GIOVANNI CASELLA",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "QUIRINO LAI",
+              "channel": "Canale 4"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33562/attendance/lesson/22f7537f-e25b-4c28-85ea-f69184be0781/6/2/8d43af51-0e19-46e6-a6dd-67f838a881e4",
+          "isModule": true,
+          "parentSubject": "IMMUNOLOGIA"
+        },
+        {
+          "code": "AAF2005",
+          "name": "TIROCINIO ABILITANTE PER L'ESAME DI STATO - AMBITI MEDICI",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 5,
+          "professors": [
+            {
+              "name": "STEFANIA BASILI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "MARCELLA VISENTINI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ROBERTO CANGEMI",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "MILVIA CASATO",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "GIOVAMBATTISTA DESIDERI",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "GIOACCHINO GALARDO",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "VALERIA RAPARELLI",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "ANTONIETTA GIGANTE",
+              "channel": "Canale 4"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33562/attendance/lesson/22f7537f-e25b-4c28-85ea-f69184be0781/6/2/839c2ec2-9af1-4206-b0f1-2a3695e34a31",
+          "isModule": true,
+          "parentSubject": "IMMUNOLOGIA"
+        },
+        {
+          "code": "AAF2003",
+          "name": "TIROCINIO ABILITANTE PER L'ESAME DI STATO - MEDICINA GENERALE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 5,
+          "professors": [
+            {
+              "name": "SILVIA IORIO",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "SELENIA MIGLIETTA",
+              "channel": "Canale 2"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33562/attendance/lesson/22f7537f-e25b-4c28-85ea-f69184be0781/6/2/5d9c5049-818e-42fc-99dd-ebddc316fe27",
+          "isModule": true,
+          "parentSubject": "IMMUNOLOGIA"
+        },
+        {
+          "code": "AAF1006",
+          "name": "PROVA FINALE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33562/attendance/lesson/22f7537f-e25b-4c28-85ea-f69184be0781/6/2/407b90e1-7a92-4b7b-98f1-5f519267765d",
+          "isModule": false
+        }
+      ]
+    },
+    {
+      "code": "33567",
+      "name": "Medicina e chirurgia",
+      "location": "Roma Sant'Andrea",
+      "academicYear": "2025/2026",
+      "subjects": [
+        {
+          "code": "10621692",
+          "name": "FISICA",
+          "ssd": [
+            "FIS/07"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 6,
+          "professors": [
+            {
+              "name": "LUCA MARINO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "RICCARDO FACCINI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "MAURO MIGLIORATI",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "GIULIO CARACCIOLO",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "LUCA DIGIACOMO",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "DANIELA POZZI",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "DANIELA POZZI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "LUCIANO DE SIO",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "LUCA DIGIACOMO",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "GIULIO CARACCIOLO",
+              "channel": "Canale 7"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33567/attendance/lesson/8097b5dd-872f-41ee-82cd-2c8b1539e65a/1/1/49dac17a-0125-49d1-a1e1-6250f63b4487",
+          "isModule": false
+        },
+        {
+          "code": "10622049",
+          "name": "CHIMICA E PROPEDEUTICA BIOCHIMICA",
+          "ssd": [
+            "BIO/10"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 6,
+          "professors": [
+            {
+              "name": "MARZIA ARESE",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "FRANCESCO FIORENTINO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "BEATRICE VALLONE",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "PAOLA BAIOCCO",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "ANDREA BELLELLI",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "ANNARITA FIORILLO",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "ELENA FORTE",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "ANNARITA FIORILLO",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "CARLO TRAVAGLINI ALLOCATELLI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "STEFANO GIANNI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "ANDREA BELLELLI",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "PAOLA BAIOCCO",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "ALESSIO PAONE",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "EUGENIO LENDARO",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "VALERIO CONSALVI",
+              "channel": "Canale 8"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33567/attendance/lesson/8097b5dd-872f-41ee-82cd-2c8b1539e65a/1/1/5ac3a48c-2f7b-4463-8c9a-cbe208117ed9",
+          "isModule": false
+        },
+        {
+          "code": "10621694",
+          "name": "BIOLOGIA",
+          "ssd": [
+            "BIO/13"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 6,
+          "professors": [
+            {
+              "name": "CARMINE MANCONE",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ILARIA LAUDADIO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "LAURA AMICONE",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "DARIO BENELLI",
+              "channel": "Canale 2"
+            },
+            {
+              "name": "CLAUDIA CARISSIMI",
+              "channel": "Canale 3"
+            },
+            {
+              "name": "ALESSANDRA MARCHETTI",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "CATERINA CATALANOTTO",
+              "channel": "Canale 4"
+            },
+            {
+              "name": "CARLA CICCHINI",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "ROSSELLA MAIONE",
+              "channel": "Canale 5"
+            },
+            {
+              "name": "LUCIA STEFANINI",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "LAURA STRONATI",
+              "channel": "Canale 6"
+            },
+            {
+              "name": "ROBERTO CARNEVALE",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "VITTORIA CAMMISOTTO",
+              "channel": "Canale 7"
+            },
+            {
+              "name": "CARLO COGONI",
+              "channel": "Canale 8"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33567/attendance/lesson/8097b5dd-872f-41ee-82cd-2c8b1539e65a/1/1/976f2003-1639-4ec2-91a4-9f808121af11",
+          "isModule": false
+        },
+        {
+          "code": "10621884",
+          "name": "ISTOLOGIA ED EMBRIOLOGIA UMANA",
+          "ssd": [
+            "BIO/17",
+            "BIO/17",
+            "BIO/17"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 9,
+          "professors": [
+            {
+              "name": "ANTONIO FILIPPINI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "LUCIANA DE ANGELIS",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33567/attendance/lesson/8097b5dd-872f-41ee-82cd-2c8b1539e65a/1/2/88d179b0-28d8-449b-bd04-8ef448c6d875",
+          "isModule": false
+        },
+        {
+          "code": "1027444",
+          "name": "IMMUNOLOGIA ED IMMUNOPATOLOGIA",
+          "ssd": [
+            "MED/04"
+          ],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 6,
+          "professors": [
+            {
+              "name": "GABRIELLA PALMIERI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ALESSANDRA ZINGONI",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33567/attendance/lesson/8097b5dd-872f-41ee-82cd-2c8b1539e65a/3/1/913706db-3c4f-4fe8-97c9-d246524d8fc7",
+          "isModule": false
+        },
+        {
+          "code": "AAF1016",
+          "name": "PROVA FINALE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 18,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33567/attendance/lesson/8097b5dd-872f-41ee-82cd-2c8b1539e65a/6/2/6368e316-13dd-4b11-9368-d4e742e01550",
+          "isModule": false
+        },
+        {
+          "code": "AAF1368",
+          "name": "ADE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 8,
+          "professors": [],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33567/attendance/lesson/8097b5dd-872f-41ee-82cd-2c8b1539e65a/6/2/94268ead-da65-4d36-bd87-cc457f60b35d",
+          "isModule": false
+        },
+        {
+          "code": "AAF2004",
+          "name": "TIROCINIO ABILITANTE PER L'ESAME DI STATO - AMBITI CHIRURGICI",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 5,
+          "professors": [
+            {
+              "name": "FABIO SANTANELLI DI POMPEO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ERINO ANGELO RENDINA",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "DONATELLA CASERTA",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "GIANLUCA SCUDERI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ANTONINO RACO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ANDREA TUBARO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "GIANFRANCO SILECCHIA",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "GIOVANNI MELINA",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ROBERTO BECELLI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "NICOLA MAFFULLI",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33567/attendance/lesson/8097b5dd-872f-41ee-82cd-2c8b1539e65a/6/2/4d14d859-982c-4cdf-b560-97ec78bb4248",
+          "isModule": true,
+          "parentSubject": "PROVA FINALE"
+        },
+        {
+          "code": "AAF2005",
+          "name": "TIROCINIO ABILITANTE PER L'ESAME DI STATO - AMBITI MEDICI",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 5,
+          "professors": [
+            {
+              "name": "SEVERINO PERSECHINO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "BRUNO ANNIBALE",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "GIORGIO SESTI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "PAOLO MENE'",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "MARCO SALVETTI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "PASQUALE PARISI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ALBERTO RICCI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "MAURIZIO POMPILI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ROBERTO ALBERTO DE BLASI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "MONICA ROCCO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ALBERTO SIGNORE",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "MATTIA FALCHETTO OSTI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ALESSANDRO BOZZAO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "FEDERICA MAZZUCA",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "EMANUELE BARBATO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "CARMINE SAVOIA",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "MARCO FRANCONE",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33567/attendance/lesson/8097b5dd-872f-41ee-82cd-2c8b1539e65a/6/2/a75fcfa4-72bc-4518-b0e3-f63818f56882",
+          "isModule": true,
+          "parentSubject": "PROVA FINALE"
+        },
+        {
+          "code": "AAF2003",
+          "name": "TIROCINIO ABILITANTE PER L'ESAME DI STATO - MEDICINA GENERALE",
+          "ssd": [],
+          "language": "ITA",
+          "year": 1,
+          "semester": 1,
+          "cfu": 5,
+          "professors": [
+            {
+              "name": "Cristina Patrizi",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ALBERTO CHIRIATTI",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "GIUSEPPE GRASSO",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "Claudia Felici",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "Manuela Petino",
+              "channel": "Canale 1"
+            },
+            {
+              "name": "ANTONIO FILIPPINI",
+              "channel": "Canale 1"
+            }
+          ],
+          "detailUrl": "https://corsidilaurea.uniroma1.it/it/course/33567/attendance/lesson/8097b5dd-872f-41ee-82cd-2c8b1539e65a/6/2/8da170cc-b6e4-40fe-b056-ce394293e5a0",
+          "isModule": true,
+          "parentSubject": "PROVA FINALE"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+# Docker Compose para Dottorio
+# PostgreSQL + pgAdmin (opcional)
+
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: dottorio-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: dottorio
+      POSTGRES_PASSWORD: dottorio_dev_2024
+      POSTGRES_DB: dottorio
+    ports:
+      - "5435:5432"
+    volumes:
+      - dottorio_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dottorio -d dottorio"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # pgAdmin (opcional - para visualizar o banco)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: dottorio-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@dottorio.local
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    volumes:
+      - dottorio_pgadmin_data:/var/lib/pgadmin
+
+volumes:
+  dottorio_postgres_data:
+  dottorio_pgadmin_data:
+
+# ==============================================
+# COMANDOS ÚTEIS:
+# ==============================================
+#
+# Iniciar os serviços:
+#   docker-compose up -d
+#
+# Ver logs:
+#   docker-compose logs -f postgres
+#
+# Parar os serviços:
+#   docker-compose down
+#
+# Resetar o banco (CUIDADO - apaga tudo):
+#   docker-compose down -v
+#   docker-compose up -d
+#
+# Acessar o psql:
+#   docker exec -it dottorio-db psql -U dottorio -d dottorio
+#
+# pgAdmin:
+#   http://localhost:5050
+#   Email: admin@dottorio.local
+#   Senha: admin123
+#
+# ==============================================
+# CONNECTION STRING (para .env):
+# ==============================================
+#
+# DATABASE_URL="postgresql://dottorio:dottorio_dev_2024@localhost:5435/dottorio"
+#

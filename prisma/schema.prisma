@@ -1,0 +1,298 @@
+// Dottorio - Database Schema
+// PostgreSQL via Docker (porta 5434)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// ENTIDADES BASE
+// ============================================
+
+model University {
+  id        String   @id @default(uuid())
+  name      String   @db.VarChar(150)
+  shortName String?  @map("short_name") @db.VarChar(50)
+  city      String?  @db.VarChar(100)
+  emoji     String?  @db.VarChar(10)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  professors Professor[]
+  users      User[]
+  exams      Exam[]
+  channels   Channel[]
+
+  @@map("universities")
+}
+
+model Channel {
+  id           String   @id @default(uuid())
+  name         String   @db.VarChar(50) // "Canale A", "Canale B", etc.
+  universityId String   @map("university_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  // Relations
+  university University @relation(fields: [universityId], references: [id])
+  users      User[]
+  exams      Exam[]
+
+  @@unique([universityId, name])
+  @@index([universityId])
+  @@map("channels")
+}
+
+model Subject {
+  id        String   @id @default(uuid())
+  name      String   @db.VarChar(100)
+  emoji     String?  @db.VarChar(10)
+  color     String?  @db.VarChar(20)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  professors ProfessorSubject[]
+  exams      Exam[]
+
+  @@map("subjects")
+}
+
+model Professor {
+  id           String   @id @default(uuid())
+  name         String   @db.VarChar(100)
+  universityId String?  @map("university_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  // Relations
+  university University?        @relation(fields: [universityId], references: [id])
+  subjects   ProfessorSubject[]
+  exams      Exam[]
+
+  @@index([universityId])
+  @@map("professors")
+}
+
+model ProfessorSubject {
+  id          String @id @default(uuid())
+  professorId String @map("professor_id")
+  subjectId   String @map("subject_id")
+
+  // Relations
+  professor Professor @relation(fields: [professorId], references: [id], onDelete: Cascade)
+  subject   Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@unique([professorId, subjectId])
+  @@map("professor_subjects")
+}
+
+// ============================================
+// USUÁRIOS
+// ============================================
+
+model User {
+  id               String   @id @default(uuid())
+  email            String   @unique @db.VarChar(255)
+  passwordHash     String   @map("password_hash") @db.VarChar(255)
+  name             String   @db.VarChar(100)
+  universityId     String   @map("university_id")
+  channelId        String?  @map("channel_id")
+  year             Int      @db.SmallInt // 1, 2, 3, 4, 5, 6
+  isRepresentative Boolean  @default(false) @map("is_representative")
+  avatarUrl        String?  @map("avatar_url")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  university     University       @relation(fields: [universityId], references: [id])
+  channel        Channel?         @relation(fields: [channelId], references: [id])
+  exams          Exam[]
+  studentAnswers StudentAnswer[]
+  answerLikes    AnswerLike[]
+  comments       Comment[]
+  commentLikes   CommentLike[]
+  savedQuestions SavedQuestion[]
+  aiRatings      AiRating[]
+
+  @@index([universityId])
+  @@index([channelId])
+  @@map("users")
+}
+
+// ============================================
+// EXAMES E QUESTÕES (ENTIDADE CENTRAL)
+// ============================================
+
+model Exam {
+  id           String    @id @default(uuid())
+  subjectId    String    @map("subject_id")
+  professorId  String?   @map("professor_id")
+  universityId String    @map("university_id")
+  channelId    String?   @map("channel_id")
+  year         Int?      @db.SmallInt // 1, 2, 3, 4, 5, 6 (ano do curso)
+  examDate     DateTime? @map("exam_date") @db.Date
+  examType     String    @default("orale") @map("exam_type") @db.VarChar(30) // orale, scritto, pratico
+  academicYear String?   @map("academic_year") @db.VarChar(20) // 2024/2025
+  description  String?
+  createdBy    String?   @map("created_by")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  subject    Subject    @relation(fields: [subjectId], references: [id])
+  professor  Professor? @relation(fields: [professorId], references: [id])
+  university University @relation(fields: [universityId], references: [id])
+  channel    Channel?   @relation(fields: [channelId], references: [id])
+  creator    User?      @relation(fields: [createdBy], references: [id])
+  questions  Question[]
+
+  @@index([subjectId])
+  @@index([professorId])
+  @@index([universityId])
+  @@index([channelId])
+  @@index([examDate])
+  @@map("exams")
+}
+
+model Question {
+  id         String   @id @default(uuid())
+  examId     String   @map("exam_id")
+  text       String
+  order      Int      @default(1) @db.SmallInt
+  timesAsked Int      @default(1) @map("times_asked")
+  views      Int      @default(0)
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relations
+  exam           Exam            @relation(fields: [examId], references: [id], onDelete: Cascade)
+  aiAnswer       AiAnswer?
+  studentAnswers StudentAnswer[]
+  comments       Comment[]
+  savedBy        SavedQuestion[]
+
+  @@index([examId])
+  @@map("questions")
+}
+
+// ============================================
+// RESPOSTAS
+// ============================================
+
+model AiAnswer {
+  id         String   @id @default(uuid())
+  questionId String   @unique @map("question_id")
+  content    String
+  model      String?  @db.VarChar(50) // gpt-4, gpt-4o, claude-3
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  question Question   @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  ratings  AiRating[]
+
+  @@map("ai_answers")
+}
+
+model StudentAnswer {
+  id         String   @id @default(uuid())
+  questionId String   @map("question_id")
+  userId     String   @map("user_id")
+  content    String
+  isPublic   Boolean  @default(false) @map("is_public")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  question Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  user     User         @relation(fields: [userId], references: [id])
+  likes    AnswerLike[]
+
+  @@unique([questionId, userId])
+  @@index([questionId])
+  @@map("student_answers")
+}
+
+model AnswerLike {
+  id        String   @id @default(uuid())
+  answerId  String   @map("answer_id")
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  answer StudentAnswer @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  user   User          @relation(fields: [userId], references: [id])
+
+  @@unique([answerId, userId])
+  @@map("answer_likes")
+}
+
+// ============================================
+// COMENTÁRIOS (EXPERIÊNCIAS)
+// ============================================
+
+model Comment {
+  id         String   @id @default(uuid())
+  questionId String   @map("question_id")
+  userId     String   @map("user_id")
+  content    String
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relations
+  question Question      @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  user     User          @relation(fields: [userId], references: [id])
+  likes    CommentLike[]
+
+  @@index([questionId])
+  @@map("comments")
+}
+
+model CommentLike {
+  id        String   @id @default(uuid())
+  commentId String   @map("comment_id")
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id])
+
+  @@unique([commentId, userId])
+  @@map("comment_likes")
+}
+
+// ============================================
+// QUESTÕES SALVAS E AVALIAÇÕES
+// ============================================
+
+model SavedQuestion {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  questionId String   @map("question_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user     User     @relation(fields: [userId], references: [id])
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, questionId])
+  @@index([userId])
+  @@map("saved_questions")
+}
+
+model AiRating {
+  id         String   @id @default(uuid())
+  aiAnswerId String   @map("ai_answer_id")
+  userId     String   @map("user_id")
+  rating     Int      @db.SmallInt // 1-5
+  feedback   String?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relations
+  aiAnswer AiAnswer @relation(fields: [aiAnswerId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id])
+
+  @@unique([aiAnswerId, userId])
+  @@map("ai_ratings")
+}
