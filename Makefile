@@ -106,6 +106,16 @@ db-reset: ## Reset do DB (⚠️ apaga tudo)
 
 db-fresh: db-reset db-seed ## Reset + Seed (banco limpo)
 
+db-quick: ## ⚡ Reset rápido do DB (sem confirmação, para dev)
+	@echo "$(YELLOW)⚡ Reset rápido do banco...$(NC)"
+	@docker compose down -v 2>/dev/null || true
+	@docker compose up -d
+	@echo "$(BLUE)⏳ Aguardando PostgreSQL iniciar...$(NC)"
+	@sleep 3
+	@PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION="dev reset" npx prisma db push --force-reset
+	@npx prisma db seed
+	@echo "$(GREEN)✅ Banco resetado e seed aplicado!$(NC)"
+
 studio: ## Abre Prisma Studio
 	@echo "$(BLUE)🎨 Abrindo Prisma Studio...$(NC)"
 	@echo "$(YELLOW)→ http://localhost:5555$(NC)"
