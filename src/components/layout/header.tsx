@@ -119,9 +119,9 @@ export function Header() {
                   variant="ghost"
                   className="flex items-center space-x-3 h-auto py-2 px-3 hover:bg-muted/50 rounded-lg"
                 >
-                  <UserAvatar 
-                    name={user?.name} 
-                    image={user?.image} 
+                  <UserAvatar
+                    name={user?.name}
+                    image={user?.image}
                     size="sm"
                   />
                   <div className="hidden lg:block text-left">
@@ -222,9 +222,9 @@ export function Header() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="h-9 w-9 p-0 rounded-full">
-                  <UserAvatar 
-                    name={user?.name} 
-                    image={user?.image} 
+                  <UserAvatar
+                    name={user?.name}
+                    image={user?.image}
                     size="sm"
                   />
                 </Button>

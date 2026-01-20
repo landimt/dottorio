@@ -68,7 +68,7 @@ export function UserAvatar({ name, image, size = "md", className }: UserAvatarPr
           className="object-cover"
         />
       )}
-      <AvatarFallback 
+      <AvatarFallback
         className={cn(
           "bg-gradient-to-br font-semibold text-white",
           gradient

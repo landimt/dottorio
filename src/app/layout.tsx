@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
-import { getLocale, getMessages } from "next-intl/server";
-import { Toaster } from "@/components/ui/sonner";
-import { ThemeProvider } from "@/components/providers/theme-provider";
 import { LocaleProvider } from "@/components/providers/locale-provider";
+import { ThemeProvider } from "@/components/providers/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 import { QueryProvider } from "@/lib/query";
+import type { Metadata } from "next";
+import { getLocale, getMessages } from "next-intl/server";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 
 const poppins = Poppins({

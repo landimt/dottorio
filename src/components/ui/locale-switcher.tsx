@@ -20,7 +20,7 @@ export function LocaleSwitcher() {
   const handleLocaleChange = (newLocale: string) => {
     // Set cookie for persistence
     document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000`;
-    
+
     startTransition(() => {
       router.refresh();
     });
