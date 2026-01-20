@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import { apiUnknownError } from "@/lib/api/api-response";
+import { apiUnknownError, apiError, ApiErrorResponse } from "@/lib/api/api-response";
 
 export interface AdminApiContext {
   adminId: string;
@@ -44,14 +44,11 @@ export function withAdminAuth<T = unknown>(
  * Middleware para APIs de admin
  * Verifica se o usuário é admin antes de permitir a requisição
  */
-export async function requireAdminApi(): Promise<AdminApiContext | NextResponse> {
+export async function requireAdminApi(): Promise<AdminApiContext | NextResponse<ApiErrorResponse>> {
   const session = await auth();
 
   if (!session?.user?.id) {
-    return NextResponse.json(
-      { error: "Non autorizzato" },
-      { status: 401 }
-    );
+    return apiError("Non autorizzato", 401, "UNAUTHORIZED");
   }
 
   const user = await prisma.user.findUnique({
@@ -64,24 +61,15 @@ export async function requireAdminApi(): Promise<AdminApiContext | NextResponse>
   });
 
   if (!user) {
-    return NextResponse.json(
-      { error: "Utente non trovato" },
-      { status: 401 }
-    );
+    return apiError("Utente non trovato", 401, "USER_NOT_FOUND");
   }
 
   if (user.status !== "active") {
-    return NextResponse.json(
-      { error: "Account sospeso" },
-      { status: 403 }
-    );
+    return apiError("Account sospeso", 403, "ACCOUNT_SUSPENDED");
   }
 
   if (user.role !== "admin" && user.role !== "super_admin") {
-    return NextResponse.json(
-      { error: "Accesso negato" },
-      { status: 403 }
-    );
+    return apiError("Accesso negato", 403, "FORBIDDEN");
   }
 
   return {

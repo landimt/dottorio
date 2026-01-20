@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { apiSuccess, apiUnknownError } from "@/lib/api/api-response";
+import { apiSuccess, apiUnknownError, ApiErrors } from "@/lib/api/api-response";
 
 // GET /api/questions/canonical - Search canonical questions for linking
 export async function GET(request: NextRequest) {
@@ -9,6 +9,11 @@ export async function GET(request: NextRequest) {
     const query = searchParams.get("q") || "";
     const excludeId = searchParams.get("excludeId");
     const limit = Math.min(parseInt(searchParams.get("limit") || "10"), 20);
+
+    // Require minimum query length
+    if (query.length > 0 && query.length < 2) {
+      return ApiErrors.badRequest("La ricerca richiede almeno 2 caratteri");
+    }
 
     // Build where clause
     const whereClause: Record<string, unknown> = {

@@ -33,7 +33,11 @@ export async function POST(
     // Get the canonical question
     const canonical = await prisma.question.findUnique({
       where: { id: canonicalId },
-      include: {
+      select: {
+        id: true,
+        text: true,
+        groupId: true,
+        isCanonical: true,
         _count: {
           select: {
             variations: true,
@@ -46,6 +50,16 @@ export async function POST(
 
     if (!canonical) {
       return ApiErrors.notFound("Domanda canonica");
+    }
+
+    // Verify that the target question is actually canonical
+    if (!canonical.isCanonical) {
+      return ApiErrors.badRequest("La domanda selezionata non è una domanda canonica");
+    }
+
+    // Prevent self-linking
+    if (questionId === canonicalId) {
+      return ApiErrors.badRequest("Non puoi collegare una domanda a se stessa");
     }
 
     // Update the question to link it to the canonical

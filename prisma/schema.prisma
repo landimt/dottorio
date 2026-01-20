@@ -192,6 +192,9 @@ model Question {
   @@index([examId])
   @@index([groupId])
   @@index([canonicalId])
+  @@index([isCanonical])
+  @@index([views])
+  @@index([createdAt])
   @@map("questions")
 }
 
@@ -225,7 +228,7 @@ model StudentAnswer {
 
   // Relations
   question Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  user     User         @relation(fields: [userId], references: [id])
+  user     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   likes    AnswerLike[]
 
   @@unique([questionId, userId])
@@ -241,7 +244,7 @@ model AnswerLike {
 
   // Relations
   answer StudentAnswer @relation(fields: [answerId], references: [id], onDelete: Cascade)
-  user   User          @relation(fields: [userId], references: [id])
+  user   User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([answerId, userId])
   @@map("answer_likes")
@@ -260,7 +263,7 @@ model Comment {
 
   // Relations
   question Question      @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  user     User          @relation(fields: [userId], references: [id])
+  user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   likes    CommentLike[]
 
   @@index([questionId])
@@ -275,7 +278,7 @@ model CommentLike {
 
   // Relations
   comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
-  user    User    @relation(fields: [userId], references: [id])
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([commentId, userId])
   @@map("comment_likes")
@@ -292,7 +295,7 @@ model SavedQuestion {
   createdAt  DateTime @default(now()) @map("created_at")
 
   // Relations
-  user     User     @relation(fields: [userId], references: [id])
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
   @@unique([userId, questionId])
@@ -310,7 +313,7 @@ model AiRating {
 
   // Relations
   aiAnswer AiAnswer @relation(fields: [aiAnswerId], references: [id], onDelete: Cascade)
-  user     User     @relation(fields: [userId], references: [id])
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([aiAnswerId, userId])
   @@map("ai_ratings")
@@ -344,16 +347,16 @@ model ContentFlag {
   type       String    @db.VarChar(30) // question, answer, comment
   entityId   String    @db.VarChar(50) @map("entity_id")
   reason     String    @db.VarChar(255) // spam, offensive, inaccurate, etc
-  reportedBy String    @map("reported_by")
+  reportedBy String?   @map("reported_by")
   status     String    @default("pending") @db.VarChar(30) // pending, reviewed, dismissed, deleted
   reviewedBy String?   @map("reviewed_by")
   reviewedAt DateTime? @map("reviewed_at")
   action     String?   @db.VarChar(50) // deleted, merged, approved, etc
   createdAt  DateTime  @default(now()) @map("created_at")
 
-  // Relations
-  reporter User  @relation("FlagReportedBy", fields: [reportedBy], references: [id])
-  reviewer User? @relation("FlagReviewedBy", fields: [reviewedBy], references: [id])
+  // Relations (SetNull to preserve flags when user is deleted)
+  reporter User? @relation("FlagReportedBy", fields: [reportedBy], references: [id], onDelete: SetNull)
+  reviewer User? @relation("FlagReviewedBy", fields: [reviewedBy], references: [id], onDelete: SetNull)
 
   @@index([entityId])
   @@index([status])

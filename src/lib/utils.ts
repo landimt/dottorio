@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import DOMPurify from "dompurify";
 
 /**
  * Combina classes Tailwind de forma inteligente
@@ -61,4 +62,27 @@ export function slugify(str: string): string {
  */
 export function capitalize(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+/**
+ * Sanitiza HTML para prevenir XSS
+ * Usa DOMPurify para remover scripts maliciosos e atributos perigosos
+ */
+export function sanitizeHtml(html: string): string {
+  if (typeof window === "undefined") {
+    // Durante SSR, retorna o HTML como está (será sanitizado no cliente)
+    return html;
+  }
+  return DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: [
+      "p", "br", "strong", "em", "u", "s", "sub", "sup",
+      "h1", "h2", "h3", "h4", "h5", "h6",
+      "ul", "ol", "li",
+      "blockquote", "pre", "code",
+      "a", "span", "div",
+      "table", "thead", "tbody", "tr", "th", "td",
+    ],
+    ALLOWED_ATTR: ["href", "target", "rel", "class", "id"],
+    ALLOW_DATA_ATTR: false,
+  });
 }

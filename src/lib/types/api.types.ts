@@ -37,8 +37,8 @@ export interface User extends UserSummary {
   isRepresentative: boolean;
   universityId: string | null;
   channelId: string | null;
-  createdAt: Date;
-  lastLoginAt: Date | null;
+  createdAt: string;
+  lastLoginAt: string | null;
 }
 
 export interface UserWithRelations extends User {
@@ -126,13 +126,13 @@ export interface Exam {
   universityId: string;
   channelId: string | null;
   year: number | null;
-  examDate: Date | null;
+  examDate: string | null;
   examType: string;
   academicYear: string | null;
   description: string | null;
   createdBy: string | null;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ExamWithRelations extends Exam {
@@ -157,8 +157,9 @@ export interface Question {
   canonicalId: string | null;
   isCanonical: boolean;
   views: number;
-  createdAt: Date;
-  updatedAt: Date;
+  timesAsked: number;
+  order: number;
+  createdAt: string;
 }
 
 export interface QuestionListItem extends Question {
@@ -210,8 +211,8 @@ export interface AiAnswer {
   model: string | null;
   rating: number | null;
   ratingCount: number;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface StudentAnswer {
@@ -220,8 +221,8 @@ export interface StudentAnswer {
   questionId: string;
   userId: string;
   isPublic: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface StudentAnswerWithUser extends StudentAnswer {
@@ -241,7 +242,7 @@ export interface Comment {
   content: string;
   questionId: string;
   userId: string;
-  createdAt: Date;
+  createdAt: string;
 }
 
 export interface CommentWithUser extends Comment {

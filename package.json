@@ -10,13 +10,11 @@
     "start": "next start",
     "postinstall": "prisma generate",
     "clean": "rm -rf .next && rm -rf node_modules/.cache",
-
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "type-check": "tsc --noEmit",
-
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
@@ -28,14 +26,11 @@
     "db:reset": "prisma migrate reset --force",
     "db:fresh": "yarn db:reset && yarn db:seed",
     "db:setup": "prisma generate && prisma migrate deploy && prisma db seed",
-
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
     "docker:logs": "docker compose logs -f",
     "docker:restart": "docker compose restart",
-
     "scrape": "tsx scripts/scrape-sapienza.ts",
-
     "validate": "yarn type-check && yarn lint && yarn format:check"
   },
   "prisma": {
@@ -116,6 +111,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
+    "dompurify": "^3.3.1",
     "dotenv": "^17.2.3",
     "embla-carousel-react": "^8.6.0",
     "input-otp": "^1.4.2",
@@ -141,6 +137,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/bcryptjs": "^3.0.0",
+    "@types/dompurify": "^3.0.5",
     "@types/node": "^20",
     "@types/pg": "^8.16.0",
     "@types/react": "^19",

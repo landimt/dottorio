@@ -42,6 +42,7 @@ import {
   GitBranch,
 } from "lucide-react";
 import { toast } from "sonner";
+import { sanitizeHtml } from "@/lib/utils";
 
 interface Question {
   id: string;
@@ -892,7 +893,7 @@ export function QuestionDetail({
                       <div
                         className="text-sm leading-relaxed text-foreground whitespace-pre-wrap"
                         dangerouslySetInnerHTML={{
-                          __html: question.aiAnswer.content,
+                          __html: sanitizeHtml(question.aiAnswer.content),
                         }}
                       />
 
