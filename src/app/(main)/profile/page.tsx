@@ -1,24 +1,19 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   GraduationCap,
-  MapPin,
-  Calendar,
   BookOpen,
-  MessageSquare,
-  Star,
-  Eye,
   Plus,
   Settings,
-  Award,
-  TrendingUp,
+  Bookmark,
+  Eye,
 } from "lucide-react";
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
+import { ProfileTabs } from "./_components/profile-tabs";
 
 async function getUserStats(userId: string) {
   const [
@@ -26,6 +21,7 @@ async function getUserStats(userId: string) {
     questionsSaved,
     commentsCount,
     answersCount,
+    totalViews,
   ] = await Promise.all([
     prisma.question.count({
       where: { exam: { createdBy: userId } },
@@ -39,47 +35,111 @@ async function getUserStats(userId: string) {
     prisma.studentAnswer.count({
       where: { userId },
     }),
+    prisma.question.aggregate({
+      where: { exam: { createdBy: userId } },
+      _sum: { views: true },
+    }),
   ]);
+
+  // Total contributions = answers + comments
+  const contributions = answersCount + commentsCount;
 
   return {
     questionsAdded,
     questionsSaved,
     commentsCount,
     answersCount,
+    contributions,
+    totalViews: totalViews._sum.views || 0,
   };
 }
 
-async function getRecentActivity(userId: string) {
-  const recentQuestions = await prisma.question.findMany({
-    where: { exam: { createdBy: userId } },
+async function getSavedQuestions(userId: string) {
+  const savedQuestions = await prisma.savedQuestion.findMany({
+    where: { userId },
     include: {
-      exam: {
+      question: {
         include: {
-          subject: true,
-          professor: true,
+          exam: {
+            include: {
+              subject: true,
+              professor: true,
+              university: true,
+            },
+          },
         },
       },
     },
     orderBy: { createdAt: "desc" },
-    take: 5,
+    take: 20,
   });
 
-  return recentQuestions;
+  return savedQuestions.map(sq => sq.question);
+}
+
+async function getUserContributions(userId: string) {
+  // Get questions from user's answers and comments
+  const [answerQuestions, commentQuestions] = await Promise.all([
+    prisma.question.findMany({
+      where: {
+        studentAnswers: {
+          some: { userId },
+        },
+      },
+      include: {
+        exam: {
+          include: {
+            subject: true,
+            professor: true,
+            university: true,
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 20,
+    }),
+    prisma.question.findMany({
+      where: {
+        comments: {
+          some: { userId },
+        },
+      },
+      include: {
+        exam: {
+          include: {
+            subject: true,
+            professor: true,
+            university: true,
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 20,
+    }),
+  ]);
+
+  // Merge and deduplicate by question ID
+  const allQuestions = [...answerQuestions, ...commentQuestions];
+  const uniqueQuestions = Array.from(
+    new Map(allQuestions.map(q => [q.id, q])).values()
+  );
+
+  return uniqueQuestions;
 }
 
 export default async function ProfilePage() {
   const session = await auth();
   const user = session?.user;
-  const t = await getTranslations("profile");
-  const tNav = await getTranslations("navigation");
-  const tHeader = await getTranslations("header");
 
   if (!user?.id) {
     return null;
   }
 
-  const stats = await getUserStats(user.id);
-  const recentActivity = await getRecentActivity(user.id);
+  const [stats, savedQuestions, contributions] = await Promise.all([
+    getUserStats(user.id),
+    getSavedQuestions(user.id),
+    getUserContributions(user.id),
+  ]);
 
   const getInitials = (name: string) => {
     return name
@@ -90,158 +150,89 @@ export default async function ProfilePage() {
       .slice(0, 2);
   };
 
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat("it-IT", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    }).format(new Date(date));
-  };
-
   return (
-    <div className="container max-w-7xl mx-auto px-4 py-8">
-      {/* Profile Header */}
-      <Card className="mb-6">
-        <CardContent className="pt-6">
-          <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
-            {/* Avatar */}
-            <Avatar className="h-24 w-24 ring-4 ring-primary/20">
-              <AvatarImage src={user.image || undefined} alt={user.name || ""} />
-              <AvatarFallback className="bg-primary/10 text-primary text-2xl font-semibold">
-                {user.name ? getInitials(user.name) : "?"}
-              </AvatarFallback>
-            </Avatar>
+    <div className="min-h-screen bg-background">
+      <div className="container max-w-6xl mx-auto px-4 py-8">
+        {/* Profile Header - Simpler design */}
+        <Card className="mb-6">
+          <CardContent className="p-6">
+            <div className="flex items-start justify-between mb-6">
+              <div className="flex items-start gap-4">
+                {/* Avatar - Medium size */}
+                <Avatar className="h-20 w-20">
+                  <AvatarImage src={user.image || undefined} alt={user.name || ""} />
+                  <AvatarFallback className="bg-primary text-white text-2xl font-semibold">
+                    {user.name ? getInitials(user.name) : "?"}
+                  </AvatarFallback>
+                </Avatar>
 
-            {/* User Info */}
-            <div className="flex-1 text-center md:text-left">
-              <div className="flex flex-col md:flex-row md:items-center gap-2 mb-2">
-                <h1 className="text-2xl font-bold">{user.name}</h1>
-                {user.isRepresentative && (
-                  <Badge variant="secondary" className="w-fit mx-auto md:mx-0">
-                    <Award className="w-3 h-3 mr-1" />
-                    {t("representative")}
-                  </Badge>
-                )}
-              </div>
-              <p className="text-muted-foreground mb-4">{user.email}</p>
+                {/* User Info */}
+                <div>
+                  <h1 className="text-xl font-bold text-foreground mb-1">
+                    {user.name}
+                  </h1>
+                  <p className="text-sm text-muted-foreground mb-3">{user.email}</p>
 
-              <div className="flex flex-wrap justify-center md:justify-start gap-4 text-sm text-muted-foreground">
-                <div className="flex items-center gap-1">
-                  <GraduationCap className="w-4 h-4" />
-                  <span>{user.universityName}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <BookOpen className="w-4 h-4" />
-                  <span>{tHeader("year", { year: user.year || 1 })}</span>
-                </div>
-                {user.courseName && (
-                  <div className="flex items-center gap-1">
-                    <MapPin className="w-4 h-4" />
-                    <span>{user.courseName}</span>
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-1.5">
+                      <GraduationCap className="w-4 h-4" />
+                      <span>{user.universityName || "Universidade"}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <BookOpen className="w-4 h-4" />
+                      <span>{user.year}º Anno</span>
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
-            </div>
 
-            {/* Actions */}
-            <div className="flex gap-2">
+              {/* Settings Button */}
               <Link href="/settings">
-                <Button variant="outline" size="sm">
-                  <Settings className="w-4 h-4 mr-2" />
-                  {tNav("settings")}
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Settings className="w-4 h-4" />
+                  Impostazioni
                 </Button>
               </Link>
             </div>
-          </div>
-        </CardContent>
-      </Card>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <Card>
-          <CardContent className="pt-6 text-center">
-            <Plus className="w-6 h-6 mx-auto mb-2 text-blue-500" />
-            <p className="text-2xl font-bold">{stats.questionsAdded}</p>
-            <p className="text-xs text-muted-foreground">{t("questionsAdded")}</p>
+            {/* Stats Row - 3 cards */}
+            <div className="grid grid-cols-3 gap-4">
+              <div className="flex items-center gap-3 p-4 rounded-lg bg-muted/30">
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Plus className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-foreground">{stats.contributions}</p>
+                  <p className="text-xs text-muted-foreground">Contribuições</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 p-4 rounded-lg bg-muted/30">
+                <div className="w-10 h-10 rounded-full bg-yellow-500/10 flex items-center justify-center">
+                  <Bookmark className="w-5 h-5 text-yellow-600" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-foreground">{stats.questionsSaved}</p>
+                  <p className="text-xs text-muted-foreground">Domande Salvate</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 p-4 rounded-lg bg-muted/30">
+                <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center">
+                  <Eye className="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-foreground">{stats.totalViews}</p>
+                  <p className="text-xs text-muted-foreground">Visualizzazioni</p>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="pt-6 text-center">
-            <Star className="w-6 h-6 mx-auto mb-2 text-yellow-500" />
-            <p className="text-2xl font-bold">{stats.questionsSaved}</p>
-            <p className="text-xs text-muted-foreground">{t("questionsSaved")}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6 text-center">
-            <MessageSquare className="w-6 h-6 mx-auto mb-2 text-green-500" />
-            <p className="text-2xl font-bold">{stats.commentsCount}</p>
-            <p className="text-xs text-muted-foreground">{t("comments")}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6 text-center">
-            <TrendingUp className="w-6 h-6 mx-auto mb-2 text-purple-500" />
-            <p className="text-2xl font-bold">{stats.answersCount}</p>
-            <p className="text-xs text-muted-foreground">{t("answers")}</p>
-          </CardContent>
-        </Card>
+
+        {/* Tabs Section */}
+        <ProfileTabs savedQuestions={savedQuestions} contributions={contributions} />
       </div>
-
-      {/* Recent Activity */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Calendar className="w-5 h-5" />
-            {t("recentActivity")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {recentActivity.length > 0 ? (
-            <div className="space-y-4">
-              {recentActivity.map((question) => (
-                <Link
-                  key={question.id}
-                  href={`/questions/${question.id}`}
-                  className="block"
-                >
-                  <div className="flex items-start gap-4 p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <Plus className="w-5 h-5 text-primary" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm line-clamp-2">
-                        {question.text}
-                      </p>
-                      <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
-                        <Badge variant="outline" className="text-xs">
-                          {question.exam.subject.name}
-                        </Badge>
-                        <span>{question.exam.professor?.name}</span>
-                        <span>•</span>
-                        <span>{formatDate(question.createdAt)}</span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8">
-              <Eye className="w-12 h-12 mx-auto text-muted-foreground/50 mb-4" />
-              <p className="text-muted-foreground mb-4">
-                {t("noQuestionsYet")}
-              </p>
-              <Link href="/exams/new">
-                <Button>
-                  <Plus className="w-4 h-4 mr-2" />
-                  {t("addFirstQuestion")}
-                </Button>
-              </Link>
-            </div>
-          )}
-        </CardContent>
-      </Card>
     </div>
   );
 }
