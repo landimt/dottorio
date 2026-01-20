@@ -9,7 +9,7 @@ const registerSchema = z.object({
   password: z.string().min(6, "La password deve avere almeno 6 caratteri"),
   universityId: z.string().uuid("Università non valida"),
   year: z.number().int().min(1).max(6, "L'anno deve essere tra 1 e 6"),
-  courseId: z.string().uuid().optional().nullable(),
+  courseId: z.string().uuid("Corso non valido"),
   isRepresentative: z.boolean().default(false),
 });
 
@@ -39,6 +39,15 @@ export async function POST(request: Request) {
     // Hash password
     const passwordHash = await hash(data.password, 12);
 
+    // Check if course exists and belongs to university
+    const course = await prisma.course.findFirst({
+      where: { id: data.courseId, universityId: data.universityId },
+    });
+
+    if (!course) {
+      return apiError("Corso non trovato o non appartiene all'università selezionata", 400, "COURSE_NOT_FOUND");
+    }
+
     // Create user
     const user = await prisma.user.create({
       data: {
@@ -47,7 +56,7 @@ export async function POST(request: Request) {
         passwordHash,
         universityId: data.universityId,
         year: data.year,
-        courseId: data.courseId || null,
+        courseId: data.courseId,
         isRepresentative: data.isRepresentative,
       },
       select: {
