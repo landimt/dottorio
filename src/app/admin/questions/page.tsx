@@ -15,6 +15,11 @@ async function getQuestions() {
         },
       },
       canonical: true,
+      aiAnswer: {
+        select: {
+          id: true,
+        },
+      },
       _count: {
         select: {
           variations: true,

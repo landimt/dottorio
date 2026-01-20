@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Eye, Link2, MessageSquare, Search, Trash2 } from "lucide-react";
+import { Eye, Link2, MessageSquare, Search, Trash2, Edit, Bot, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -31,6 +32,7 @@ interface Question {
     university: { shortName: string | null; name: string };
   };
   canonical: { id: string; text: string } | null;
+  aiAnswer: { id: string } | null;
   _count: {
     variations: number;
     studentAnswers: number;
@@ -45,6 +47,7 @@ interface QuestionsTableProps {
 export function QuestionsTable({ questions: initialQuestions }: QuestionsTableProps) {
   const t = useTranslations("admin.questionsPage");
   const tCommon = useTranslations("admin.common");
+  const router = useRouter();
 
   const [questions, setQuestions] = useState(initialQuestions);
   const [search, setSearch] = useState("");
@@ -99,8 +102,9 @@ export function QuestionsTable({ questions: initialQuestions }: QuestionsTablePr
               <TableHead>{t("subject")}</TableHead>
               <TableHead>{t("professor")}</TableHead>
               <TableHead className="text-center">{t("stats")}</TableHead>
+              <TableHead className="text-center">{t("aiAnswer")}</TableHead>
               <TableHead>{t("links")}</TableHead>
-              <TableHead className="w-[80px]">{tCommon("actions")}</TableHead>
+              <TableHead className="w-[120px]">{tCommon("actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -154,6 +158,21 @@ export function QuestionsTable({ questions: initialQuestions }: QuestionsTablePr
                   </div>
                 </TableCell>
                 <TableCell>
+                  <div className="flex justify-center">
+                    {question.aiAnswer ? (
+                      <div className="flex items-center gap-1 text-green-600" title={t("hasAiAnswer")}>
+                        <Bot className="h-4 w-4" />
+                        <Check className="h-3 w-3" />
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1 text-muted-foreground" title={t("noAiAnswer")}>
+                        <Bot className="h-4 w-4" />
+                        <X className="h-3 w-3" />
+                      </div>
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell>
                   {question.groupId ? (
                     <div className="flex items-center gap-1">
                       <Link2 className="h-3 w-3 text-muted-foreground" />
@@ -166,13 +185,24 @@ export function QuestionsTable({ questions: initialQuestions }: QuestionsTablePr
                   )}
                 </TableCell>
                 <TableCell>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleDelete(question.id)}
-                  >
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
+                  <div className="flex items-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => router.push(`/admin/questions/${question.id}`)}
+                      title={t("edit")}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleDelete(question.id)}
+                      title={t("delete")}
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
