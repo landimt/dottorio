@@ -12,7 +12,7 @@ export default async function AdminLayout({
   return (
     <div className="min-h-screen bg-background">
       <AdminHeader />
-      <main className="container mx-auto p-6">{children}</main>
+      <main className="max-w-7xl mx-auto p-6">{children}</main>
     </div>
   );
 }

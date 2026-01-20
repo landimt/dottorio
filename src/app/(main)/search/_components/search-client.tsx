@@ -316,7 +316,7 @@ export function SearchClient({ subjects, professors, universities, courses }: Se
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-6xl mx-auto p-6 space-y-6">
+      <div className="max-w-7xl mx-auto p-6 space-y-6">
         {/* Header */}
         <div className="space-y-4 animate-fade-in">
           <div className="text-center space-y-2">
@@ -851,9 +851,9 @@ export function SearchClient({ subjects, professors, universities, courses }: Se
       {isFabOpen && (
         <div className="fixed bottom-24 md:bottom-28 right-6 md:right-8 z-50 flex flex-col gap-3 animate-fade-in">
           <Link href="/exams/new">
-            <button className="flex items-center gap-3 bg-white hover:bg-gray-50 text-foreground px-4 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 group hover:scale-105 border border-border">
+            <button className="flex items-center gap-3 bg-card hover:bg-muted text-foreground px-4 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 group hover:scale-105 border border-border">
               <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-                <Edit className="w-5 h-5 text-white" />
+                <Edit className="w-5 h-5 text-primary-foreground" />
               </div>
               <span className="pr-2 text-sm font-medium whitespace-nowrap">
                 {t("addQuestion")}
@@ -866,10 +866,10 @@ export function SearchClient({ subjects, professors, universities, courses }: Se
               setIsFabOpen(false);
               alert(t("comingSoon"));
             }}
-            className="flex items-center gap-3 bg-white hover:bg-gray-50 text-foreground px-4 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 group hover:scale-105 border border-border"
+            className="flex items-center gap-3 bg-card hover:bg-muted text-foreground px-4 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 group hover:scale-105 border border-border"
           >
-            <div className="w-10 h-10 bg-[#FFA78D] rounded-full flex items-center justify-center">
-              <Upload className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 bg-accent rounded-full flex items-center justify-center">
+              <Upload className="w-5 h-5 text-accent-foreground" />
             </div>
             <span className="pr-2 text-sm font-medium whitespace-nowrap">
               {t("importQuestions")}
@@ -888,9 +888,9 @@ export function SearchClient({ subjects, professors, universities, courses }: Se
         }`}
       >
         {isFabOpen ? (
-          <X className="w-6 h-6 text-white" />
+          <X className="w-6 h-6 text-primary-foreground" />
         ) : (
-          <Plus className="w-6 h-6 text-white" />
+          <Plus className="w-6 h-6 text-primary-foreground" />
         )}
       </button>
     </div>

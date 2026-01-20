@@ -49,7 +49,7 @@ export default async function SearchPage() {
 function SearchSkeleton() {
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-6xl mx-auto p-6 space-y-6">
+      <div className="max-w-7xl mx-auto p-6 space-y-6">
         {/* Header */}
         <div className="space-y-4 animate-fade-in">
           <div className="text-center space-y-2">

@@ -46,7 +46,7 @@ const ALL_NOTEBOOKS: Notebook[] = [
     createdAt: '2024-01-15',
     updatedAt: '2024-01-15',
     icon: '🫀',
-    color: '#EFF6FF'
+    color: 'primary/10'
   },
   {
     id: '2',
@@ -59,7 +59,7 @@ const ALL_NOTEBOOKS: Notebook[] = [
     createdAt: '2024-01-20',
     updatedAt: '2024-01-20',
     icon: '🧬',
-    color: '#FFF7ED'
+    color: 'accent/10'
   },
   {
     id: '3',
@@ -71,7 +71,7 @@ const ALL_NOTEBOOKS: Notebook[] = [
     createdAt: '2024-02-01',
     updatedAt: '2024-02-01',
     icon: '💚',
-    color: '#F0FDF4'
+    color: 'green-50'
   },
   {
     id: '4',
@@ -83,7 +83,7 @@ const ALL_NOTEBOOKS: Notebook[] = [
     createdAt: '2024-02-10',
     updatedAt: '2024-02-10',
     icon: '🔬',
-    color: '#FEF2F2'
+    color: 'red-50'
   },
   {
     id: '5',
@@ -95,7 +95,7 @@ const ALL_NOTEBOOKS: Notebook[] = [
     createdAt: '2024-02-15',
     updatedAt: '2024-02-15',
     icon: '⚛️',
-    color: '#F5F3FF'
+    color: 'purple-50'
   },
   {
     id: '6',
@@ -107,7 +107,7 @@ const ALL_NOTEBOOKS: Notebook[] = [
     createdAt: '2024-03-01',
     updatedAt: '2024-03-01',
     icon: '🧪',
-    color: '#FFFBEB'
+    color: 'yellow-50'
   }
 ];
 
@@ -486,7 +486,7 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
       <div className="flex-1 flex flex-col">
         {/* Editor Header */}
         <div className="bg-card/95 backdrop-blur-sm border-b border-border p-3 sm:p-4 shadow-sm">
-          <div className="max-w-5xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
+          <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
             <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
               {/* Menu button mobile */}
               <Button
@@ -541,7 +541,7 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
 
         {/* Editor de Texto com TipTap */}
         <div className="flex-1 overflow-hidden p-3 sm:p-8">
-          <div className="max-w-5xl mx-auto h-full">
+          <div className="max-w-7xl mx-auto h-full">
             <TipTapEditor
               key={`tiptap-${currentNotebook.id}-${currentPage.id}`}
               content={content}

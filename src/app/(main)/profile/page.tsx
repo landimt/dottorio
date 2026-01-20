@@ -99,7 +99,7 @@ export default async function ProfilePage() {
   };
 
   return (
-    <div className="container max-w-4xl mx-auto px-4 py-8">
+    <div className="container max-w-7xl mx-auto px-4 py-8">
       {/* Profile Header */}
       <Card className="mb-6">
         <CardContent className="pt-6">
