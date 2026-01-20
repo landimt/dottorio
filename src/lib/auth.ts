@@ -20,7 +20,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           where: { email: credentials.email as string },
           include: {
             university: true,
-            channel: true,
+            course: true,
           },
         });
 
@@ -44,8 +44,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           image: user.avatarUrl,
           universityId: user.universityId,
           universityName: user.university.name,
-          channelId: user.channelId,
-          channelName: user.channel?.name || null,
+          courseId: user.courseId,
+          courseName: user.course?.name || null,
           year: user.year,
           isRepresentative: user.isRepresentative,
         };
@@ -58,8 +58,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.id = user.id;
         token.universityId = user.universityId;
         token.universityName = user.universityName;
-        token.channelId = user.channelId;
-        token.channelName = user.channelName;
+        token.courseId = user.courseId;
+        token.courseName = user.courseName;
         token.year = user.year;
         token.isRepresentative = user.isRepresentative;
       }
@@ -70,8 +70,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.id = token.id as string;
         session.user.universityId = token.universityId as string;
         session.user.universityName = token.universityName as string;
-        session.user.channelId = token.channelId as string | null;
-        session.user.channelName = token.channelName as string | null;
+        session.user.courseId = token.courseId as string | null;
+        session.user.courseName = token.courseName as string | null;
         session.user.year = token.year as number;
         session.user.isRepresentative = token.isRepresentative as boolean;
       }

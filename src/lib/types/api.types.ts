@@ -36,14 +36,14 @@ export interface User extends UserSummary {
   year: number | null;
   isRepresentative: boolean;
   universityId: string | null;
-  channelId: string | null;
+  courseId: string | null;
   createdAt: string;
   lastLoginAt: string | null;
 }
 
 export interface UserWithRelations extends User {
   university: University | null;
-  channel: Channel | null;
+  course: Course | null;
   _count: {
     exams: number;
     studentAnswers: number;
@@ -67,14 +67,42 @@ export interface UniversityWithCounts extends University {
   _count: {
     professors: number;
     users: number;
-    channels: number;
+    courses: number;
   };
 }
 
-export interface Channel {
+export interface UniversityWithRelations extends University {
+  courses: Course[];
+  professors: Professor[];
+  _count: {
+    professors: number;
+    users: number;
+    courses: number;
+    exams: number;
+  };
+}
+
+// ============================================================================
+// Course Types (antigo Course)
+// ============================================================================
+
+export interface Course {
   id: string;
   name: string;
   universityId: string;
+  year: number | null;
+  emoji: string | null;
+  description: string | null;
+}
+
+export interface CourseWithRelations extends Course {
+  university: University;
+  subjects: Subject[];
+  _count: {
+    users: number;
+    subjects: number;
+    exams: number;
+  };
 }
 
 // ============================================================================
@@ -84,8 +112,23 @@ export interface Channel {
 export interface Subject {
   id: string;
   name: string;
+  courseId: string;
   emoji: string | null;
   color: string | null;
+  semester: number | null;
+  year: number | null;
+  credits: number | null;
+}
+
+export interface SubjectWithRelations extends Subject {
+  course: Course;
+  professors: Array<{
+    professor: Professor;
+  }>;
+  _count: {
+    professors: number;
+    exams: number;
+  };
 }
 
 export interface SubjectWithCounts extends Subject {
@@ -102,16 +145,18 @@ export interface SubjectWithCounts extends Subject {
 export interface Professor {
   id: string;
   name: string;
-  universityId: string | null;
+  email: string | null;
+  universityId: string;
 }
 
 export interface ProfessorWithRelations extends Professor {
-  university: University | null;
+  university: University;
   subjects: Array<{
     subject: Subject;
   }>;
   _count: {
     exams: number;
+    subjects: number;
   };
 }
 
@@ -124,7 +169,7 @@ export interface Exam {
   subjectId: string;
   professorId: string | null;
   universityId: string;
-  channelId: string | null;
+  courseId: string | null;
   year: number | null;
   examDate: string | null;
   examType: string;
@@ -139,7 +184,8 @@ export interface ExamWithRelations extends Exam {
   subject: Subject;
   professor: Professor | null;
   university: University;
-  creator: UserSummary;
+  course: Course | null;
+  creator: UserSummary | null;
   _count?: {
     questions: number;
   };
@@ -277,6 +323,11 @@ export interface UsersListResponse {
 // Universities (Admin)
 export interface UniversitiesListResponse {
   universities: UniversityWithCounts[];
+}
+
+// Courses (Admin)
+export interface CoursesListResponse {
+  courses: CourseWithRelations[];
 }
 
 // Subjects (Admin)

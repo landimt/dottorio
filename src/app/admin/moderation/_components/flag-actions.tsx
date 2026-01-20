@@ -32,7 +32,7 @@ interface ContentFlag {
   reporter: {
     name: string | null;
     email: string;
-  };
+  } | null;
   createdAt: Date;
 }
 

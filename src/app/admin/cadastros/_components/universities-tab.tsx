@@ -34,7 +34,7 @@ interface University {
   _count: {
     professors: number;
     users: number;
-    channels: number;
+    courses: number;
   };
 }
 
@@ -97,7 +97,7 @@ export function UniversitiesTab({ universities: initialUniversities }: Universit
         ));
         toast.success("Universidade atualizada!");
       } else {
-        setUniversities([...universities, { ...savedUniversity, _count: { professors: 0, users: 0, channels: 0 } }]);
+        setUniversities([...universities, { ...savedUniversity, _count: { professors: 0, users: 0, courses: 0 } }]);
         toast.success("Universidade criada!");
       }
 
@@ -248,7 +248,7 @@ export function UniversitiesTab({ universities: initialUniversities }: Universit
                 <TableCell>{university.city || "-"}</TableCell>
                 <TableCell className="text-center">{university._count.professors}</TableCell>
                 <TableCell className="text-center">{university._count.users}</TableCell>
-                <TableCell className="text-center">{university._count.channels}</TableCell>
+                <TableCell className="text-center">{university._count.courses}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-1">
                     <Button

@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { ExamForm } from "./_components/exam-form";
 
 async function getFormData() {
-  const [subjects, professors, universities, channels] = await Promise.all([
+  const [subjects, professors, universities, courses] = await Promise.all([
     prisma.subject.findMany({
       orderBy: { name: "asc" },
     }),
@@ -13,12 +13,12 @@ async function getFormData() {
     prisma.university.findMany({
       orderBy: { name: "asc" },
     }),
-    prisma.channel.findMany({
+    prisma.course.findMany({
       orderBy: { name: "asc" },
     }),
   ]);
 
-  return { subjects, professors, universities, channels };
+  return { subjects, professors, universities, courses };
 }
 
 export default async function NewExamPage() {

@@ -51,7 +51,7 @@ interface University {
   shortName: string | null;
 }
 
-interface Channel {
+interface Course {
   id: string;
   name: string;
   university: { shortName: string | null };
@@ -80,7 +80,7 @@ interface SearchClientProps {
   subjects: Subject[];
   professors: Professor[];
   universities: University[];
-  channels: Channel[];
+  courses: Course[];
 }
 
 // Subject colors and icons mapping
@@ -98,7 +98,7 @@ const subjectStyles: Record<string, { icon: string; color: string }> = {
   Cardiologia: { icon: "❤️", color: "#F7B29D" },
 };
 
-export function SearchClient({ subjects, professors, universities, channels }: SearchClientProps) {
+export function SearchClient({ subjects, professors, universities, courses }: SearchClientProps) {
   const searchParams = useSearchParams();
 
   const [filters, setFilters] = useState({
@@ -106,7 +106,7 @@ export function SearchClient({ subjects, professors, universities, channels }: S
     subjectId: searchParams.get("subjectId") || "",
     professorId: searchParams.get("professorId") || "",
     universityId: searchParams.get("universityId") || "",
-    channelId: searchParams.get("channelId") || "",
+    courseId: searchParams.get("courseId") || "",
     difficulty: searchParams.get("difficulty") || "",
   });
 
@@ -123,7 +123,7 @@ export function SearchClient({ subjects, professors, universities, channels }: S
       subjectId: filters.subjectId || undefined,
       professorId: filters.professorId || undefined,
       universityId: filters.universityId || undefined,
-      channelId: filters.channelId || undefined,
+      courseId: filters.courseId || undefined,
       difficulty: filters.difficulty || undefined,
       page: String(page),
       limit: "20",
@@ -159,7 +159,7 @@ export function SearchClient({ subjects, professors, universities, channels }: S
       subjectId: "",
       professorId: "",
       universityId: "",
-      channelId: "",
+      courseId: "",
       difficulty: "",
     });
     setPage(1);
@@ -171,12 +171,12 @@ export function SearchClient({ subjects, professors, universities, channels }: S
     const subject = subjects.find((s) => s.id === filters.subjectId);
     const professor = professors.find((p) => p.id === filters.professorId);
     const university = universities.find((u) => u.id === filters.universityId);
-    const channel = channels.find((c) => c.id === filters.channelId);
+    const course = courses.find((c) => c.id === filters.courseId);
 
     if (subject) parts.push(subject.name);
     if (professor) parts.push(professor.name);
     if (university) parts.push(university.shortName);
-    if (channel) parts.push(channel.name);
+    if (course) parts.push(course.name);
     if (filters.query) parts.push(`"${filters.query}"`);
     if (filters.difficulty) parts.push(filters.difficulty);
 
@@ -337,9 +337,9 @@ export function SearchClient({ subjects, professors, universities, channels }: S
                     Canale
                   </Label>
                   <Select
-                    value={filters.channelId}
+                    value={filters.courseId}
                     onValueChange={(value) =>
-                      handleFilterChange("channelId", value === "all" ? "" : value)
+                      handleFilterChange("courseId", value === "all" ? "" : value)
                     }
                   >
                     <SelectTrigger className="bg-input border-border text-foreground h-9">
@@ -347,9 +347,9 @@ export function SearchClient({ subjects, professors, universities, channels }: S
                     </SelectTrigger>
                     <SelectContent className="bg-card border-border">
                       <SelectItem value="all">Tutti</SelectItem>
-                      {channels.map((channel) => (
-                        <SelectItem key={channel.id} value={channel.id}>
-                          {channel.name} {channel.university?.shortName && `(${channel.university.shortName})`}
+                      {courses.map((course) => (
+                        <SelectItem key={course.id} value={course.id}>
+                          {course.name} {course.university?.shortName && `(${course.university.shortName})`}
                         </SelectItem>
                       ))}
                     </SelectContent>

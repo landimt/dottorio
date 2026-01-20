@@ -11,7 +11,7 @@ export const GET = withAdminAuth<{ id: string }>(async (request, { params }) => 
     where: { id },
     include: {
       university: true,
-      channel: true,
+      course: true,
       _count: {
         select: {
           exams: true,

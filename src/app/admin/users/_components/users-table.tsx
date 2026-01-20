@@ -49,7 +49,7 @@ interface User {
     shortName: string | null;
     emoji: string | null;
   };
-  channel: {
+  course: {
     id: string;
     name: string;
   } | null;
@@ -178,8 +178,8 @@ export function UsersTable({ users: initialUsers }: UsersTableProps) {
                       <span>{user.university.emoji}</span>
                       <span className="text-sm">{user.university.shortName || user.university.name}</span>
                     </div>
-                    {user.channel && (
-                      <div className="text-xs text-muted-foreground">{user.channel.name} • {user.year}º ano</div>
+                    {user.course && (
+                      <div className="text-xs text-muted-foreground">{user.course.name} • {user.year}º ano</div>
                     )}
                   </TableCell>
                   <TableCell>

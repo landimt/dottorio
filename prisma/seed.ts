@@ -107,84 +107,89 @@ async function main() {
 
   console.log(`✅ Created ${universities.length} universities`);
 
-  // Channels for each university
-  const channelNames = ["Canale A", "Canale B", "Canale C", "Canale D"];
-  const createdChannels: { id: string; name: string; universityId: string }[] = [];
+  // Courses for each university
+  const courseNames = ["Canale A", "Canale B", "Canale C", "Canale D"];
+  const createdCourses: { id: string; name: string; universityId: string }[] = [];
 
   for (const uni of universities) {
-    for (const channelName of channelNames) {
-      const channelId = `ch-${uni.id}-${channelName.replace("Canale ", "").toLowerCase()}`;
-      const channel = await prisma.channel.upsert({
-        where: { id: channelId },
+    for (const courseName of courseNames) {
+      const courseId = `ch-${uni.id}-${courseName.replace("Canale ", "").toLowerCase()}`;
+      const course = await prisma.course.upsert({
+        where: { id: courseId },
         update: {},
         create: {
-          id: channelId,
-          name: channelName,
+          id: courseId,
+          name: courseName,
           universityId: uni.id,
         },
       });
-      createdChannels.push(channel);
+      createdCourses.push(course);
     }
   }
 
-  console.log(`✅ Created ${createdChannels.length} channels`);
+  console.log(`✅ Created ${createdCourses.length} courses`);
 
-  // Subjects
+  // Get the Canale A for Sapienza (for subjects)
+  const sapienzaCourseAId = createdCourses.find(
+    (c) => c.universityId === "uni-sapienza" && c.name === "Canale A"
+  )?.id || createdCourses[0]?.id;
+
+  // Subjects (now linked to a course)
   const subjects = await Promise.all([
     prisma.subject.upsert({
       where: { id: "sub-anatomia1" },
       update: {},
-      create: { id: "sub-anatomia1", name: "Anatomia I", emoji: "🫀", color: "red" },
+      create: { id: "sub-anatomia1", name: "Anatomia I", emoji: "🫀", color: "red", courseId: sapienzaCourseAId, year: 1 },
     }),
     prisma.subject.upsert({
       where: { id: "sub-anatomia2" },
       update: {},
-      create: { id: "sub-anatomia2", name: "Anatomia II", emoji: "🦴", color: "red" },
+      create: { id: "sub-anatomia2", name: "Anatomia II", emoji: "🦴", color: "red", courseId: sapienzaCourseAId, year: 2 },
     }),
     prisma.subject.upsert({
       where: { id: "sub-fisiologia" },
       update: {},
-      create: { id: "sub-fisiologia", name: "Fisiologia", emoji: "⚡", color: "yellow" },
+      create: { id: "sub-fisiologia", name: "Fisiologia", emoji: "⚡", color: "yellow", courseId: sapienzaCourseAId, year: 2 },
     }),
     prisma.subject.upsert({
       where: { id: "sub-biochimica" },
       update: {},
-      create: { id: "sub-biochimica", name: "Biochimica", emoji: "🧬", color: "green" },
+      create: { id: "sub-biochimica", name: "Biochimica", emoji: "🧬", color: "green", courseId: sapienzaCourseAId, year: 1 },
     }),
     prisma.subject.upsert({
       where: { id: "sub-patologia" },
       update: {},
-      create: { id: "sub-patologia", name: "Patologia", emoji: "🔬", color: "purple" },
+      create: { id: "sub-patologia", name: "Patologia", emoji: "🔬", color: "purple", courseId: sapienzaCourseAId, year: 3 },
     }),
     prisma.subject.upsert({
       where: { id: "sub-farmacologia" },
       update: {},
-      create: { id: "sub-farmacologia", name: "Farmacologia", emoji: "💊", color: "blue" },
+      create: { id: "sub-farmacologia", name: "Farmacologia", emoji: "💊", color: "blue", courseId: sapienzaCourseAId, year: 4 },
     }),
     prisma.subject.upsert({
       where: { id: "sub-microbiologia" },
       update: {},
-      create: { id: "sub-microbiologia", name: "Microbiologia", emoji: "🦠", color: "teal" },
+      create: { id: "sub-microbiologia", name: "Microbiologia", emoji: "🦠", color: "teal", courseId: sapienzaCourseAId, year: 3 },
     }),
     prisma.subject.upsert({
       where: { id: "sub-istologia" },
       update: {},
-      create: { id: "sub-istologia", name: "Istologia", emoji: "🔍", color: "pink" },
+      create: { id: "sub-istologia", name: "Istologia", emoji: "🔍", color: "pink", courseId: sapienzaCourseAId, year: 1 },
     }),
     prisma.subject.upsert({
       where: { id: "sub-neurologia" },
       update: {},
-      create: { id: "sub-neurologia", name: "Neurologia", emoji: "🧠", color: "indigo" },
+      create: { id: "sub-neurologia", name: "Neurologia", emoji: "🧠", color: "indigo", courseId: sapienzaCourseAId, year: 5 },
     }),
     prisma.subject.upsert({
       where: { id: "sub-cardiologia" },
       update: {},
-      create: { id: "sub-cardiologia", name: "Cardiologia", emoji: "❤️", color: "rose" },
+      create: { id: "sub-cardiologia", name: "Cardiologia", emoji: "❤️", color: "rose", courseId: sapienzaCourseAId, year: 4 },
     }),
     prisma.subject.upsert({
       where: { id: "sub-chirurgia" },
       update: {},
-      create: { id: "sub-chirurgia", name: "Chirurgia", emoji: "🏥", color: "gray" },
+      create: { id: "sub-chirurgia", name: "Chirurgia", emoji: "🏥", color: "gray", courseId: sapienzaCourseAId, year: 5 },
     }),
   ]);
 
@@ -193,9 +198,9 @@ async function main() {
   // Hash password (demo123)
   const passwordHash = await hash("demo123", 12);
 
-  // Get the Canale A for Sapienza
-  const sapienzaChannelA = createdChannels.find(
-    (ch) => ch.universityId === "uni-sapienza" && ch.name === "Canale A"
+  // Get the Canale A for Sapienza (for users/exams)
+  const sapienzaCourseA = createdCourses.find(
+    (c) => c.universityId === "uni-sapienza" && c.name === "Canale A"
   );
 
   // Create ADMIN user
@@ -211,7 +216,7 @@ async function main() {
       name: "Admin Dottorio",
       universityId: "uni-sapienza",
       year: 6,
-      channelId: null,
+      courseId: null,
       isRepresentative: false,
       role: "admin",
       status: "active",
@@ -234,7 +239,7 @@ async function main() {
       name: "Sofia Marchetti",
       universityId: "uni-sapienza",
       year: 3,
-      channelId: sapienzaChannelA?.id || null,
+      courseId: sapienzaCourseA?.id || null,
       isRepresentative: true,
       role: "representative",
       status: "active",
@@ -254,7 +259,7 @@ async function main() {
       name: "Marco Ferrari",
       universityId: "uni-sapienza",
       year: 2,
-      channelId: sapienzaChannelA?.id || null,
+      courseId: sapienzaCourseA?.id || null,
       isRepresentative: false,
       role: "student",
       status: "active",
@@ -270,7 +275,7 @@ async function main() {
       name: "Giulia Romano",
       universityId: "uni-sapienza",
       year: 3,
-      channelId: sapienzaChannelA?.id || null,
+      courseId: sapienzaCourseA?.id || null,
       isRepresentative: false,
       role: "student",
       status: "active",
@@ -418,7 +423,7 @@ async function main() {
       professorId: "prof-rossi",
       universityId: "uni-sapienza",
       year: 1,
-      channelId: sapienzaChannelA?.id || null,
+      courseId: sapienzaCourseA?.id || null,
       examDate: new Date("2026-01-15"),
       examType: "orale",
       academicYear: "2025/2026",
@@ -436,7 +441,7 @@ async function main() {
       professorId: "prof-bianchi",
       universityId: "uni-sapienza",
       year: 2,
-      channelId: sapienzaChannelA?.id || null,
+      courseId: sapienzaCourseA?.id || null,
       examDate: new Date("2026-02-10"),
       examType: "scritto",
       academicYear: "2025/2026",
@@ -454,7 +459,7 @@ async function main() {
       professorId: "prof-verdi",
       universityId: "uni-sapienza",
       year: 4,
-      channelId: sapienzaChannelA?.id || null,
+      courseId: sapienzaCourseA?.id || null,
       examDate: new Date("2026-03-20"),
       examType: "orale",
       academicYear: "2025/2026",

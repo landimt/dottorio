@@ -130,10 +130,10 @@ export default async function ProfilePage() {
                   <BookOpen className="w-4 h-4" />
                   <span>{user.year}º Anno</span>
                 </div>
-                {user.channelName && (
+                {user.courseName && (
                   <div className="flex items-center gap-1">
                     <MapPin className="w-4 h-4" />
-                    <span>{user.channelName}</span>
+                    <span>{user.courseName}</span>
                   </div>
                 )}
               </div>

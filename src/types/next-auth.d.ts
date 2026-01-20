@@ -7,8 +7,8 @@ declare module "next-auth" {
       id: string;
       universityId: string;
       universityName: string;
-      channelId: string | null;
-      channelName: string | null;
+      courseId: string | null;
+      courseName: string | null;
       year: number;
       isRepresentative: boolean;
     } & DefaultSession["user"];
@@ -18,8 +18,8 @@ declare module "next-auth" {
     id: string;
     universityId: string;
     universityName: string;
-    channelId: string | null;
-    channelName: string | null;
+    courseId: string | null;
+    courseName: string | null;
     year: number;
     isRepresentative: boolean;
   }
@@ -30,8 +30,8 @@ declare module "next-auth/jwt" {
     id: string;
     universityId: string;
     universityName: string;
-    channelId: string | null;
-    channelName: string | null;
+    courseId: string | null;
+    courseName: string | null;
     year: number;
     isRepresentative: boolean;
   }

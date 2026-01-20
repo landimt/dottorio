@@ -185,7 +185,7 @@ export const API = {
   // Reference data
   universities: {
     list: () => apiGet<unknown[]>("/api/universities"),
-    channels: (id: string) => apiGet<unknown[]>(`/api/universities/${id}/channels`),
+    courses: (id: string) => apiGet<unknown[]>(`/api/universities/${id}/courses`),
   },
   subjects: {
     list: () => apiGet<unknown[]>("/api/subjects"),

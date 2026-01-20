@@ -10,7 +10,7 @@ export interface AdminUser {
   name: string;
   role: string;
   universityId: string;
-  channelId: string | null;
+  courseId: string | null;
 }
 
 /**
@@ -33,7 +33,7 @@ export async function requireAdmin(): Promise<AdminUser> {
       role: true,
       status: true,
       universityId: true,
-      channelId: true,
+      courseId: true,
     },
   });
 

@@ -29,7 +29,7 @@ export const universityInclude = {
     select: {
       professors: true,
       users: true,
-      channels: true,
+      courses: true,
     },
   },
 } satisfies Prisma.UniversityInclude;
@@ -182,7 +182,7 @@ export function questionDetailInclude(userId?: string) {
 
 export const adminUserInclude = {
   university: true,
-  channel: true,
+  course: true,
   _count: {
     select: {
       exams: true,

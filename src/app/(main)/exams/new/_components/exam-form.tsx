@@ -48,7 +48,7 @@ interface University {
   name: string;
 }
 
-interface Channel {
+interface Course {
   id: string;
   name: string;
   universityId: string;
@@ -72,10 +72,10 @@ interface ExamFormProps {
   subjects: Subject[];
   professors: Professor[];
   universities: University[];
-  channels: Channel[];
+  courses: Course[];
 }
 
-export function ExamForm({ subjects, professors, universities, channels }: ExamFormProps) {
+export function ExamForm({ subjects, professors, universities, courses }: ExamFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: session } = useSession();
@@ -84,15 +84,15 @@ export function ExamForm({ subjects, professors, universities, channels }: ExamF
   const prefillData = {
     subject: searchParams.get("subject") || "",
     professor: searchParams.get("professor") || "",
-    channelId: searchParams.get("channelId") || "",
+    courseId: searchParams.get("courseId") || "",
   };
 
-  const hasPrefill = prefillData.subject || prefillData.professor || prefillData.channelId;
+  const hasPrefill = prefillData.subject || prefillData.professor || prefillData.courseId;
 
   const [formData, setFormData] = useState({
     universityId: session?.user?.universityId || "",
     year: session?.user?.year || 1, // Now a number (1-6)
-    channelId: prefillData.channelId,
+    courseId: prefillData.courseId,
     subjectId: prefillData.subject,
     professorId: prefillData.professor,
     questions: [""], // Array of questions
@@ -120,12 +120,12 @@ export function ExamForm({ subjects, professors, universities, channels }: ExamF
     if (hasPrefill) {
       setFormData((prev) => ({
         ...prev,
-        channelId: prefillData.channelId || prev.channelId,
+        courseId: prefillData.courseId || prev.courseId,
         subjectId: prefillData.subject || prev.subjectId,
         professorId: prefillData.professor || prev.professorId,
       }));
     }
-  }, [hasPrefill, prefillData.channelId, prefillData.subject, prefillData.professor]);
+  }, [hasPrefill, prefillData.courseId, prefillData.subject, prefillData.professor]);
 
   // Update university from session
   useEffect(() => {
@@ -141,8 +141,8 @@ export function ExamForm({ subjects, professors, universities, channels }: ExamF
   // Years as numbers (1-6)
   const years = [1, 2, 3, 4, 5, 6];
 
-  // Filter channels by user's university
-  const universityChannels = channels.filter(
+  // Filter courses by user's university
+  const universityCourses = courses.filter(
     (ch) => ch.universityId === formData.universityId
   );
 
@@ -194,7 +194,7 @@ export function ExamForm({ subjects, professors, universities, channels }: ExamF
           subjectId: formData.subjectId,
           professorId: formData.professorId,
           universityId: formData.universityId,
-          channelId: formData.channelId || undefined,
+          courseId: formData.courseId || undefined,
           year: formData.year || undefined,
         }),
       });
@@ -339,7 +339,7 @@ export function ExamForm({ subjects, professors, universities, channels }: ExamF
     const params = new URLSearchParams({
       subject: formData.subjectId,
       professor: formData.professorId,
-      ...(formData.channelId && { channelId: formData.channelId }),
+      ...(formData.courseId && { courseId: formData.courseId }),
     });
 
     const link = `${baseUrl}?${params.toString()}`;
@@ -364,7 +364,7 @@ export function ExamForm({ subjects, professors, universities, channels }: ExamF
   const getSubjectName = (id: string) => subjects.find((s) => s.id === id)?.name || id;
   const getProfessorName = (id: string) => professors.find((p) => p.id === id)?.name || id;
   const getUniversityName = (id: string) => universities.find((u) => u.id === id)?.name || id;
-  const getChannelName = (id: string) => channels.find((c) => c.id === id)?.name || id;
+  const getCourseName = (id: string) => courses.find((c) => c.id === id)?.name || id;
   const getYearLabel = (year: number) => `${year}º Anno`;
 
   if (showSuccess) {
@@ -441,10 +441,10 @@ export function ExamForm({ subjects, professors, universities, channels }: ExamF
                     </p>
                   </div>
                 )}
-                {prefillData.channelId && (
+                {prefillData.courseId && (
                   <div className="bg-white/60 dark:bg-black/20 rounded-lg p-3 border border-primary/20 backdrop-blur-sm">
                     <p className="text-xs text-muted-foreground mb-1">Canale</p>
-                    <p className="font-medium text-foreground">{getChannelName(prefillData.channelId)}</p>
+                    <p className="font-medium text-foreground">{getCourseName(prefillData.courseId)}</p>
                   </div>
                 )}
               </div>
@@ -565,38 +565,38 @@ export function ExamForm({ subjects, professors, universities, channels }: ExamF
                 <div className="space-y-2 relative">
                   <Label htmlFor="channel" className="text-foreground flex items-center gap-2">
                     Canale
-                    {prefillData.channelId && (
+                    {prefillData.courseId && (
                       <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
                         Precompilato
                       </span>
                     )}
                   </Label>
                   <Select
-                    value={formData.channelId}
-                    onValueChange={(value) => handleInputChange("channelId", value)}
+                    value={formData.courseId}
+                    onValueChange={(value) => handleInputChange("courseId", value)}
                   >
                     <SelectTrigger
-                      disabled={!!prefillData.channelId || universityChannels.length === 0}
+                      disabled={!!prefillData.courseId || universityCourses.length === 0}
                       className={`${
-                        prefillData.channelId
+                        prefillData.courseId
                           ? "bg-primary/5 border-primary/30 text-primary cursor-not-allowed"
                           : "bg-input border-border text-foreground"
                       }`}
                     >
-                      {formData.channelId ? (
-                        <span>{getChannelName(formData.channelId)}</span>
+                      {formData.courseId ? (
+                        <span>{getCourseName(formData.courseId)}</span>
                       ) : (
-                        <SelectValue placeholder={universityChannels.length === 0 ? "Nessun canale disponibile" : "Seleziona il canale"} />
+                        <SelectValue placeholder={universityCourses.length === 0 ? "Nessun canale disponibile" : "Seleziona il canale"} />
                       )}
                     </SelectTrigger>
                     <SelectContent className="bg-card border-border">
-                      {universityChannels.map((channel) => (
+                      {universityCourses.map((course) => (
                         <SelectItem
-                          key={channel.id}
-                          value={channel.id}
+                          key={course.id}
+                          value={course.id}
                           className="text-foreground focus:bg-[#FEF2F2] focus:text-[#DC2626] data-[state=checked]:bg-[#FFE4E6] data-[state=checked]:text-[#DC2626] hover:bg-[#FEF2F2] hover:text-[#DC2626]"
                         >
-                          {channel.name}
+                          {course.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -851,10 +851,10 @@ export function ExamForm({ subjects, professors, universities, channels }: ExamF
                   {getProfessorName(formData.professorId)}
                 </p>
               </div>
-              {formData.channelId && (
+              {formData.courseId && (
                 <div className="col-span-2 bg-gradient-to-br from-[#EFF6FF] to-[#DBEAFE] dark:from-[#005A9C]/10 dark:to-[#005A9C]/5 rounded-lg p-3 border border-primary/20">
                   <p className="text-xs text-muted-foreground mb-1">📍 Canale</p>
-                  <p className="font-semibold text-primary">{getChannelName(formData.channelId)}</p>
+                  <p className="font-semibold text-primary">{getCourseName(formData.courseId)}</p>
                 </div>
               )}
             </div>

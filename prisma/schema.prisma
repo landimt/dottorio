@@ -24,50 +24,62 @@ model University {
   // Relations
   professors Professor[]
   users      User[]
+  courses    Course[]
   exams      Exam[]
-  channels   Channel[]
 
   @@map("universities")
 }
 
-model Channel {
+model Course {
   id           String   @id @default(uuid())
-  name         String   @db.VarChar(50) // "Canale A", "Canale B", etc.
+  name         String   @db.VarChar(100) // "Medicina Canale A", "Farmacia", etc.
   universityId String   @map("university_id")
+  year         Int?     @db.SmallInt // Ano do curso (1-6)
+  emoji        String?  @db.VarChar(10)
+  description  String?  @db.VarChar(255)
   createdAt    DateTime @default(now()) @map("created_at")
 
   // Relations
   university University @relation(fields: [universityId], references: [id])
   users      User[]
+  subjects   Subject[]
   exams      Exam[]
 
   @@unique([universityId, name])
   @@index([universityId])
-  @@map("channels")
+  @@map("courses")
 }
 
 model Subject {
   id        String   @id @default(uuid())
   name      String   @db.VarChar(100)
+  courseId  String   @map("course_id")
   emoji     String?  @db.VarChar(10)
   color     String?  @db.VarChar(20)
+  semester  Int?     @db.SmallInt // 1 ou 2
+  year      Int?     @db.SmallInt // Ano em que a matéria é ministrada (1-6)
+  credits   Int?     @db.SmallInt // Créditos/CFU
   createdAt DateTime @default(now()) @map("created_at")
 
   // Relations
+  course     Course             @relation(fields: [courseId], references: [id], onDelete: Cascade)
   professors ProfessorSubject[]
   exams      Exam[]
 
+  @@unique([courseId, name])
+  @@index([courseId])
   @@map("subjects")
 }
 
 model Professor {
   id           String   @id @default(uuid())
   name         String   @db.VarChar(100)
-  universityId String?  @map("university_id")
+  email        String?  @db.VarChar(255)
+  universityId String   @map("university_id")
   createdAt    DateTime @default(now()) @map("created_at")
 
   // Relations
-  university University?        @relation(fields: [universityId], references: [id])
+  university University         @relation(fields: [universityId], references: [id])
   subjects   ProfessorSubject[]
   exams      Exam[]
 
@@ -93,24 +105,24 @@ model ProfessorSubject {
 // ============================================
 
 model User {
-  id               String   @id @default(uuid())
-  email            String   @unique @db.VarChar(255)
-  passwordHash     String   @map("password_hash") @db.VarChar(255)
-  name             String   @db.VarChar(100)
-  universityId     String   @map("university_id")
-  channelId        String?  @map("channel_id")
-  year             Int      @db.SmallInt // 1, 2, 3, 4, 5, 6
-  isRepresentative Boolean  @default(false) @map("is_representative")
-  role             String   @default("student") @db.VarChar(30) // student, representative, admin, super_admin
-  status           String   @default("active") @db.VarChar(30) // active, suspended, banned
-  avatarUrl        String?  @map("avatar_url")
+  id               String    @id @default(uuid())
+  email            String    @unique @db.VarChar(255)
+  passwordHash     String    @map("password_hash") @db.VarChar(255)
+  name             String    @db.VarChar(100)
+  universityId     String    @map("university_id")
+  courseId         String?   @map("course_id")
+  year             Int       @db.SmallInt // 1, 2, 3, 4, 5, 6
+  isRepresentative Boolean   @default(false) @map("is_representative")
+  role             String    @default("student") @db.VarChar(30) // student, representative, admin, super_admin
+  status           String    @default("active") @db.VarChar(30) // active, suspended, banned
+  avatarUrl        String?   @map("avatar_url")
   lastLoginAt      DateTime? @map("last_login_at")
-  createdAt        DateTime @default(now()) @map("created_at")
-  updatedAt        DateTime @updatedAt @map("updated_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
 
   // Relations
-  university     University       @relation(fields: [universityId], references: [id])
-  channel        Channel?         @relation(fields: [channelId], references: [id])
+  university     University    @relation(fields: [universityId], references: [id])
+  course         Course?       @relation(fields: [courseId], references: [id])
   exams          Exam[]
   studentAnswers StudentAnswer[]
   answerLikes    AnswerLike[]
@@ -119,11 +131,11 @@ model User {
   savedQuestions SavedQuestion[]
   aiRatings      AiRating[]
   auditLogs      AuditLog[]
-  reportedFlags  ContentFlag[]    @relation("FlagReportedBy")
-  reviewedFlags  ContentFlag[]    @relation("FlagReviewedBy")
+  reportedFlags  ContentFlag[] @relation("FlagReportedBy")
+  reviewedFlags  ContentFlag[] @relation("FlagReviewedBy")
 
   @@index([universityId])
-  @@index([channelId])
+  @@index([courseId])
   @@index([role])
   @@index([status])
   @@map("users")
@@ -138,7 +150,7 @@ model Exam {
   subjectId    String    @map("subject_id")
   professorId  String?   @map("professor_id")
   universityId String    @map("university_id")
-  channelId    String?   @map("channel_id")
+  courseId     String?   @map("course_id")
   year         Int?      @db.SmallInt // 1, 2, 3, 4, 5, 6 (ano do curso)
   examDate     DateTime? @map("exam_date") @db.Date
   examType     String    @default("orale") @map("exam_type") @db.VarChar(30) // orale, scritto, pratico
@@ -149,17 +161,17 @@ model Exam {
   updatedAt    DateTime  @updatedAt @map("updated_at")
 
   // Relations
-  subject    Subject    @relation(fields: [subjectId], references: [id])
-  professor  Professor? @relation(fields: [professorId], references: [id])
+  subject   Subject    @relation(fields: [subjectId], references: [id])
+  professor Professor? @relation(fields: [professorId], references: [id])
   university University @relation(fields: [universityId], references: [id])
-  channel    Channel?   @relation(fields: [channelId], references: [id])
-  creator    User?      @relation(fields: [createdBy], references: [id])
-  questions  Question[]
+  course    Course?    @relation(fields: [courseId], references: [id])
+  creator   User?      @relation(fields: [createdBy], references: [id])
+  questions Question[]
 
   @@index([subjectId])
   @@index([professorId])
   @@index([universityId])
-  @@index([channelId])
+  @@index([courseId])
   @@index([examDate])
   @@map("exams")
 }

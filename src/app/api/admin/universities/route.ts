@@ -12,7 +12,7 @@ export const GET = withAdminAuth(async () => {
         select: {
           professors: true,
           users: true,
-          channels: true,
+          courses: true,
         },
       },
     },

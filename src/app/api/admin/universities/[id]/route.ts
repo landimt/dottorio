@@ -10,7 +10,7 @@ export const GET = withAdminAuth<{ id: string }>(async (request, { params }) => 
   const university = await prisma.university.findUnique({
     where: { id },
     include: {
-      channels: true,
+      courses: true,
       _count: {
         select: {
           professors: true,

@@ -48,7 +48,7 @@ export const GET = withAdminAuth(async (request) => {
           shortName: true,
         },
       },
-      channel: {
+      course: {
         select: {
           id: true,
           name: true,

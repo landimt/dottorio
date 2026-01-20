@@ -9,7 +9,7 @@ const registerSchema = z.object({
   password: z.string().min(6, "La password deve avere almeno 6 caratteri"),
   universityId: z.string().uuid("Università non valida"),
   year: z.number().int().min(1).max(6, "L'anno deve essere tra 1 e 6"),
-  channelId: z.string().uuid().optional().nullable(),
+  courseId: z.string().uuid().optional().nullable(),
   isRepresentative: z.boolean().default(false),
 });
 
@@ -47,7 +47,7 @@ export async function POST(request: Request) {
         passwordHash,
         universityId: data.universityId,
         year: data.year,
-        channelId: data.channelId || null,
+        courseId: data.courseId || null,
         isRepresentative: data.isRepresentative,
       },
       select: {

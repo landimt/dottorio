@@ -143,8 +143,8 @@ export function Header() {
                       <GraduationCap className="w-3 h-3" />
                       {tHeader("year", { year: user?.year ?? 1 })}
                     </span>
-                    {user?.channelName && (
-                      <span className="text-xs text-muted-foreground">• {user.channelName}</span>
+                    {user?.courseName && (
+                      <span className="text-xs text-muted-foreground">• {user.courseName}</span>
                     )}
                   </div>
                 </div>

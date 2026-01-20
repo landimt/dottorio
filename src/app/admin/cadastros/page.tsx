@@ -14,7 +14,7 @@ async function getCadastrosData() {
           select: {
             professors: true,
             users: true,
-            channels: true,
+            courses: true,
           },
         },
       },

@@ -2,14 +2,14 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { API } from "@/lib/api/fetcher";
-import type { University, Channel } from "@/lib/types/api.types";
+import type { University, Course } from "@/lib/types/api.types";
 
 // Query keys
 export const universityKeys = {
   all: ["universities"] as const,
   lists: () => [...universityKeys.all, "list"] as const,
   detail: (id: string) => [...universityKeys.all, "detail", id] as const,
-  channels: (universityId: string) => [...universityKeys.all, universityId, "channels"] as const,
+  courses: (universityId: string) => [...universityKeys.all, universityId, "courses"] as const,
 };
 
 // Hooks
@@ -21,10 +21,10 @@ export function useUniversities() {
   });
 }
 
-export function useUniversityChannels(universityId: string) {
+export function useUniversityCourses(universityId: string) {
   return useQuery({
-    queryKey: universityKeys.channels(universityId),
-    queryFn: () => API.universities.channels(universityId) as Promise<Channel[]>,
+    queryKey: universityKeys.courses(universityId),
+    queryFn: () => API.universities.courses(universityId) as Promise<Course[]>,
     enabled: !!universityId,
     staleTime: 5 * 60 * 1000,
   });

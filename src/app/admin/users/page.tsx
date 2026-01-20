@@ -6,7 +6,7 @@ async function getUsers() {
     orderBy: { createdAt: "desc" },
     include: {
       university: true,
-      channel: true,
+      course: true,
       _count: {
         select: {
           exams: true,

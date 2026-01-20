@@ -28,7 +28,7 @@ interface University {
   name: string;
 }
 
-interface Channel {
+interface Course {
   id: string;
   name: string;
   universityId: string;
@@ -42,33 +42,33 @@ export function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [universities, setUniversities] = useState<University[]>([]);
-  const [channels, setChannels] = useState<Channel[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
 
   // Form state for select components
   const [universityId, setUniversityId] = useState("");
   const [year, setYear] = useState<number | null>(null);
-  const [channelId, setChannelId] = useState("");
+  const [courseId, setCourseId] = useState("");
   const [isRepresentative, setIsRepresentative] = useState(false);
 
-  // Filtered channels by selected university
-  const universityChannels = channels.filter(
+  // Filtered courses by selected university
+  const universityCourses = courses.filter(
     (ch) => ch.universityId === universityId
   );
 
   useEffect(() => {
     async function loadData() {
       try {
-        const [uniRes, channelRes] = await Promise.all([
+        const [uniRes, courseRes] = await Promise.all([
           fetch("/api/universities"),
-          fetch("/api/channels"),
+          fetch("/api/courses"),
         ]);
         if (uniRes.ok) {
           const uniData = await uniRes.json();
           setUniversities(uniData);
         }
-        if (channelRes.ok) {
-          const channelData = await channelRes.json();
-          setChannels(channelData);
+        if (courseRes.ok) {
+          const courseData = await courseRes.json();
+          setCourses(courseData);
         }
       } catch {
         // Fallback to empty arrays
@@ -79,7 +79,7 @@ export function RegisterForm() {
 
   // Reset channel when university changes
   useEffect(() => {
-    setChannelId("");
+    setCourseId("");
   }, [universityId]);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -108,7 +108,7 @@ export function RegisterForm() {
       password: formData.get("password") as string,
       universityId,
       year, // Now a number
-      channelId: channelId || null,
+      courseId: courseId || null,
       isRepresentative,
     };
 
@@ -226,20 +226,20 @@ export function RegisterForm() {
             <div className="space-y-2">
               <Label htmlFor="channel">Canale</Label>
               <Select
-                value={channelId}
-                onValueChange={setChannelId}
+                value={courseId}
+                onValueChange={setCourseId}
               >
-                <SelectTrigger disabled={isLoading || universityChannels.length === 0}>
+                <SelectTrigger disabled={isLoading || universityCourses.length === 0}>
                   <SelectValue
                     placeholder={
-                      universityChannels.length === 0
+                      universityCourses.length === 0
                         ? "Seleziona prima l'università"
                         : "Canale"
                     }
                   />
                 </SelectTrigger>
                 <SelectContent>
-                  {universityChannels.map((ch) => (
+                  {universityCourses.map((ch) => (
                     <SelectItem key={ch.id} value={ch.id}>
                       {ch.name}
                     </SelectItem>

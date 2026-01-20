@@ -9,7 +9,7 @@ export const examService = {
         subject: true,
         professor: true,
         university: true,
-        channel: true,
+        course: true,
         creator: {
           select: {
             id: true,
@@ -32,7 +32,7 @@ export const examService = {
         subject: true,
         professor: true,
         university: true,
-        channel: true,
+        course: true,
         creator: {
           select: {
             id: true,
@@ -61,7 +61,7 @@ export const examService = {
         subjectId: data.subjectId,
         professorId: data.professorId,
         universityId: data.universityId,
-        channelId: data.channelId || null,
+        courseId: data.courseId || null,
         year: data.year || null,
         examDate: data.date ? new Date(data.date) : null,
         description: data.notes,
@@ -71,7 +71,7 @@ export const examService = {
         subject: true,
         professor: true,
         university: true,
-        channel: true,
+        course: true,
       },
     });
   },
@@ -92,7 +92,7 @@ export const examService = {
         ...(data.subjectId && { subjectId: data.subjectId }),
         ...(data.professorId && { professorId: data.professorId }),
         ...(data.universityId && { universityId: data.universityId }),
-        ...(data.channelId !== undefined && { channelId: data.channelId || null }),
+        ...(data.courseId !== undefined && { courseId: data.courseId || null }),
         ...(data.year !== undefined && { year: data.year || null }),
         ...(data.date && { examDate: new Date(data.date) }),
         ...(data.notes !== undefined && { description: data.notes }),
@@ -101,7 +101,7 @@ export const examService = {
         subject: true,
         professor: true,
         university: true,
-        channel: true,
+        course: true,
       },
     });
   },
@@ -128,7 +128,7 @@ export const examService = {
         subject: true,
         professor: true,
         university: true,
-        channel: true,
+        course: true,
         _count: {
           select: { questions: true },
         },

@@ -99,7 +99,7 @@ export default async function ModerationPage() {
                     <div className="flex items-center gap-2">
                       <Badge variant="outline">{flag.type}</Badge>
                       <span className="text-sm text-muted-foreground">
-                        Segnalato da {flag.reporter.name || flag.reporter.email}
+                        Segnalato da {flag.reporter?.name || flag.reporter?.email || "Utente anonimo"}
                       </span>
                     </div>
                     <p className="text-sm">{flag.reason}</p>

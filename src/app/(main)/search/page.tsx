@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { SearchClient } from "./_components/search-client";
 
 async function getFiltersData() {
-  const [subjects, professors, universities, channels] = await Promise.all([
+  const [subjects, professors, universities, courses] = await Promise.all([
     prisma.subject.findMany({
       orderBy: { name: "asc" },
       include: {
@@ -18,7 +18,7 @@ async function getFiltersData() {
     prisma.university.findMany({
       orderBy: { name: "asc" },
     }),
-    prisma.channel.findMany({
+    prisma.course.findMany({
       orderBy: { name: "asc" },
       include: {
         university: {
@@ -28,7 +28,7 @@ async function getFiltersData() {
     }),
   ]);
 
-  return { subjects, professors, universities, channels };
+  return { subjects, professors, universities, courses };
 }
 
 export default async function SearchPage() {

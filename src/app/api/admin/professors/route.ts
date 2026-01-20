@@ -35,7 +35,8 @@ export const POST = withAdminAuth(async (request) => {
     const professor = await prisma.professor.create({
       data: {
         name: data.name.trim(),
-        universityId: data.universityId || null,
+        email: data.email?.trim() || null,
+        universityId: data.universityId,
         subjects: {
           create: (data.subjectIds || []).map((subjectId: string) => ({
             subjectId,

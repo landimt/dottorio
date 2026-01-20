@@ -52,7 +52,8 @@ export const PUT = withAdminAuth<{ id: string }>(async (request, { params }) => 
         where: { id },
         data: {
           ...(data.name && { name: data.name.trim() }),
-          ...(data.universityId !== undefined && { universityId: data.universityId || null }),
+          ...(data.email !== undefined && { email: data.email?.trim() || null }),
+          ...(data.universityId && { universityId: data.universityId }),
           ...(data.subjectIds !== undefined && {
             subjects: {
               create: data.subjectIds.map((subjectId: string) => ({

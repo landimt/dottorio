@@ -24,15 +24,20 @@ interface SelectProps {
   onValueChange?: (value: string) => void;
   defaultValue?: string;
   disabled?: boolean;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
   children: React.ReactNode;
 }
 
-function Select({ value: controlledValue, onValueChange, defaultValue = "", disabled = false, children }: SelectProps) {
+function Select({ value: controlledValue, onValueChange, defaultValue = "", disabled = false, open: controlledOpen, onOpenChange, children }: SelectProps) {
   const [internalValue, setInternalValue] = React.useState(defaultValue);
-  const [open, setOpen] = React.useState(false);
-  
+  const [internalOpen, setInternalOpen] = React.useState(false);
+
   const value = controlledValue !== undefined ? controlledValue : internalValue;
   const handleValueChange = onValueChange || setInternalValue;
+
+  const open = controlledOpen !== undefined ? controlledOpen : internalOpen;
+  const setOpen = onOpenChange || setInternalOpen;
 
   return (
     <SelectContext.Provider value={{ value, onValueChange: handleValueChange, open, setOpen, disabled }}>
@@ -76,7 +81,7 @@ function SelectTrigger({
   const { open, setOpen, disabled } = useSelectContext();
   
   const sizeClasses = {
-    default: "h-9",
+    default: "h-10",
     sm: "h-8",
   };
 
