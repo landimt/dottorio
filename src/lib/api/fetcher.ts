@@ -204,12 +204,24 @@ export const API = {
       update: (id: string, data: unknown) => apiPut<unknown>(`/api/admin/universities/${id}`, data),
       delete: (id: string) => apiDelete<void>(`/api/admin/universities/${id}`),
     },
+    courses: {
+      list: (universityId?: string) => apiGet<unknown[]>("/api/admin/courses", universityId ? { universityId } : undefined),
+      get: (id: string) => apiGet<unknown>(`/api/admin/courses/${id}`),
+      create: (data: unknown) => apiPost<unknown>("/api/admin/courses", data),
+      update: (id: string, data: unknown) => apiPut<unknown>(`/api/admin/courses/${id}`, data),
+      delete: (id: string) => apiDelete<void>(`/api/admin/courses/${id}`),
+    },
     subjects: {
       list: () => apiGet<unknown[]>("/api/admin/subjects"),
       get: (id: string) => apiGet<unknown>(`/api/admin/subjects/${id}`),
       create: (data: unknown) => apiPost<unknown>("/api/admin/subjects", data),
       update: (id: string, data: unknown) => apiPut<unknown>(`/api/admin/subjects/${id}`, data),
       delete: (id: string) => apiDelete<void>(`/api/admin/subjects/${id}`),
+      // Professor associations
+      associateProfessors: (subjectId: string, professorIds: string[]) =>
+        apiPost<unknown>(`/api/admin/subjects/${subjectId}/professors`, { professorIds }),
+      disassociateProfessor: (subjectId: string, professorSubjectId: string) =>
+        apiDelete<void>(`/api/admin/subjects/${subjectId}/professors/${professorSubjectId}`),
     },
     professors: {
       list: () => apiGet<unknown[]>("/api/admin/professors"),
