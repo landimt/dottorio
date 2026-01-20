@@ -1,10 +1,53 @@
 # Plano de Implementação PWA - Dottorio
 
+> **STATUS: IMPLEMENTADO** - O PWA foi configurado com sucesso. Veja a seção "Como Substituir os Ícones" abaixo.
+
 ## Visão Geral
 
 Transformar o Dottorio em um Progressive Web App (PWA) instalável em dispositivos móveis e desktop.
 
 **Objetivo:** Permitir que usuários instalem o app diretamente do navegador, com ícone na tela inicial e experiência similar a um app nativo.
+
+---
+
+## Como Substituir os Ícones Placeholder
+
+Os ícones atuais são placeholders SVG com a letra "D" em fundo teal. Para substituir pelos ícones reais:
+
+### Opção 1: Usar RealFaviconGenerator (Recomendado)
+
+1. Acesse https://realfavicongenerator.net/
+2. Faça upload de uma imagem quadrada (512x512 ou maior)
+3. Configure as opções e gere o pacote
+4. Baixe e extraia os arquivos em `public/`
+5. Atualize o `manifest.json` para usar os novos arquivos PNG
+
+### Opção 2: Substituir Manualmente
+
+Substitua os seguintes arquivos mantendo os mesmos nomes:
+
+```
+public/
+├── favicon.svg → favicon.ico (ou manter SVG)
+├── favicon-16x16.svg → favicon-16x16.png
+├── favicon-32x32.svg → favicon-32x32.png
+├── apple-touch-icon.svg → apple-touch-icon.png (180x180)
+└── icons/
+    ├── icon-72x72.svg → icon-72x72.png
+    ├── icon-96x96.svg → icon-96x96.png
+    ├── icon-128x128.svg → icon-128x128.png
+    ├── icon-144x144.svg → icon-144x144.png
+    ├── icon-152x152.svg → icon-152x152.png
+    ├── icon-192x192.svg → icon-192x192.png
+    ├── icon-384x384.svg → icon-384x384.png
+    ├── icon-512x512.svg → icon-512x512.png
+    ├── icon-maskable-192x192.svg → icon-maskable-192x192.png
+    └── icon-maskable-512x512.svg → icon-maskable-512x512.png
+```
+
+**Após substituir por PNGs**, atualize:
+- `public/manifest.json` - mude `type: "image/svg+xml"` para `type: "image/png"`
+- `src/app/layout.tsx` - mude `type: "image/svg+xml"` para `type: "image/png"`
 
 ---
 
