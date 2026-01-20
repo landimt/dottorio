@@ -133,6 +133,7 @@ model User {
   auditLogs      AuditLog[]
   reportedFlags  ContentFlag[] @relation("FlagReportedBy")
   reviewedFlags  ContentFlag[] @relation("FlagReviewedBy")
+  shareLinks     ShareLink[]
 
   @@index([universityId])
   @@index([courseId])
@@ -165,8 +166,9 @@ model Exam {
   professor Professor? @relation(fields: [professorId], references: [id])
   university University @relation(fields: [universityId], references: [id])
   course    Course?    @relation(fields: [courseId], references: [id])
-  creator   User?      @relation(fields: [createdBy], references: [id])
-  questions Question[]
+  creator    User?       @relation(fields: [createdBy], references: [id])
+  questions  Question[]
+  shareLinks ShareLink[]
 
   @@index([subjectId])
   @@index([professorId])
@@ -329,6 +331,30 @@ model AiRating {
 
   @@unique([aiAnswerId, userId])
   @@map("ai_ratings")
+}
+
+// ============================================
+// LINKS DE COMPARTILHAMENTO
+// ============================================
+
+model ShareLink {
+  id          String    @id @default(uuid())
+  slug        String    @unique @db.VarChar(10)
+  examId      String    @map("exam_id")
+  createdById String    @map("created_by")
+  clickCount  Int       @default(0) @map("click_count")
+  expiresAt   DateTime  @map("expires_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  exam      Exam @relation(fields: [examId], references: [id], onDelete: Cascade)
+  createdBy User @relation(fields: [createdById], references: [id], onDelete: Cascade)
+
+  @@index([slug])
+  @@index([examId])
+  @@index([createdById])
+  @@index([expiresAt])
+  @@map("share_links")
 }
 
 // ============================================

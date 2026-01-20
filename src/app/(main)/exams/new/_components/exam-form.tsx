@@ -402,23 +402,63 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
     setSelectedCanonical(null);
   };
 
+  const [isGeneratingLink, setIsGeneratingLink] = useState(false);
+
   // Generate shareable link (only for class representatives)
-  const handleGenerateShareableLink = () => {
+  const handleGenerateShareableLink = async () => {
     if (!formData.subjectId || !formData.professorId) {
       toast.error(t("selectSubjectAndProfessor"));
       return;
     }
 
-    const baseUrl = window.location.origin + "/exams/new";
-    const params = new URLSearchParams({
-      subject: formData.subjectId,
-      professor: formData.professorId,
-      ...(formData.courseId && { courseId: formData.courseId }),
-    });
+    setIsGeneratingLink(true);
 
-    const link = `${baseUrl}?${params.toString()}`;
-    setShareableLink(link);
-    setShowShareDialog(true);
+    try {
+      // First, create or find an exam
+      const examResponse = await fetch("/api/exams", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          subjectId: formData.subjectId,
+          professorId: formData.professorId,
+          universityId: formData.universityId,
+          courseId: formData.courseId || undefined,
+          year: formData.year || undefined,
+        }),
+      });
+
+      if (!examResponse.ok) {
+        throw new Error(t("creationError"));
+      }
+
+      const examResult = await examResponse.json();
+      const exam = examResult.data;
+
+      // Then, create a share link
+      const shareResponse = await fetch("/api/shares", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          examId: exam.id,
+        }),
+      });
+
+      if (!shareResponse.ok) {
+        const errorData = await shareResponse.json();
+        console.error("Share API error:", errorData);
+        throw new Error(errorData.error?.message || "Errore nella creazione del link");
+      }
+
+      const shareResult = await shareResponse.json();
+      const link = `${window.location.origin}/share/${shareResult.data.slug}`;
+      setShareableLink(link);
+      setShowShareDialog(true);
+    } catch (error) {
+      console.error("Erro ao gerar link:", error);
+      toast.error(error instanceof Error ? error.message : "Errore nella generazione del link");
+    } finally {
+      setIsGeneratingLink(false);
+    }
   };
 
   // Copy link to clipboard
@@ -471,7 +511,7 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
       <div className="max-w-2xl mx-auto p-6 space-y-6">
         {/* Banner for shared links */}
         {hasPrefill && (
-          <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-[#EFF6FF] via-[#DBEAFE] to-[#BFDBFE] dark:from-[#005A9C]/20 dark:via-[#005A9C]/10 dark:to-[#005A9C]/5 border-2 border-primary/30 shadow-lg animate-slide-in-up">
+          <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-[bg-primary/10] via-[bg-primary/20] to-[bg-primary/30] dark:from-[primary]/20 dark:via-[primary]/10 dark:to-[primary]/5 border-2 border-primary/30 shadow-lg animate-slide-in-up">
             {/* Decorative elements */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl" />
             <div className="absolute bottom-0 left-0 w-24 h-24 bg-accent/10 rounded-full blur-2xl" />
@@ -563,23 +603,30 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
                 </CardDescription>
               </div>
 
-              {/* Generate link button - only for class representatives */}
-              {session?.user?.isRepresentative && (
-                <div className="relative group">
-                  <div className="absolute -inset-0.5 bg-gradient-to-r from-primary to-primary/60 rounded-lg blur opacity-30 group-hover:opacity-60 transition-all" />
-                  <Button
-                    type="button"
-                    size="sm"
-                    onClick={handleGenerateShareableLink}
-                    className="relative flex-shrink-0 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground border-0 shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:-translate-y-0.5"
-                    disabled={!formData.subjectId || !formData.professorId}
-                  >
-                    <Link2 className="w-4 h-4 mr-2" />
-                    {t("generateLink")}
-                    <span className="ml-2 text-xs opacity-75">✨</span>
-                  </Button>
-                </div>
-              )}
+              {/* Generate link button - available for all users */}
+              <div className="relative group">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-primary to-primary/60 rounded-lg blur opacity-30 group-hover:opacity-60 transition-all" />
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={handleGenerateShareableLink}
+                  className="relative flex-shrink-0 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground border-0 shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:-translate-y-0.5"
+                  disabled={!formData.subjectId || !formData.professorId || isGeneratingLink}
+                >
+                  {isGeneratingLink ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                      {tCommon("loading")}
+                    </>
+                  ) : (
+                    <>
+                      <Link2 className="w-4 h-4 mr-2" />
+                      {t("generateLink")}
+                      <span className="ml-2 text-xs opacity-75">✨</span>
+                    </>
+                  )}
+                </Button>
+              </div>
             </div>
           </CardHeader>
 
@@ -757,8 +804,8 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
                     >
                       <div className="flex items-start gap-3">
                         {/* Question number */}
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#EFF6FF] dark:bg-[#005A9C]/10 flex items-center justify-center mt-2 transition-all group-hover:bg-[#DBEAFE] dark:group-hover:bg-[#005A9C]/20">
-                          <span className="text-sm text-[#005A9C] dark:text-[#60A5FA]">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[bg-primary/10] dark:bg-[primary]/10 flex items-center justify-center mt-2 transition-all group-hover:bg-[bg-primary/20] dark:group-hover:bg-[primary]/20">
+                          <span className="text-sm text-[primary] dark:text-[#60A5FA]">
                             {index + 1}
                           </span>
                         </div>
@@ -858,7 +905,7 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
       <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
         <DialogContent className="sm:max-w-lg bg-card border-border overflow-hidden">
           {/* Header with gradient */}
-          <div className="relative -mx-6 -mt-6 mb-4 p-6 bg-gradient-to-br from-[#EFF6FF] via-[#DBEAFE] to-[#BFDBFE] dark:from-[#005A9C]/20 dark:via-[#005A9C]/10 dark:to-[#005A9C]/5 border-b border-primary/20">
+          <div className="relative -mx-6 -mt-6 mb-4 p-6 bg-gradient-to-br from-[bg-primary/10] via-[bg-primary/20] to-[bg-primary/30] dark:from-[primary]/20 dark:via-[primary]/10 dark:to-[primary]/5 border-b border-primary/20">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl" />
             <div className="absolute bottom-0 left-0 w-24 h-24 bg-accent/10 rounded-full blur-2xl" />
 
@@ -882,20 +929,20 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
           <div className="space-y-4 px-1">
             {/* Info cards */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-gradient-to-br from-[#EFF6FF] to-[#DBEAFE] dark:from-[#005A9C]/10 dark:to-[#005A9C]/5 rounded-lg p-3 border border-primary/20">
+              <div className="bg-gradient-to-br from-[bg-primary/10] to-[bg-primary/20] dark:from-[primary]/10 dark:to-[primary]/5 rounded-lg p-3 border border-primary/20">
                 <p className="text-xs text-muted-foreground mb-1">{t("shareDialog.subjectLabel")}</p>
                 <p className="font-semibold text-primary">
                   {getSubjectName(formData.subjectId)}
                 </p>
               </div>
-              <div className="bg-gradient-to-br from-[#EFF6FF] to-[#DBEAFE] dark:from-[#005A9C]/10 dark:to-[#005A9C]/5 rounded-lg p-3 border border-primary/20">
+              <div className="bg-gradient-to-br from-[bg-primary/10] to-[bg-primary/20] dark:from-[primary]/10 dark:to-[primary]/5 rounded-lg p-3 border border-primary/20">
                 <p className="text-xs text-muted-foreground mb-1">{t("shareDialog.professorLabel")}</p>
                 <p className="font-semibold text-primary">
                   {getProfessorName(formData.professorId)}
                 </p>
               </div>
               {formData.courseId && (
-                <div className="col-span-2 bg-gradient-to-br from-[#EFF6FF] to-[#DBEAFE] dark:from-[#005A9C]/10 dark:to-[#005A9C]/5 rounded-lg p-3 border border-primary/20">
+                <div className="col-span-2 bg-gradient-to-br from-[bg-primary/10] to-[bg-primary/20] dark:from-[primary]/10 dark:to-[primary]/5 rounded-lg p-3 border border-primary/20">
                   <p className="text-xs text-muted-foreground mb-1">{t("shareDialog.courseLabel")}</p>
                   <p className="font-semibold text-primary">{getCourseName(formData.courseId)}</p>
                 </div>
@@ -935,26 +982,26 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
             </div>
 
             {/* Instructions */}
-            <div className="bg-gradient-to-br from-[#FFF7ED] to-[#FED7AA] dark:from-[#FFA78D]/10 dark:to-[#FFA78D]/5 rounded-lg p-4 border border-[#FFA78D]/30">
+            <div className="bg-gradient-to-br from-[#FFF7ED] to-[#FED7AA] dark:from-[accent]/10 dark:to-[accent]/5 rounded-lg p-4 border border-[accent]/30">
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#FFA78D]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <div className="w-8 h-8 rounded-full bg-[accent]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                   <span className="text-lg">💡</span>
                 </div>
                 <div className="flex-1 space-y-2">
-                  <p className="text-sm font-medium text-[#92400E] dark:text-[#FFA78D]">
+                  <p className="text-sm font-medium text-[orange-900] dark:text-[accent]">
                     {t("shareDialog.howToShare")}
                   </p>
-                  <ul className="text-xs text-[#92400E]/80 dark:text-[#FFA78D]/80 space-y-1">
+                  <ul className="text-xs text-[orange-900]/80 dark:text-[accent]/80 space-y-1">
                     <li className="flex items-center gap-2">
-                      <span className="w-1 h-1 rounded-full bg-[#FFA78D]" />
+                      <span className="w-1 h-1 rounded-full bg-[accent]" />
                       {t("shareDialog.step1")}
                     </li>
                     <li className="flex items-center gap-2">
-                      <span className="w-1 h-1 rounded-full bg-[#FFA78D]" />
+                      <span className="w-1 h-1 rounded-full bg-[accent]" />
                       {t("shareDialog.step2")}
                     </li>
                     <li className="flex items-center gap-2">
-                      <span className="w-1 h-1 rounded-full bg-[#FFA78D]" />
+                      <span className="w-1 h-1 rounded-full bg-[accent]" />
                       {t("shareDialog.step3")}
                     </li>
                   </ul>
@@ -1003,7 +1050,7 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
             </div>
 
             {/* Explanation */}
-            <div className="bg-[#EFF6FF] dark:bg-[#005A9C]/10 rounded-lg p-3 border-l-4 border-[#005A9C]">
+            <div className="bg-[bg-primary/10] dark:bg-[primary]/10 rounded-lg p-3 border-l-4 border-[primary]">
               <p className="text-sm text-foreground leading-relaxed m-0">
                 {tQuestion("linking.explanation")}
               </p>
