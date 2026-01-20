@@ -37,6 +37,45 @@ interface SapienzaData {
   }[];
 }
 
+// Tipagem do JSON de questões
+interface SeedQuestion {
+  text: string;
+  timesAsked: number;
+  views: number;
+}
+
+interface SeedQuestionsData {
+  description: string;
+  createdAt: string;
+  totalQuestions: number;
+  questions: {
+    anatomiaPatologica: SeedQuestion[];
+    anatomiaUmana: SeedQuestion[];
+    biologia: SeedQuestion[];
+    fisica: SeedQuestion[];
+    chimica: SeedQuestion[];
+    fisiologia: SeedQuestion[];
+    istologia: SeedQuestion[];
+    farmacologia: SeedQuestion[];
+    patologiaGenerale: SeedQuestion[];
+    microbiologia: SeedQuestion[];
+    medicinaInterna: SeedQuestion[];
+    chirurgiaGenerale: SeedQuestion[];
+    neurologia: SeedQuestion[];
+    pediatria: SeedQuestion[];
+    semeiotica: SeedQuestion[];
+  };
+}
+
+// Tipagem do JSON de questões de Anatomia Umana I (300 questões)
+interface AnatomiaUmanaQuestionsData {
+  description: string;
+  createdAt: string;
+  subject: string;
+  totalQuestions: number;
+  questions: SeedQuestion[];
+}
+
 // Helper para normalizar nomes para comparação
 function normalizeKey(text: string): string {
   return text
@@ -667,69 +706,165 @@ async function main() {
   }
 
   // ============================================
-  // 7. EXAMES DE EXEMPLO
+  // 7. CARREGAR QUESTÕES DOS ARQUIVOS EXTERNOS
+  // ============================================
+  console.log("\n📂 Loading questions from seed files...");
+
+  // Arquivo principal de questões
+  const questionsPath = path.join(process.cwd(), "data", "seed-questions.json");
+  const questionsRawData = fs.readFileSync(questionsPath, "utf-8");
+  const seedQuestionsData: SeedQuestionsData = JSON.parse(questionsRawData);
+  console.log(`   📊 Questões gerais: ${seedQuestionsData.totalQuestions}`);
+
+  // Arquivo de 300 questões de Anatomia Umana I
+  const anatomiaPath = path.join(process.cwd(), "data", "seed-questions-anatomia-humana.json");
+  const anatomiaRawData = fs.readFileSync(anatomiaPath, "utf-8");
+  const anatomiaQuestionsData: AnatomiaUmanaQuestionsData = JSON.parse(anatomiaRawData);
+  console.log(`   📊 Questões Anatomia Umana I: ${anatomiaQuestionsData.totalQuestions}`);
+
+  // ============================================
+  // 8. EXAMES DE EXEMPLO
   // ============================================
   console.log("\n📝 Creating sample exams...");
 
-  // Pegar algumas matérias e professores para criar exames
+  // Pegar algumas matérias e professores para criar exames (fallback)
   const subjectIds = Array.from(subjectsMap.values());
   const professorIds = Array.from(professorsMap.values());
 
-  const examData = [
-    { subjectIdx: 0, profIdx: 0, year: 1, date: "2026-01-15" },
-    { subjectIdx: 1, profIdx: 5, year: 1, date: "2026-02-10" },
-    { subjectIdx: 2, profIdx: 10, year: 1, date: "2026-02-20" },
+  // Mapeamento de matérias do JSON para nomes no banco
+  const subjectMapping: { key: keyof typeof seedQuestionsData.questions; dbName: string; year: number }[] = [
+    { key: "anatomiaPatologica", dbName: "Anatomia Patologica", year: 3 },
+    { key: "anatomiaUmana", dbName: "Anatomia Umana", year: 1 },
+    { key: "biologia", dbName: "BIOLOGIA", year: 1 },
+    { key: "fisica", dbName: "FISICA", year: 1 },
+    { key: "chimica", dbName: "CHIMICA", year: 1 },
+    { key: "fisiologia", dbName: "Fisiologia", year: 2 },
+    { key: "istologia", dbName: "Istologia", year: 1 },
+    { key: "farmacologia", dbName: "Farmacologia", year: 3 },
+    { key: "patologiaGenerale", dbName: "Patologia Generale", year: 3 },
+    { key: "microbiologia", dbName: "Microbiologia", year: 2 },
+    { key: "medicinaInterna", dbName: "Medicina Interna", year: 4 },
+    { key: "chirurgiaGenerale", dbName: "Chirurgia Generale", year: 4 },
+    { key: "neurologia", dbName: "Neurologia", year: 5 },
+    { key: "pediatria", dbName: "Pediatria", year: 5 },
+    { key: "semeiotica", dbName: "Semeiotica", year: 3 },
   ];
 
-  const createdExams = [];
-  for (let i = 0; i < examData.length; i++) {
-    const ed = examData[i];
-    if (!subjectIds[ed.subjectIdx] || !professorIds[ed.profIdx]) continue;
+  const createdExams: { id: string; subjectName: keyof typeof seedQuestionsData.questions }[] = [];
+  const examDates = ["2025-06-15", "2025-09-10", "2026-01-20"];
 
-    // Create exam with UUIDv7
-    const exam = await prisma.exam.create({
-      data: {
-        id: uuidv7(),
-        subjectId: subjectIds[ed.subjectIdx],
-        professorId: professorIds[ed.profIdx],
-        universityId: university.id,
-        courseId: defaultCourseId,
-        year: ed.year,
-        examDate: new Date(ed.date),
-        examType: i % 2 === 0 ? "orale" : "scritto",
-        academicYear: "2025/2026",
-        createdBy: representative.id,
-      },
+  for (const mapping of subjectMapping) {
+    // Buscar a matéria no banco
+    const subject = await prisma.subject.findFirst({
+      where: { name: { contains: mapping.dbName } },
     });
-    createdExams.push(exam);
-    console.log(`   ✅ Esame ${i + 1}`);
+
+    if (!subject) {
+      console.log(`   ⚠️  Matéria não encontrada: ${mapping.dbName}`);
+      continue;
+    }
+
+    // Buscar um professor associado (se houver)
+    const profSubject = await prisma.professorSubject.findFirst({
+      where: { subjectId: subject.id },
+      include: { professor: true },
+    });
+
+    // Criar 3 exames por matéria (datas diferentes)
+    for (let i = 0; i < examDates.length; i++) {
+      const exam = await prisma.exam.create({
+        data: {
+          id: uuidv7(),
+          subjectId: subject.id,
+          professorId: profSubject?.professor.id || professorIds[0],
+          universityId: university.id,
+          courseId: defaultCourseId,
+          year: mapping.year,
+          examDate: new Date(examDates[i]),
+          examType: i % 2 === 0 ? "orale" : "scritto",
+          academicYear: "2025/2026",
+          createdBy: representative.id,
+        },
+      });
+      createdExams.push({ id: exam.id, subjectName: mapping.key });
+    }
+    console.log(`   ✅ 3 Esami ${mapping.dbName}`);
+  }
+
+  console.log(`   📊 Total de exames criados: ${createdExams.length}`);
+
+  // ============================================
+  // 8.1. EXAMES ESPECIAIS DE ANATOMIA UMANA I (300 questões)
+  // ============================================
+  console.log("\n📝 Creating Anatomia Umana I exams (300 questions)...");
+
+  // Buscar a matéria Anatomia Umana I
+  const anatomiaUmanaISubject = await prisma.subject.findFirst({
+    where: { name: "Anatomia Umana I", courseId: medicinaAId },
+  });
+
+  // Buscar professor de Anatomia
+  const anatomiaProf = await prisma.professor.findFirst({
+    where: { name: { contains: "Vitali" } },
+  });
+
+  const anatomiaExams: { id: string }[] = [];
+
+  if (anatomiaUmanaISubject) {
+    // Criar 10 exames para distribuir as 300 questões (~30 por exame)
+    const anatomiaExamDates = [
+      "2024-06-10", "2024-09-05", "2025-01-15",
+      "2025-06-12", "2025-09-08", "2026-01-18",
+      "2024-07-15", "2024-11-20", "2025-02-25",
+      "2025-07-10"
+    ];
+
+    for (let i = 0; i < anatomiaExamDates.length; i++) {
+      const exam = await prisma.exam.create({
+        data: {
+          id: uuidv7(),
+          subjectId: anatomiaUmanaISubject.id,
+          professorId: anatomiaProf?.id || professorIds[0],
+          universityId: university.id,
+          courseId: defaultCourseId,
+          year: 1,
+          examDate: new Date(anatomiaExamDates[i]),
+          examType: i % 2 === 0 ? "orale" : "scritto",
+          academicYear: i < 3 ? "2023/2024" : (i < 6 ? "2024/2025" : "2025/2026"),
+          createdBy: representative.id,
+        },
+      });
+      anatomiaExams.push({ id: exam.id });
+    }
+    console.log(`   ✅ ${anatomiaExams.length} exames de Anatomia Umana I criados`);
   }
 
   // ============================================
-  // 8. PERGUNTAS DE EXEMPLO
+  // 9. PERGUNTAS DE EXEMPLO
   // ============================================
   console.log("\n❓ Creating sample questions...");
 
-  const sampleQuestions = [
-    // Física
-    { text: "Descriva le leggi di Newton e le loro applicazioni nel corpo umano.", timesAsked: 8, views: 127 },
-    { text: "Come si calcola il lavoro compiuto da una forza? Fornisca un esempio.", timesAsked: 5, views: 89 },
-    { text: "Spieghi il principio di conservazione dell'energia.", timesAsked: 6, views: 102 },
-    // Biologia
-    { text: "Descriva la struttura e la funzione della membrana cellulare.", timesAsked: 12, views: 234 },
-    { text: "Quali sono le fasi del ciclo cellulare? Descriva brevemente ciascuna.", timesAsked: 10, views: 198 },
-    { text: "Spieghi il processo di trascrizione del DNA.", timesAsked: 8, views: 156 },
-    // Chimica
-    { text: "Descriva la struttura degli amminoacidi e il legame peptidico.", timesAsked: 15, views: 312 },
-    { text: "Quali sono le differenze tra reazioni endotermiche ed esotermiche?", timesAsked: 7, views: 134 },
-    { text: "Spieghi il concetto di pH e la scala di acidità.", timesAsked: 9, views: 167 },
-  ];
-
   const createdQuestions: { id: string; examId: string }[] = [];
   let questionIdx = 0;
+
+  // Contador de questões por matéria (para distribuir entre os exames)
+  const questionCounters: Record<string, number> = {};
+  for (const mapping of subjectMapping) {
+    questionCounters[mapping.key] = 0;
+  }
+
+  // Distribuir questões entre os exames de cada matéria
   for (const exam of createdExams) {
-    for (let i = 0; i < 3 && questionIdx < sampleQuestions.length; i++) {
-      const q = sampleQuestions[questionIdx];
+    const questions = seedQuestionsData.questions[exam.subjectName];
+    if (!questions || questions.length === 0) continue;
+
+    // Cada exame recebe ~10 questões (distribuídas entre os 3 exames)
+    const questionsPerExam = Math.ceil(questions.length / 3);
+    const startIdx = questionCounters[exam.subjectName];
+    const endIdx = Math.min(startIdx + questionsPerExam, questions.length);
+
+    for (let i = startIdx; i < endIdx; i++) {
+      const q = questions[i];
       const groupId = uuidv7();
 
       const question = await prisma.question.create({
@@ -737,7 +872,7 @@ async function main() {
           id: uuidv7(),
           examId: exam.id,
           text: q.text,
-          order: i + 1,
+          order: i - startIdx + 1,
           timesAsked: q.timesAsked,
           views: q.views,
           groupId: groupId,
@@ -747,11 +882,51 @@ async function main() {
       createdQuestions.push({ id: question.id, examId: exam.id });
       questionIdx++;
     }
+
+    questionCounters[exam.subjectName] = endIdx;
   }
-  console.log(`   ✅ ${questionIdx} domande create`);
+
+  console.log(`   ✅ ${questionIdx} domande create (questões gerais)`);
 
   // ============================================
-  // 9. RESPOSTAS DE ESTUDANTES
+  // 9.1. QUESTÕES DE ANATOMIA UMANA I (300 questões)
+  // ============================================
+  console.log("\n❓ Creating Anatomia Umana I questions (300)...");
+
+  let anatomiaQuestionIdx = 0;
+  const questionsPerAnatomiaExam = Math.ceil(anatomiaQuestionsData.questions.length / anatomiaExams.length);
+
+  for (let examIdx = 0; examIdx < anatomiaExams.length; examIdx++) {
+    const exam = anatomiaExams[examIdx];
+    const startIdx = examIdx * questionsPerAnatomiaExam;
+    const endIdx = Math.min(startIdx + questionsPerAnatomiaExam, anatomiaQuestionsData.questions.length);
+
+    for (let i = startIdx; i < endIdx; i++) {
+      const q = anatomiaQuestionsData.questions[i];
+      const groupId = uuidv7();
+
+      const question = await prisma.question.create({
+        data: {
+          id: uuidv7(),
+          examId: exam.id,
+          text: q.text,
+          order: i - startIdx + 1,
+          timesAsked: q.timesAsked,
+          views: q.views,
+          groupId: groupId,
+          isCanonical: true,
+        },
+      });
+      createdQuestions.push({ id: question.id, examId: exam.id });
+      anatomiaQuestionIdx++;
+    }
+  }
+
+  console.log(`   ✅ ${anatomiaQuestionIdx} domande de Anatomia Umana I create`);
+  console.log(`   📊 Total geral: ${questionIdx + anatomiaQuestionIdx} questões`);
+
+  // ============================================
+  // 10. RESPOSTAS DE ESTUDANTES
   // ============================================
   console.log("\n💬 Creating sample answers...");
 
@@ -760,21 +935,33 @@ async function main() {
     await prisma.studentAnswer.create({
       data: {
         id: uuidv7(),
-        questionId: createdQuestions[0].id, // First question
+        questionId: createdQuestions[0].id, // First question (Anatomia Patologica)
         userId: representative.id,
-        content: "Le tre leggi di Newton sono: 1) Principio di inerzia - un corpo permane nel suo stato di quiete o moto rettilineo uniforme a meno che non intervenga una forza esterna. 2) F=ma - la forza è uguale alla massa per l'accelerazione. 3) Principio di azione e reazione - ad ogni azione corrisponde una reazione uguale e contraria.",
+        content: "La necrosi è una morte cellulare patologica caratterizzata da: rigonfiamento cellulare, rottura della membrana, rilascio del contenuto citoplasmatico e risposta infiammatoria. L'apoptosi invece è una morte cellulare programmata con: condensazione della cromatina, formazione di corpi apoptotici, membrana intatta e assenza di infiammazione. La necrosi è irreversibile e danneggia i tessuti circostanti, mentre l'apoptosi è un processo fisiologico di eliminazione cellulare controllata.",
         isPublic: true,
       },
     });
   }
 
-  if (createdQuestions.length > 3 && createdStudents.length > 0) {
+  if (createdQuestions.length > 6 && createdStudents.length > 0) {
     await prisma.studentAnswer.create({
       data: {
         id: uuidv7(),
-        questionId: createdQuestions[3].id, // Fourth question
+        questionId: createdQuestions[6].id, // Anatomia Umana question
         userId: createdStudents[0].id,
-        content: "La membrana cellulare è composta da un doppio strato fosfolipidico con proteine integrali e periferiche. Ha funzioni di: barriera selettiva, trasporto di molecole, comunicazione cellulare e adesione.",
+        content: "Il cuore è diviso in 4 cavità: 2 atri (superiori) e 2 ventricoli (inferiori). Le valvole atrioventricolari (mitrale a sinistra, tricuspide a destra) separano atri e ventricoli. Le valvole semilunari (aortica e polmonare) separano i ventricoli dalle arterie. Il sistema di conduzione include: nodo senoatriale (pacemaker), nodo atrioventricolare, fascio di His e fibre di Purkinje.",
+        isPublic: true,
+      },
+    });
+  }
+
+  if (createdQuestions.length > 12 && createdStudents.length > 1) {
+    await prisma.studentAnswer.create({
+      data: {
+        id: uuidv7(),
+        questionId: createdQuestions[12].id, // Biologia question
+        userId: createdStudents[1].id,
+        content: "Il DNA ha una struttura a doppia elica antiparallela, con le basi azotate rivolte verso l'interno (A-T con 2 legami H, G-C con 3 legami H). La replicazione semiconservativa prevede: 1) Separazione dei filamenti da elicasi, 2) Sintesi di primer da primasi, 3) Allungamento da DNA polimerasi III (5'→3'), 4) Sostituzione primer e ligazione da DNA polimerasi I e ligasi. Ogni molecola figlia contiene un filamento parentale e uno neosintetizzato.",
         isPublic: true,
       },
     });
@@ -783,29 +970,40 @@ async function main() {
   console.log("   ✅ Respostas de exemplo criadas");
 
   // ============================================
-  // 10. COMENTÁRIOS
+  // 11. COMENTÁRIOS
   // ============================================
   console.log("\n📝 Creating sample comments...");
 
   // Create comments only if we have questions and students
-  if (createdQuestions.length > 0 && createdStudents.length > 1) {
+  if (createdQuestions.length > 0 && createdStudents.length > 2) {
     await prisma.comment.create({
       data: {
         id: uuidv7(),
-        questionId: createdQuestions[0].id, // First question
-        userId: createdStudents[1].id,
-        content: "Questa domanda è uscita anche al mio esame! Il prof ha apprezzato quando ho fatto esempi pratici.",
+        questionId: createdQuestions[0].id,
+        userId: createdStudents[2].id,
+        content: "Questa domanda è uscita anche al mio esame! Il prof ha chiesto di fare esempi pratici delle differenze morfologiche.",
       },
     });
   }
 
-  if (createdQuestions.length > 3 && createdStudents.length > 2) {
+  if (createdQuestions.length > 6 && createdStudents.length > 3) {
     await prisma.comment.create({
       data: {
         id: uuidv7(),
-        questionId: createdQuestions[3].id, // Fourth question
-        userId: createdStudents[2].id,
-        content: "Importante ricordare anche il modello a mosaico fluido di Singer e Nicolson!",
+        questionId: createdQuestions[6].id,
+        userId: createdStudents[3].id,
+        content: "Il professore vuole sapere anche i rapporti del cuore con esofago, aorta discendente e vena cava.",
+      },
+    });
+  }
+
+  if (createdQuestions.length > 12 && createdStudents.length > 4) {
+    await prisma.comment.create({
+      data: {
+        id: uuidv7(),
+        questionId: createdQuestions[12].id,
+        userId: createdStudents[4].id,
+        content: "Ricordatevi l'esperimento di Meselson-Stahl che ha dimostrato la natura semiconservativa della replicazione!",
       },
     });
   }
@@ -822,12 +1020,30 @@ async function main() {
 📊 Resumo:
    • 1 universidade (Sapienza)
    • ${coursesMap.size} cursos de Medicina
-   • ${subjectsMap.size} matérias
-   • ${professorsMap.size} professores
+   • ${subjectsMap.size} matérias base + matérias adicionais
+   • ${professorsMap.size} professores base + professores adicionais
    • ${linkCount} vínculos professor-matéria
    • ${2 + students.length + 1} usuários
-   • ${createdExams.length} exames
-   • ${questionIdx} perguntas
+   • ${createdExams.length + anatomiaExams.length} exames total
+   • ${questionIdx + anatomiaQuestionIdx} perguntas total
+
+📚 Questões por Matéria:
+   • Anatomia Umana I: ${anatomiaQuestionsData.totalQuestions} questões (arquivo especial)
+   • Anatomia Patológica: ${seedQuestionsData.questions.anatomiaPatologica.length} questões
+   • Anatomia Umana (geral): ${seedQuestionsData.questions.anatomiaUmana.length} questões
+   • Biologia: ${seedQuestionsData.questions.biologia.length} questões
+   • Fisica: ${seedQuestionsData.questions.fisica.length} questões
+   • Chimica/Biochimica: ${seedQuestionsData.questions.chimica.length} questões
+   • Fisiologia: ${seedQuestionsData.questions.fisiologia.length} questões
+   • Istologia: ${seedQuestionsData.questions.istologia.length} questões
+   • Farmacologia: ${seedQuestionsData.questions.farmacologia.length} questões
+   • Patologia Generale: ${seedQuestionsData.questions.patologiaGenerale.length} questões
+   • Microbiologia: ${seedQuestionsData.questions.microbiologia.length} questões
+   • Medicina Interna: ${seedQuestionsData.questions.medicinaInterna.length} questões
+   • Chirurgia Generale: ${seedQuestionsData.questions.chirurgiaGenerale.length} questões
+   • Neurologia: ${seedQuestionsData.questions.neurologia.length} questões
+   • Pediatria: ${seedQuestionsData.questions.pediatria.length} questões
+   • Semeiotica: ${seedQuestionsData.questions.semeiotica.length} questões
 
 📋 Credenciais de Acesso (senha: demo123):
    ┌────────────────────────────────────────┐
