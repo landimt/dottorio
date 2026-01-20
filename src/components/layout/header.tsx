@@ -23,6 +23,7 @@ import {
   Settings,
   Sun,
   User,
+  Shield,
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
@@ -46,6 +47,7 @@ export function Header() {
   ];
 
   const user = session?.user;
+  const isAdmin = user?.role === "admin" || user?.role === "super_admin";
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
@@ -89,6 +91,20 @@ export function Header() {
 
           {/* Right Section */}
           <div className="flex-1 flex items-center justify-end space-x-3">
+            {/* Admin Panel Button - Only for admins */}
+            {isAdmin && (
+              <Link href="/admin">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="flex items-center gap-2 h-9 px-3 text-primary hover:text-primary hover:bg-primary/10 font-medium"
+                >
+                  <Shield className="w-4 h-4" />
+                  <span className="hidden lg:inline">{tHeader("adminPanel")}</span>
+                </Button>
+              </Link>
+            )}
+
             {/* Notifications */}
             <Button
               variant="ghost"
@@ -159,6 +175,8 @@ export function Header() {
                   </Link>
                 </DropdownMenuItem>
 
+                <DropdownMenuSeparator />
+
                 {/* Theme Toggle */}
                 <DropdownMenuItem onClick={toggleTheme} className="cursor-pointer">
                   {theme === "dark" ? (
@@ -192,6 +210,19 @@ export function Header() {
           </Link>
 
           <div className="flex items-center gap-1">
+            {/* Admin Panel Button Mobile - Only for admins */}
+            {isAdmin && (
+              <Link href="/admin">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-9 w-9 p-0 text-primary hover:text-primary hover:bg-primary/10"
+                >
+                  <Shield className="w-5 h-5" />
+                </Button>
+              </Link>
+            )}
+
             <Button
               variant="ghost"
               size="sm"
@@ -241,6 +272,8 @@ export function Header() {
                     <span>{tHeader("settings")}</span>
                   </Link>
                 </DropdownMenuItem>
+
+                <DropdownMenuSeparator />
 
                 {/* Theme Toggle Mobile */}
                 <DropdownMenuItem onClick={toggleTheme} className="cursor-pointer">
