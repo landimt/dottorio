@@ -448,18 +448,18 @@ export function QuestionDetail({
   };
 
   const getUniversityInfo = (universityName: string | undefined) => {
-    if (!universityName) return { short: "N/A", color: "#C9B3F9" };
+    if (!universityName) return { short: "N/A", colorClass: "text-purple-400 bg-purple-50 border-purple-200" };
 
-    const universityMap: Record<string, { short: string; color: string }> = {
-      "La Sapienza": { short: "Sapienza", color: "#F7B29D" },
-      "Università di Bologna": { short: "UniBO", color: "#C9B3F9" },
-      "Università di Milano": { short: "UniMI", color: "#A5D6F6" },
+    const universityMap: Record<string, { short: string; colorClass: string }> = {
+      "La Sapienza": { short: "Sapienza", colorClass: "text-orange-400 bg-orange-50 border-orange-200" },
+      "Università di Bologna": { short: "UniBO", colorClass: "text-purple-400 bg-purple-50 border-purple-200" },
+      "Università di Milano": { short: "UniMI", colorClass: "text-blue-400 bg-blue-50 border-blue-200" },
     };
 
     return (
       universityMap[universityName] || {
         short: universityName.slice(0, 8),
-        color: "#C9B3F9",
+        colorClass: "text-purple-400 bg-purple-50 border-purple-200",
       }
     );
   };
@@ -482,14 +482,14 @@ export function QuestionDetail({
 
           {/* Mobile Question Selector */}
           <div className="md:hidden mb-4">
-            <Card className="p-3 bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 border-2">
+            <Card className="p-3 bg-gradient-to-br from-card to-muted border-2">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="font-semibold text-foreground text-sm">
                   {question.exam.subject.emoji} {question.exam.subject.name}
                 </h3>
                 <Badge
                   variant="outline"
-                  className="bg-[#005A9C]/10 text-[#005A9C] border-[#005A9C]/20 font-semibold text-xs px-2 py-0.5"
+                  className="bg-primary/10 text-primary border-primary/20 font-semibold text-xs px-2 py-0.5"
                 >
                   {filteredQuestions.findIndex((q) => q.id === question.id) + 1}{" "}
                   / {filteredQuestions.length}
@@ -562,7 +562,7 @@ export function QuestionDetail({
                       className="fixed inset-0 z-10"
                       onClick={() => setIsQuestionDropdownOpen(false)}
                     />
-                    <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 border-2 border-border rounded-lg shadow-xl z-20 max-h-[300px] overflow-y-auto">
+                    <div className="absolute top-full left-0 right-0 mt-2 bg-card border-2 border-border rounded-lg shadow-xl z-20 max-h-[300px] overflow-y-auto">
                       {filteredQuestions.map((q, index) => (
                         <button
                           key={q.id}
@@ -572,11 +572,11 @@ export function QuestionDetail({
                             }
                             setIsQuestionDropdownOpen(false);
                           }}
-                          className={`w-full px-3 py-3 text-sm text-left hover:bg-[#005A9C]/5 transition-colors border-b border-border last:border-b-0 flex items-start gap-2 ${
-                            q.id === question.id ? "bg-[#005A9C]/10" : ""
+                          className={`w-full px-3 py-3 text-sm text-left hover:bg-primary/5 transition-colors border-b border-border last:border-b-0 flex items-start gap-2 ${
+                            q.id === question.id ? "bg-primary/10" : ""
                           }`}
                         >
-                          <span className="font-semibold text-[#005A9C] flex-shrink-0 min-w-[24px]">
+                          <span className="font-semibold text-primary flex-shrink-0 min-w-[24px]">
                             {index + 1}.
                           </span>
                           <span className="flex-1 leading-relaxed">
@@ -654,7 +654,7 @@ export function QuestionDetail({
                   }}
                   className={`w-full text-left p-4 transition-all hover:bg-muted/50 ${
                     q.id === question.id
-                      ? "bg-[#EFF6FF] dark:bg-[#005A9C]/10 border-l-4 border-l-[#005A9C]"
+                      ? "bg-primary/10 border-l-4 border-l-primary"
                       : "border-l-4 border-l-transparent"
                   }`}
                 >
@@ -662,14 +662,14 @@ export function QuestionDetail({
                     <p
                       className={`text-sm line-clamp-2 leading-relaxed ${
                         q.id === question.id
-                          ? "text-[#005A9C] font-medium"
+                          ? "text-primary font-medium"
                           : "text-foreground"
                       }`}
                     >
                       {q.text}
                     </p>
                     {q.id === question.id && saved && (
-                      <BookmarkCheck className="w-4 h-4 text-[#005A9C] flex-shrink-0" />
+                      <BookmarkCheck className="w-4 h-4 text-primary flex-shrink-0" />
                     )}
                   </div>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -690,7 +690,7 @@ export function QuestionDetail({
                               setIsVariationsDialogOpen(true);
                             }
                           }}
-                          className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#005A9C]/10 text-[#005A9C] hover:bg-[#005A9C]/20 hover:scale-105 transition-all duration-200 border border-[#005A9C]/30 hover:border-[#005A9C] cursor-pointer"
+                          className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-primary/10 text-primary hover:bg-primary/20 hover:scale-105 transition-all duration-200 border border-primary/30 hover:border-primary cursor-pointer"
                           title={t("variations.title")}
                         >
                           <GitBranch className="w-3 h-3" />
@@ -718,7 +718,7 @@ export function QuestionDetail({
                   onClick={handleToggleSave}
                   className={
                     saved
-                      ? "bg-[#005A9C] hover:bg-[#004d85] flex-shrink-0"
+                      ? "bg-primary hover:bg-primary/90 flex-shrink-0"
                       : "flex-shrink-0"
                   }
                 >
@@ -736,13 +736,13 @@ export function QuestionDetail({
               <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                 <Badge
                   variant="outline"
-                  className="bg-[#EFF6FF] text-[#005A9C] border-[#005A9C]/20"
+                  className="bg-primary/10 text-primary border-primary/20"
                 >
                   {question.exam.professor?.name || "N/A"}
                 </Badge>
                 <Badge
                   variant="outline"
-                  className="bg-[#FFF7ED] text-[#FFA78D] border-[#FFA78D]/20"
+                  className="bg-accent/10 text-accent border-accent/20"
                 >
                   {question.exam.university.name}
                 </Badge>
@@ -800,8 +800,8 @@ export function QuestionDetail({
                 {/* AI Answer Tab */}
                 <TabsContent value="ai-answer" className="space-y-4 mt-0">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3 border-l-4 border-[#005A9C] pl-3">
-                      <BookOpen className="w-5 h-5 text-[#005A9C]" />
+                    <div className="flex items-center space-x-3 border-l-4 border-primary pl-3">
+                      <BookOpen className="w-5 h-5 text-primary" />
                       <h2 className="font-medium text-foreground">
                         {t("aiAnswer.title")}
                       </h2>
@@ -824,7 +824,7 @@ export function QuestionDetail({
                   <div className="border border-border rounded-lg p-4 bg-muted/30 space-y-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <Star className="w-5 h-5 text-[#005A9C]" />
+                        <Star className="w-5 h-5 text-primary" />
                         <span className="text-sm font-medium">
                           {t("aiAnswer.rateAnswer")}
                         </span>
@@ -874,7 +874,7 @@ export function QuestionDetail({
                             size="sm"
                             onClick={handleSubmitAIFeedback}
                             disabled={!aiRatingFeedback.trim()}
-                            className="bg-[#005A9C] hover:bg-[#004d85] text-white"
+                            className="bg-primary hover:bg-primary/90 text-primary-foreground"
                           >
                             {tCommon("submit")}
                           </Button>
@@ -887,7 +887,7 @@ export function QuestionDetail({
                   {question.aiAnswer ? (
                     <div className="prose prose-sm max-w-none dark:prose-invert">
                       {/* Callout intro */}
-                      <div className="bg-[#EFF6FF] dark:bg-[#005A9C]/10 rounded-lg p-4 border-l-4 border-[#005A9C] mb-4">
+                      <div className="bg-primary/10 rounded-lg p-4 border-l-4 border-primary mb-4">
                         <p className="text-sm leading-relaxed text-foreground m-0">
                           {t("aiAnswer.intro")}
                         </p>
@@ -901,7 +901,7 @@ export function QuestionDetail({
                       />
 
                       {/* Key points callout */}
-                      <div className="bg-[#FFF8F3] dark:bg-[#FFA78D]/5 rounded-lg p-4 border-l-4 border-[#FFA78D] mt-6">
+                      <div className="bg-accent/10 rounded-lg p-4 border-l-4 border-accent mt-6">
                         <div className="flex items-start gap-3">
                           <span className="text-lg">💡</span>
                           <div>
@@ -929,8 +929,8 @@ export function QuestionDetail({
                 {/* Student Answers Tab */}
                 <TabsContent value="student-answers" className="space-y-4 mt-0">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3 border-l-4 border-[#005A9C] pl-3">
-                      <Users className="w-5 h-5 text-[#005A9C]" />
+                    <div className="flex items-center space-x-3 border-l-4 border-primary pl-3">
+                      <Users className="w-5 h-5 text-primary" />
                       <h2 className="font-medium text-foreground">
                         {t("studentAnswers.title")}
                       </h2>
@@ -938,7 +938,10 @@ export function QuestionDetail({
                   </div>
 
                   <div className="text-sm text-muted-foreground bg-muted/30 rounded-lg p-3 border border-border">
-                    💡 <strong>{studentAnswers.length}</strong> {t("studentAnswers.description").replace("<strong>{count} studenti</strong>", `<strong>${studentAnswers.length}</strong>`).replace("💡 ", "")}
+                    {t.rich("studentAnswers.description", {
+                      count: studentAnswers.length,
+                      strong: (chunks) => <strong>{chunks}</strong>,
+                    })}
                   </div>
 
                   {studentAnswers.length > 0 ? (
@@ -954,7 +957,7 @@ export function QuestionDetail({
                           >
                             <div className="flex items-start gap-3 mb-3">
                               <Avatar className="w-10 h-10">
-                                <AvatarFallback className="bg-[#EFF6FF] text-[#005A9C]">
+                                <AvatarFallback className="bg-primary/10 text-primary">
                                   {getInitials(answer.user.name)}
                                 </AvatarFallback>
                               </Avatar>
@@ -965,11 +968,7 @@ export function QuestionDetail({
                                   </span>
                                   <Badge
                                     variant="outline"
-                                    className="text-xs"
-                                    style={{
-                                      backgroundColor: `${uniInfo.color}20`,
-                                      borderColor: uniInfo.color,
-                                    }}
+                                    className={`text-xs border ${uniInfo.colorClass}`}
                                   >
                                     {uniInfo.short}
                                   </Badge>
@@ -998,13 +997,13 @@ export function QuestionDetail({
                                 }
                                 className={`h-8 ${
                                   answer.isLiked
-                                    ? "text-[#005A9C]"
+                                    ? "text-primary"
                                     : "text-muted-foreground"
                                 }`}
                               >
                                 <ThumbsUp
                                   className={`w-4 h-4 mr-2 ${
-                                    answer.isLiked ? "fill-[#005A9C]/30" : ""
+                                    answer.isLiked ? "fill-primary/30" : ""
                                   }`}
                                 />
                                 {answer.likesCount}{" "}
@@ -1043,8 +1042,8 @@ export function QuestionDetail({
                 {/* My Answer Tab */}
                 <TabsContent value="my-answer" className="space-y-4 mt-0">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3 border-l-4 border-[#FFA78D] pl-3">
-                      <StickyNote className="w-5 h-5 text-[#FFA78D]" />
+                    <div className="flex items-center space-x-3 border-l-4 border-accent pl-3">
+                      <StickyNote className="w-5 h-5 text-accent" />
                       <h2 className="font-medium text-foreground">
                         {isEditingPersonalAnswer
                           ? t("myAnswer.writeTitle")
@@ -1057,7 +1056,7 @@ export function QuestionDetail({
                         variant="outline"
                         size="sm"
                         onClick={() => setIsEditingPersonalAnswer(true)}
-                        className="border-[#FFA78D] text-[#FFA78D] hover:bg-[#FFA78D]/10"
+                        className="border-accent text-accent hover:bg-accent/10"
                       >
                         {tCommon("edit")}
                       </Button>
@@ -1096,12 +1095,12 @@ export function QuestionDetail({
                           <div className="h-4 w-px bg-border" />
                           <button
                             onClick={() => setIsAnswerPublic(!isAnswerPublic)}
-                            className="flex items-center gap-2 text-sm hover:text-[#005A9C] transition-colors"
+                            className="flex items-center gap-2 text-sm hover:text-primary transition-colors"
                           >
                             {isAnswerPublic ? (
                               <>
-                                <Globe className="w-4 h-4 text-[#005A9C]" />
-                                <span className="text-[#005A9C] font-medium">
+                                <Globe className="w-4 h-4 text-primary" />
+                                <span className="text-primary font-medium">
                                   {t("myAnswer.public")}
                                 </span>
                               </>
@@ -1117,7 +1116,7 @@ export function QuestionDetail({
                         </div>
                         <Button
                           onClick={handleSavePersonalAnswer}
-                          className="bg-[#FFA78D] hover:bg-[#ff9473] text-white"
+                          className="bg-accent hover:bg-accent/90 text-accent-foreground"
                           size="sm"
                           disabled={isSubmitting}
                         >
@@ -1127,9 +1126,9 @@ export function QuestionDetail({
                       </div>
 
                       {isAnswerPublic && (
-                        <div className="bg-[#EFF6FF] border border-[#005A9C]/20 rounded-lg p-3 flex items-start gap-2">
-                          <Users className="w-4 h-4 text-[#005A9C] mt-0.5" />
-                          <p className="text-sm text-[#005A9C]">
+                        <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 flex items-start gap-2">
+                          <Users className="w-4 h-4 text-primary mt-0.5" />
+                          <p className="text-sm text-primary">
                             {t("myAnswer.publicNotice")}
                           </p>
                         </div>
@@ -1148,7 +1147,7 @@ export function QuestionDetail({
                       </div>
                       <Button
                         onClick={() => setActiveTab("ai-answer")}
-                        className="bg-[#005A9C] hover:bg-[#004d85] text-white"
+                        className="bg-primary hover:bg-primary/90 text-primary-foreground"
                         size="sm"
                       >
                         <BookOpen className="w-4 h-4 mr-2" />
@@ -1252,7 +1251,7 @@ export function QuestionDetail({
             <Card
               className={`p-4 ${
                 question.isCanonical
-                  ? "border-2 border-[#005A9C] bg-[#005A9C]/5"
+                  ? "border-2 border-primary bg-primary/5"
                   : "border border-border"
               }`}
             >
@@ -1260,7 +1259,7 @@ export function QuestionDetail({
                 <Badge
                   className={
                     question.isCanonical
-                      ? "bg-[#005A9C] text-white shrink-0"
+                      ? "bg-primary text-primary-foreground shrink-0"
                       : "bg-muted text-muted-foreground shrink-0"
                   }
                 >
@@ -1282,18 +1281,18 @@ export function QuestionDetail({
             {/* If current is not canonical, show the canonical question */}
             {!question.isCanonical && question.canonical && (
               <Card
-                className="p-4 border-2 border-[#005A9C] bg-[#005A9C]/5 cursor-pointer hover:bg-[#005A9C]/10 transition-colors"
+                className="p-4 border-2 border-primary bg-primary/5 cursor-pointer hover:bg-primary/10 transition-colors"
                 onClick={() => router.push(`/questions/${question.canonical!.id}`)}
               >
                 <div className="flex items-start gap-3">
-                  <Badge className="bg-[#005A9C] text-white shrink-0">
+                  <Badge className="bg-primary text-primary-foreground shrink-0">
                     {t("variations.main")}
                   </Badge>
                   <div className="flex-1 space-y-2">
                     <p className="text-sm font-medium text-foreground">
                       {question.canonical.text}
                     </p>
-                    <p className="text-xs text-[#005A9C]">
+                    <p className="text-xs text-primary">
                       {t("variations.viewMain")}
                     </p>
                   </div>
@@ -1311,7 +1310,7 @@ export function QuestionDetail({
                   {variations.map((variation, index) => (
                     <Card
                       key={variation.id}
-                      className="p-4 border border-border hover:border-[#005A9C]/50 hover:bg-muted/30 transition-all cursor-pointer"
+                      className="p-4 border border-border hover:border-primary/50 hover:bg-muted/30 transition-all cursor-pointer"
                       onClick={() => router.push(`/questions/${variation.id}`)}
                     >
                       <div className="flex items-start gap-3">
@@ -1362,7 +1361,7 @@ export function QuestionDetail({
             <Button
               onClick={() => setIsVariationsDialogOpen(false)}
               variant="outline"
-              className="border-border text-foreground hover:bg-muted"
+              className="hover:bg-muted"
             >
               {tCommon("close")}
             </Button>
@@ -1396,7 +1395,7 @@ function CommentsSection({
   onToggleLike: (id: string) => void;
   isSubmitting: boolean;
   getInitials: (name: string | null) => string;
-  getUniversityInfo: (name: string | undefined) => { short: string; color: string };
+  getUniversityInfo: (name: string | undefined) => { short: string; colorClass: string };
   isDesktop?: boolean;
   sortBy?: "likes" | "recent";
   setSortBy?: (v: "likes" | "recent") => void;
@@ -1408,8 +1407,8 @@ function CommentsSection({
       {/* Mobile header with sort */}
       {!isDesktop && sortBy && setSortBy && (
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3 border-l-4 border-[#005A9C] pl-3">
-            <MessageCircle className="w-5 h-5 text-[#005A9C]" />
+          <div className="flex items-center space-x-3 border-l-4 border-primary pl-3">
+            <MessageCircle className="w-5 h-5 text-primary" />
             <h2 className="font-medium text-foreground">
               {t("experiences.title")}
             </h2>
@@ -1458,12 +1457,7 @@ function CommentsSection({
                     </span>
                     <Badge
                       variant="outline"
-                      className="text-xs rounded-full px-2"
-                      style={{
-                        backgroundColor: `${uniInfo.color}20`,
-                        borderColor: uniInfo.color,
-                        color: uniInfo.color,
-                      }}
+                      className={`text-xs rounded-full px-2 border ${uniInfo.colorClass}`}
                     >
                       {uniInfo.short}
                     </Badge>
@@ -1475,7 +1469,7 @@ function CommentsSection({
                     <button
                       onClick={() => onToggleLike(comment.id)}
                       className={`flex items-center gap-1.5 hover:text-foreground transition-colors ${
-                        comment.isLiked ? "text-[#005A9C]" : ""
+                        comment.isLiked ? "text-primary" : ""
                       }`}
                     >
                       <ThumbsUp
@@ -1516,7 +1510,7 @@ function CommentsSection({
         <div className="space-y-3">
           {!isDesktop && (
             <div className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
-              <MessageCircle className="w-4 h-4 text-[#005A9C]" />
+              <MessageCircle className="w-4 h-4 text-primary" />
               <span>{t("experiences.shareYours")}</span>
             </div>
           )}
@@ -1530,7 +1524,7 @@ function CommentsSection({
             <Button
               onClick={onPublish}
               disabled={!newComment.trim() || isSubmitting}
-              className="bg-[#FFA78D] hover:bg-[#ff9473] text-white rounded-full px-6"
+              className="bg-accent hover:bg-accent/90 text-accent-foreground rounded-full px-6"
               size="sm"
             >
               <Send className="w-4 h-4 mr-2" />
