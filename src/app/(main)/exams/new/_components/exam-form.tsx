@@ -26,10 +26,9 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { CheckCircle, ArrowLeft, Plus, X, Link2, Copy, Search, GitBranch, BookOpen, Users, Sparkles } from "lucide-react";
+import { CheckCircle, ArrowLeft, Plus, X, Link2, Copy, Search, GitBranch, BookOpen, Users } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 
@@ -69,13 +68,11 @@ interface CreatedQuestion {
 }
 
 interface ExamFormProps {
-  subjects: Subject[];
-  professors: Professor[];
   universities: University[];
   courses: Course[];
 }
 
-export function ExamForm({ subjects, professors, universities, courses }: ExamFormProps) {
+export function ExamForm({ universities, courses }: ExamFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: session } = useSession();
@@ -91,8 +88,8 @@ export function ExamForm({ subjects, professors, universities, courses }: ExamFo
 
   const [formData, setFormData] = useState({
     universityId: session?.user?.universityId || "",
+    courseId: prefillData.courseId || session?.user?.courseId || "",
     year: session?.user?.year || 1, // Now a number (1-6)
-    courseId: prefillData.courseId,
     subjectId: prefillData.subject,
     professorId: prefillData.professor,
     questions: [""], // Array of questions
@@ -102,6 +99,12 @@ export function ExamForm({ subjects, professors, universities, courses }: ExamFo
   const [showSuccess, setShowSuccess] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [shareableLink, setShareableLink] = useState("");
+
+  // Dynamic data loading
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [professors, setProfessors] = useState<Professor[]>([]);
+  const [isLoadingSubjects, setIsLoadingSubjects] = useState(false);
+  const [isLoadingProfessors, setIsLoadingProfessors] = useState(false);
 
   // Question Linking States
   const [createdQuestions, setCreatedQuestions] = useState<CreatedQuestion[]>([]);
@@ -127,16 +130,82 @@ export function ExamForm({ subjects, professors, universities, courses }: ExamFo
     }
   }, [hasPrefill, prefillData.courseId, prefillData.subject, prefillData.professor]);
 
-  // Update university from session
+  // Update university and course from session
   useEffect(() => {
     if (session?.user?.universityId) {
       setFormData((prev) => ({
         ...prev,
         universityId: session.user.universityId || "",
+        courseId: prev.courseId || session.user.courseId || "",
         year: session.user.year || prev.year,
       }));
     }
-  }, [session?.user?.universityId, session?.user?.year]);
+  }, [session?.user?.universityId, session?.user?.courseId, session?.user?.year]);
+
+  // Load subjects when course or year changes
+  useEffect(() => {
+    async function loadSubjects() {
+      if (!formData.courseId) {
+        setSubjects([]);
+        return;
+      }
+
+      setIsLoadingSubjects(true);
+      try {
+        // Build URL with course and optional year filter
+        const params = new URLSearchParams({ courseId: formData.courseId });
+        if (formData.year) {
+          params.append("year", String(formData.year));
+        }
+        const response = await fetch(`/api/subjects?${params.toString()}`);
+        if (response.ok) {
+          const result = await response.json();
+          setSubjects(result.data || []);
+        }
+      } catch (error) {
+        console.error("Error loading subjects:", error);
+        setSubjects([]);
+      } finally {
+        setIsLoadingSubjects(false);
+      }
+    }
+
+    loadSubjects();
+    // Reset subject and professor when course or year changes (unless prefilled)
+    if (!prefillData.subject) {
+      setFormData((prev) => ({ ...prev, subjectId: "", professorId: "" }));
+    }
+  }, [formData.courseId, formData.year, prefillData.subject]);
+
+  // Load professors when subject changes
+  useEffect(() => {
+    async function loadProfessors() {
+      if (!formData.subjectId) {
+        setProfessors([]);
+        return;
+      }
+
+      setIsLoadingProfessors(true);
+      try {
+        const response = await fetch(`/api/professors?subjectId=${formData.subjectId}`);
+        if (response.ok) {
+          const result = await response.json();
+          setProfessors(result.data || []);
+        }
+      } catch (error) {
+        console.error("Error loading professors:", error);
+        setProfessors([]);
+      } finally {
+        setIsLoadingProfessors(false);
+      }
+    }
+
+    loadProfessors();
+    // Reset professor when subject changes (unless prefilled)
+    if (!prefillData.professor) {
+      setFormData((prev) => ({ ...prev, professorId: "" }));
+    }
+  }, [formData.subjectId, prefillData.professor]);
 
   // Years as numbers (1-6)
   const years = [1, 2, 3, 4, 5, 6];
@@ -203,7 +272,8 @@ export function ExamForm({ subjects, professors, universities, courses }: ExamFo
         throw new Error("Errore nella creazione dell'esame");
       }
 
-      const exam = await examResponse.json();
+      const examResult = await examResponse.json();
+      const exam = examResult.data; // API returns { success: true, data: {...} }
 
       // Then, create all questions for this exam and capture the responses
       const questionResponses = await Promise.all(
@@ -218,10 +288,10 @@ export function ExamForm({ subjects, professors, universities, courses }: ExamFo
           });
           if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.error || "Errore nella creazione della domanda");
+            throw new Error(errorData.error?.message || "Errore nella creazione della domanda");
           }
-          const data = await response.json();
-          return { id: data.id, text };
+          const questionResult = await response.json();
+          return { id: questionResult.data.id, text };
         })
       );
 
@@ -263,8 +333,8 @@ export function ExamForm({ subjects, professors, universities, courses }: ExamFo
       const response = await fetch(
         `/api/questions/canonical?q=${encodeURIComponent(query)}&excludeId=${currentQuestion?.id || ""}&limit=10`
       );
-      const data = await response.json();
-      setSearchResults(data.questions || []);
+      const result = await response.json();
+      setSearchResults(result.data?.questions || []);
     } catch {
       setSearchResults([]);
     } finally {
@@ -290,8 +360,8 @@ export function ExamForm({ subjects, professors, universities, courses }: ExamFo
         throw new Error("Errore nel collegamento");
       }
 
-      const data = await response.json();
-      toast.success(`Domanda collegata! Ora fa parte di un gruppo con ${data.group.totalQuestions} domande`);
+      const result = await response.json();
+      toast.success(`Domanda collegata! Ora fa parte di un gruppo con ${result.data.group.totalQuestions} domande`);
 
       // Move to next question or finish
       moveToNextQuestion();
@@ -365,7 +435,6 @@ export function ExamForm({ subjects, professors, universities, courses }: ExamFo
   const getProfessorName = (id: string) => professors.find((p) => p.id === id)?.name || id;
   const getUniversityName = (id: string) => universities.find((u) => u.id === id)?.name || id;
   const getCourseName = (id: string) => courses.find((c) => c.id === id)?.name || id;
-  const getYearLabel = (year: number) => `${year}º Anno`;
 
   if (showSuccess) {
     return (
@@ -443,7 +512,7 @@ export function ExamForm({ subjects, professors, universities, courses }: ExamFo
                 )}
                 {prefillData.courseId && (
                   <div className="bg-white/60 dark:bg-black/20 rounded-lg p-3 border border-primary/20 backdrop-blur-sm">
-                    <p className="text-xs text-muted-foreground mb-1">Canale</p>
+                    <p className="text-xs text-muted-foreground mb-1">Corso</p>
                     <p className="font-medium text-foreground">{getCourseName(prefillData.courseId)}</p>
                   </div>
                 )}
@@ -518,6 +587,7 @@ export function ExamForm({ subjects, professors, universities, courses }: ExamFo
 
           <CardContent className="p-6">
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Row 1: Università e Corso */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="university" className="text-foreground">
@@ -531,15 +601,55 @@ export function ExamForm({ subjects, professors, universities, courses }: ExamFo
                   />
                 </div>
 
+                <div className="space-y-2 relative">
+                  <Label htmlFor="course" className="text-foreground flex items-center gap-2">
+                    Corso
+                    {(prefillData.courseId || session?.user?.courseId) && formData.courseId && (
+                      <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                        Dal tuo profilo
+                      </span>
+                    )}
+                  </Label>
+                  <Select
+                    value={formData.courseId}
+                    onValueChange={(value) => handleInputChange("courseId", value)}
+                  >
+                    <SelectTrigger
+                      disabled={universityCourses.length === 0}
+                      className="bg-input border-border text-foreground text-left"
+                    >
+                      {formData.courseId ? (
+                        <span>{getCourseName(formData.courseId)}</span>
+                      ) : (
+                        <SelectValue placeholder={universityCourses.length === 0 ? "Nessun corso disponibile" : "Seleziona il corso"} />
+                      )}
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-border">
+                      {universityCourses.map((course) => (
+                        <SelectItem
+                          key={course.id}
+                          value={course.id}
+                          className="text-foreground focus:bg-[#FEF2F2] focus:text-[#DC2626] data-[state=checked]:bg-[#FFE4E6] data-[state=checked]:text-[#DC2626] hover:bg-[#FEF2F2] hover:text-[#DC2626]"
+                        >
+                          {course.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Row 2: Anno e Materia */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="year" className="text-foreground">
-                    Anno del Corso
+                    Anno
                   </Label>
                   <Select
                     value={formData.year ? String(formData.year) : ""}
                     onValueChange={(value) => handleInputChange("year", parseInt(value, 10))}
                   >
-                    <SelectTrigger className="bg-input border-border text-foreground">
+                    <SelectTrigger className="bg-input border-border text-foreground text-left">
                       {formData.year ? (
                         <span>{formData.year}º Anno</span>
                       ) : (
@@ -554,49 +664,6 @@ export function ExamForm({ subjects, professors, universities, courses }: ExamFo
                           className="text-foreground focus:bg-[#FEF2F2] focus:text-[#DC2626] data-[state=checked]:bg-[#FFE4E6] data-[state=checked]:text-[#DC2626] hover:bg-[#FEF2F2] hover:text-[#DC2626]"
                         >
                           {year}º Anno
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2 relative">
-                  <Label htmlFor="channel" className="text-foreground flex items-center gap-2">
-                    Canale
-                    {prefillData.courseId && (
-                      <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
-                        Precompilato
-                      </span>
-                    )}
-                  </Label>
-                  <Select
-                    value={formData.courseId}
-                    onValueChange={(value) => handleInputChange("courseId", value)}
-                  >
-                    <SelectTrigger
-                      disabled={!!prefillData.courseId || universityCourses.length === 0}
-                      className={`${
-                        prefillData.courseId
-                          ? "bg-primary/5 border-primary/30 text-primary cursor-not-allowed"
-                          : "bg-input border-border text-foreground"
-                      }`}
-                    >
-                      {formData.courseId ? (
-                        <span>{getCourseName(formData.courseId)}</span>
-                      ) : (
-                        <SelectValue placeholder={universityCourses.length === 0 ? "Nessun canale disponibile" : "Seleziona il canale"} />
-                      )}
-                    </SelectTrigger>
-                    <SelectContent className="bg-card border-border">
-                      {universityCourses.map((course) => (
-                        <SelectItem
-                          key={course.id}
-                          value={course.id}
-                          className="text-foreground focus:bg-[#FEF2F2] focus:text-[#DC2626] data-[state=checked]:bg-[#FFE4E6] data-[state=checked]:text-[#DC2626] hover:bg-[#FEF2F2] hover:text-[#DC2626]"
-                        >
-                          {course.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -617,17 +684,19 @@ export function ExamForm({ subjects, professors, universities, courses }: ExamFo
                     onValueChange={(value) => handleInputChange("subjectId", value)}
                   >
                     <SelectTrigger
-                      disabled={!!prefillData.subject}
-                      className={`${
+                      disabled={!!prefillData.subject || !formData.courseId || isLoadingSubjects}
+                      className={`text-left ${
                         prefillData.subject
                           ? "bg-primary/5 border-primary/30 text-primary cursor-not-allowed"
                           : "bg-input border-border text-foreground"
                       }`}
                     >
-                      {formData.subjectId ? (
+                      {isLoadingSubjects ? (
+                        <span className="text-muted-foreground">Caricamento...</span>
+                      ) : formData.subjectId ? (
                         <span>{getSubjectName(formData.subjectId)}</span>
                       ) : (
-                        <SelectValue placeholder="Seleziona la materia" />
+                        <SelectValue placeholder={!formData.courseId ? "Seleziona prima il corso" : subjects.length === 0 ? "Nessuna materia disponibile" : "Seleziona la materia"} />
                       )}
                     </SelectTrigger>
                     <SelectContent className="bg-card border-border">
@@ -659,17 +728,19 @@ export function ExamForm({ subjects, professors, universities, courses }: ExamFo
                   onValueChange={(value) => handleInputChange("professorId", value)}
                 >
                   <SelectTrigger
-                    disabled={!!prefillData.professor}
-                    className={`${
+                    disabled={!!prefillData.professor || !formData.subjectId || isLoadingProfessors}
+                    className={`text-left ${
                       prefillData.professor
                         ? "bg-primary/5 border-primary/30 text-primary cursor-not-allowed"
                         : "bg-input border-border text-foreground"
                     }`}
                   >
-                    {formData.professorId ? (
+                    {isLoadingProfessors ? (
+                      <span className="text-muted-foreground">Caricamento...</span>
+                    ) : formData.professorId ? (
                       <span>{getProfessorName(formData.professorId)}</span>
                     ) : (
-                      <SelectValue placeholder="Seleziona il professore" />
+                      <SelectValue placeholder={!formData.subjectId ? "Seleziona prima la materia" : professors.length === 0 ? "Nessun professore disponibile" : "Seleziona il professore"} />
                     )}
                   </SelectTrigger>
                   <SelectContent className="bg-card border-border">
@@ -853,7 +924,7 @@ export function ExamForm({ subjects, professors, universities, courses }: ExamFo
               </div>
               {formData.courseId && (
                 <div className="col-span-2 bg-gradient-to-br from-[#EFF6FF] to-[#DBEAFE] dark:from-[#005A9C]/10 dark:to-[#005A9C]/5 rounded-lg p-3 border border-primary/20">
-                  <p className="text-xs text-muted-foreground mb-1">📍 Canale</p>
+                  <p className="text-xs text-muted-foreground mb-1">📍 Corso</p>
                   <p className="font-semibold text-primary">{getCourseName(formData.courseId)}</p>
                 </div>
               )}
