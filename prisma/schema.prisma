@@ -220,6 +220,7 @@ model AiAnswer {
   id         String   @id @default(uuid())
   questionId String   @unique @map("question_id")
   content    String
+  source     String?  // Fonte da resposta (ex: "Capitolo 12 - Anatomia Umana di Martini")
   model      String?  @db.VarChar(50) // gpt-4, gpt-4o, claude-3
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
