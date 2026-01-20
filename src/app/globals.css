@@ -116,7 +116,7 @@
   --destructive-foreground: #ffffff;
   --border: #E9ECEF;
   --input: #FFFFFF;
-  --input-background: #FFFFFF;
+  --input-background: #F8F9FA;
   --ring: #005A9C;
   --chart-1: #DC2626;
   --chart-2: #FFA78D;
@@ -459,4 +459,158 @@ select:focus {
 /* Smooth transitions for interactive elements */
 button, a, input, select, textarea {
   transition: all var(--duration-fast) cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Tiptap/ProseMirror editor styles */
+.ProseMirror {
+  outline: none;
+}
+
+/* Paragraph spacing in editor - like ChatGPT */
+.ProseMirror p {
+  margin-top: 0;
+  margin-bottom: 1em;
+}
+
+.ProseMirror p:last-child {
+  margin-bottom: 0;
+}
+
+/* Heading spacing */
+.ProseMirror h1,
+.ProseMirror h2,
+.ProseMirror h3,
+.ProseMirror h4,
+.ProseMirror h5,
+.ProseMirror h6 {
+  margin-top: 1.5em;
+  margin-bottom: 0.75em;
+  font-weight: 600;
+}
+
+.ProseMirror h1:first-child,
+.ProseMirror h2:first-child,
+.ProseMirror h3:first-child {
+  margin-top: 0;
+}
+
+/* List spacing */
+.ProseMirror ul,
+.ProseMirror ol {
+  margin-top: 0.5em;
+  margin-bottom: 1em;
+  padding-left: 1.5em;
+}
+
+.ProseMirror li {
+  margin-bottom: 0.25em;
+}
+
+/* Code block spacing */
+.ProseMirror pre {
+  margin-top: 0.75em;
+  margin-bottom: 0.75em;
+  padding: 0.75em;
+  background-color: var(--muted);
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+}
+
+.ProseMirror code {
+  background-color: var(--muted);
+  padding: 0.125em 0.25em;
+  border-radius: var(--radius-sm);
+  font-size: 0.9em;
+}
+
+/* Text selection in Tiptap editor */
+.ProseMirror ::selection,
+.ProseMirror::selection {
+  background-color: rgba(0, 90, 156, 0.3) !important;
+  color: inherit !important;
+}
+
+.ProseMirror ::-moz-selection,
+.ProseMirror::-moz-selection {
+  background-color: rgba(0, 90, 156, 0.3) !important;
+  color: inherit !important;
+}
+
+.dark .ProseMirror ::selection,
+.dark .ProseMirror::selection {
+  background-color: rgba(74, 159, 231, 0.3) !important;
+}
+
+.dark .ProseMirror ::-moz-selection,
+.dark .ProseMirror::-moz-selection {
+  background-color: rgba(74, 159, 231, 0.3) !important;
+}
+
+/* Selected nodes (images, etc) in Tiptap */
+.ProseMirror-selectednode {
+  outline: 2px solid var(--primary) !important;
+  outline-offset: 2px;
+}
+
+/* Placeholder text in empty Tiptap editor */
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--muted-foreground);
+  pointer-events: none;
+  height: 0;
+}
+
+/* Rich text content display (when not editing) - ChatGPT style spacing */
+.prose p {
+  margin-top: 0;
+  margin-bottom: 1em;
+}
+
+.prose p:last-child {
+  margin-bottom: 0;
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  margin-top: 1.5em;
+  margin-bottom: 0.75em;
+  font-weight: 600;
+}
+
+.prose h1:first-child,
+.prose h2:first-child,
+.prose h3:first-child {
+  margin-top: 0;
+}
+
+.prose ul,
+.prose ol {
+  margin-top: 0.5em;
+  margin-bottom: 1em;
+  padding-left: 1.5em;
+}
+
+.prose li {
+  margin-bottom: 0.25em;
+}
+
+.prose pre {
+  margin-top: 0.75em;
+  margin-bottom: 0.75em;
+  padding: 0.75em;
+  background-color: var(--muted);
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+}
+
+.prose code {
+  background-color: var(--muted);
+  padding: 0.125em 0.25em;
+  border-radius: var(--radius-sm);
+  font-size: 0.9em;
 }
