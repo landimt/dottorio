@@ -78,7 +78,7 @@ export async function POST(
           error: {
             code: "VALIDATION_ERROR",
             message: "Dati non validi",
-            details: error.errors,
+            details: error.issues,
           },
         },
         { status: 400 }
