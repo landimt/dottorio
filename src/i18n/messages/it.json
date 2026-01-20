@@ -334,9 +334,20 @@
     "questionsSaved": "Domande Salvate",
     "comments": "Commenti",
     "answers": "Risposte",
+    "contributions": "Contribuzioni",
+    "views": "Visualizzazioni",
     "recentActivity": "Attività Recente",
     "noQuestionsYet": "Non hai ancora aggiunto domande",
-    "addFirstQuestion": "Aggiungi la tua prima domanda"
+    "addFirstQuestion": "Aggiungi la tua prima domanda",
+    "myContributions": "I Miei Contributi",
+    "savedQuestions": "Domande Salvate",
+    "noSavedQuestions": "Nessuna domanda salvata ancora",
+    "saveQuestionsDesc": "Salva questioni importanti per accedervi rapidamente",
+    "exploreQuestions": "Esplora Domande",
+    "noContributions": "Nessun contributo ancora",
+    "startContributing": "Inizia a Contribuire",
+    "viewDetails": "Vedi dettagli",
+    "visualizations": "visualizzazioni"
   },
   "settings": {
     "title": "Impostazioni",

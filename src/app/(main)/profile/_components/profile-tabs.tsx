@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Eye, ChevronRight, Bookmark, Users, BookOpen } from "lucide-react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 interface Question {
   id: string;
@@ -25,6 +26,7 @@ interface ProfileTabsProps {
 
 export function ProfileTabs({ savedQuestions, contributions }: ProfileTabsProps) {
   const [activeTab, setActiveTab] = useState<"saved" | "contributions">("saved");
+  const t = useTranslations("profile");
 
   return (
     <Card>
@@ -39,7 +41,7 @@ export function ProfileTabs({ savedQuestions, contributions }: ProfileTabsProps)
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            I Miei Contributi
+            {t("myContributions")}
             {activeTab === "contributions" && (
               <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
             )}
@@ -52,7 +54,7 @@ export function ProfileTabs({ savedQuestions, contributions }: ProfileTabsProps)
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            Domande Salvate
+            {t("savedQuestions")}
             {activeTab === "saved" && (
               <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
             )}
@@ -84,7 +86,7 @@ export function ProfileTabs({ savedQuestions, contributions }: ProfileTabsProps)
                       )}
                       <div className="flex items-center gap-1 text-xs text-muted-foreground ml-2">
                         <Eye className="w-3.5 h-3.5" />
-                        <span>{question.views} visualizzazioni</span>
+                        <span>{question.views} {t("visualizations")}</span>
                       </div>
                     </div>
 
@@ -92,7 +94,7 @@ export function ProfileTabs({ savedQuestions, contributions }: ProfileTabsProps)
                       href={`/questions/${question.id}`}
                       className="flex items-center gap-1 text-sm text-accent hover:text-accent/80 font-medium whitespace-nowrap"
                     >
-                      Vedi dettagli
+                      {t("viewDetails")}
                       <ChevronRight className="w-4 h-4" />
                     </Link>
                   </div>
@@ -102,12 +104,12 @@ export function ProfileTabs({ savedQuestions, contributions }: ProfileTabsProps)
               <div className="text-center py-12">
                 <Bookmark className="w-16 h-16 mx-auto text-muted-foreground/30 mb-4" />
                 <p className="text-muted-foreground mb-4">
-                  Nessuna domanda salvata ancora
+                  {t("noSavedQuestions")}
                 </p>
                 <Link href="/search">
                   <Button className="gap-2">
                     <BookOpen className="w-4 h-4" />
-                    Esplora Domande
+                    {t("exploreQuestions")}
                   </Button>
                 </Link>
               </div>
@@ -140,7 +142,7 @@ export function ProfileTabs({ savedQuestions, contributions }: ProfileTabsProps)
                       )}
                       <div className="flex items-center gap-1 text-xs text-muted-foreground ml-2">
                         <Eye className="w-3.5 h-3.5" />
-                        <span>{question.views} visualizzazioni</span>
+                        <span>{question.views} {t("visualizations")}</span>
                       </div>
                     </div>
 
@@ -148,7 +150,7 @@ export function ProfileTabs({ savedQuestions, contributions }: ProfileTabsProps)
                       href={`/questions/${question.id}`}
                       className="flex items-center gap-1 text-sm text-accent hover:text-accent/80 font-medium whitespace-nowrap"
                     >
-                      Vedi dettagli
+                      {t("viewDetails")}
                       <ChevronRight className="w-4 h-4" />
                     </Link>
                   </div>
@@ -158,12 +160,12 @@ export function ProfileTabs({ savedQuestions, contributions }: ProfileTabsProps)
               <div className="text-center py-12">
                 <Users className="w-16 h-16 mx-auto text-muted-foreground/30 mb-4" />
                 <p className="text-muted-foreground mb-4">
-                  Nessun contributo ancora
+                  {t("noContributions")}
                 </p>
                 <Link href="/search">
                   <Button className="gap-2">
                     <BookOpen className="w-4 h-4" />
-                    Inizia a Contribuire
+                    {t("startContributing")}
                   </Button>
                 </Link>
               </div>

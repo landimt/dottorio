@@ -42,7 +42,7 @@ function getInitials(name: string | null | undefined): string {
 interface UserAvatarProps {
   name?: string | null;
   image?: string | null;
-  size?: "sm" | "md" | "lg" | "xl";
+  size?: "sm" | "md" | "lg" | "xl" | "2xl";
   className?: string;
 }
 
@@ -52,6 +52,7 @@ const sizeClasses = {
   md: "h-10 w-10 text-sm",
   lg: "h-12 w-12 text-base",
   xl: "h-16 w-16 text-lg",
+  "2xl": "h-20 w-20 text-2xl",
 };
 
 export function UserAvatar({ name, image, size = "md", className }: UserAvatarProps) {

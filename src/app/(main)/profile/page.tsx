@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/ui/user-avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -13,6 +13,7 @@ import {
   Eye,
 } from "lucide-react";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { ProfileTabs } from "./_components/profile-tabs";
 
 async function getUserStats(userId: string) {
@@ -130,6 +131,8 @@ async function getUserContributions(userId: string) {
 export default async function ProfilePage() {
   const session = await auth();
   const user = session?.user;
+  const t = await getTranslations("profile");
+  const tNav = await getTranslations("navigation");
 
   if (!user?.id) {
     return null;
@@ -141,15 +144,6 @@ export default async function ProfilePage() {
     getUserContributions(user.id),
   ]);
 
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
-  };
-
   return (
     <div className="min-h-screen bg-background">
       <div className="container max-w-6xl mx-auto px-4 py-8">
@@ -158,13 +152,12 @@ export default async function ProfilePage() {
           <CardContent className="p-6">
             <div className="flex items-start justify-between mb-6">
               <div className="flex items-start gap-4">
-                {/* Avatar - Medium size */}
-                <Avatar className="h-20 w-20">
-                  <AvatarImage src={user.image || undefined} alt={user.name || ""} />
-                  <AvatarFallback className="bg-primary text-white text-2xl font-semibold">
-                    {user.name ? getInitials(user.name) : "?"}
-                  </AvatarFallback>
-                </Avatar>
+                {/* Avatar with UserAvatar component */}
+                <UserAvatar
+                  name={user.name}
+                  image={user.image}
+                  size="2xl"
+                />
 
                 {/* User Info */}
                 <div>
@@ -190,7 +183,7 @@ export default async function ProfilePage() {
               <Link href="/settings">
                 <Button variant="outline" size="sm" className="gap-2">
                   <Settings className="w-4 h-4" />
-                  Impostazioni
+                  {tNav("settings")}
                 </Button>
               </Link>
             </div>
@@ -203,7 +196,7 @@ export default async function ProfilePage() {
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-foreground">{stats.contributions}</p>
-                  <p className="text-xs text-muted-foreground">Contribuições</p>
+                  <p className="text-xs text-muted-foreground">{t("contributions")}</p>
                 </div>
               </div>
 
@@ -213,7 +206,7 @@ export default async function ProfilePage() {
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-foreground">{stats.questionsSaved}</p>
-                  <p className="text-xs text-muted-foreground">Domande Salvate</p>
+                  <p className="text-xs text-muted-foreground">{t("questionsSaved")}</p>
                 </div>
               </div>
 
@@ -223,7 +216,7 @@ export default async function ProfilePage() {
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-foreground">{stats.totalViews}</p>
-                  <p className="text-xs text-muted-foreground">Visualizzazioni</p>
+                  <p className="text-xs text-muted-foreground">{t("views")}</p>
                 </div>
               </div>
             </div>
