@@ -43,6 +43,9 @@ export const PUT = withAdminAuth<{ id: string }>(async (request, { params }) => 
         ...(data.name && { name: data.name.trim() }),
         ...(data.emoji !== undefined && { emoji: data.emoji?.trim() || null }),
         ...(data.color !== undefined && { color: data.color?.trim() || null }),
+        ...(data.year !== undefined && { year: data.year }),
+        ...(data.semester !== undefined && { semester: data.semester }),
+        ...(data.credits !== undefined && { credits: data.credits }),
       },
     });
 

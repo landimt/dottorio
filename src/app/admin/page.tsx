@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { getTranslations } from "next-intl/server";
 import { StatCard } from "./_components/stat-card";
 import { QuickActions } from "./_components/quick-actions";
-import { MessageSquare, Users, BookOpen, GraduationCap, School, BookMarked } from "lucide-react";
+import { MessageSquare, Users, GraduationCap, BookMarked } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 async function getAdminStats() {
@@ -47,25 +47,25 @@ export default async function AdminDashboard() {
       title: t("quickActions.manageUsers"),
       description: t("quickActions.manageUsersDesc"),
       href: "/admin/users",
-      icon: Users,
+      icon: "users" as const,
     },
     {
       title: t("quickActions.registries"),
       description: t("quickActions.registriesDesc"),
       href: "/admin/cadastros",
-      icon: School,
+      icon: "school" as const,
     },
     {
       title: t("quickActions.manageQuestions"),
       description: t("quickActions.manageQuestionsDesc"),
       href: "/admin/questions",
-      icon: BookOpen,
+      icon: "book-open" as const,
     },
     {
       title: t("quickActions.moderation"),
       description: t("quickActions.moderationDesc"),
       href: "/admin/moderation",
-      icon: GraduationCap,
+      icon: "graduation-cap" as const,
     },
   ];
 
