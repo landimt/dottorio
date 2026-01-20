@@ -11,6 +11,7 @@ declare module "next-auth" {
       courseName: string | null;
       year: number;
       isRepresentative: boolean;
+      role: string;
     } & DefaultSession["user"];
   }
 
@@ -22,6 +23,7 @@ declare module "next-auth" {
     courseName: string | null;
     year: number;
     isRepresentative: boolean;
+    role: string;
   }
 }
 
@@ -34,5 +36,6 @@ declare module "next-auth/jwt" {
     courseName: string | null;
     year: number;
     isRepresentative: boolean;
+    role: string;
   }
 }
