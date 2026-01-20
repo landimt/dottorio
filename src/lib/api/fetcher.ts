@@ -142,6 +142,12 @@ export const API = {
       apiGet<{ questions: unknown[]; pagination: unknown }>("/api/questions", params),
     get: (id: string) =>
       apiGet<unknown>(`/api/questions/${id}`),
+    related: (id: string, params?: { page?: string; limit?: string }) =>
+      apiGet<{ questions: unknown[]; pagination: { page: number; limit: number; total: number; hasMore: boolean } }>(`/api/questions/${id}/related`, params),
+    variations: (id: string) =>
+      apiGet<unknown[]>(`/api/questions/${id}/variations`),
+    personalAnswer: (id: string) =>
+      apiGet<unknown>(`/api/questions/${id}/personal-answer`),
     save: (id: string) =>
       apiPost<{ saved: boolean }>(`/api/questions/${id}/save`),
     view: (id: string) =>

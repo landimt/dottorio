@@ -49,6 +49,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           courseName: user.course?.name || null,
           year: user.year,
           isRepresentative: user.isRepresentative,
+          role: user.role,
         };
       },
     }),
@@ -63,6 +64,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.courseName = user.courseName;
         token.year = user.year;
         token.isRepresentative = user.isRepresentative;
+        token.role = user.role;
       }
       return token;
     },
@@ -75,6 +77,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.courseName = token.courseName as string | null;
         session.user.year = token.year as number;
         session.user.isRepresentative = token.isRepresentative as boolean;
+        session.user.role = token.role as string;
       }
       return session;
     },

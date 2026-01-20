@@ -119,6 +119,12 @@ export const questionService = {
                 id: true,
                 name: true,
                 email: true,
+                university: {
+                  select: {
+                    name: true,
+                  },
+                },
+                year: true,
               },
             },
             _count: {
@@ -140,6 +146,12 @@ export const questionService = {
                 id: true,
                 name: true,
                 email: true,
+                university: {
+                  select: {
+                    name: true,
+                  },
+                },
+                year: true,
               },
             },
             _count: {
@@ -177,13 +189,17 @@ export const questionService = {
       isSaved: userId ? question.savedBy && question.savedBy.length > 0 : false,
       studentAnswers: question.studentAnswers.map((a) => ({
         ...a,
+        likesCount: a._count.likes,
         isLiked: userId ? a.likes && a.likes.length > 0 : false,
         likes: undefined,
+        _count: undefined,
       })),
       comments: question.comments.map((c) => ({
         ...c,
+        likesCount: c._count.likes,
         isLiked: userId ? c.likes && c.likes.length > 0 : false,
         likes: undefined,
+        _count: undefined,
       })),
       savedBy: undefined,
     };

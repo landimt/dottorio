@@ -20,6 +20,37 @@ function getExpirationDate(): Date {
 
 export const shareLinkService = {
   async create(examId: string, userId: string) {
+    // Check if a non-expired link already exists for this exam and user
+    const existingLink = await prisma.shareLink.findFirst({
+      where: {
+        examId,
+        createdById: userId,
+        expiresAt: {
+          gt: new Date(),
+        },
+      },
+      include: {
+        exam: {
+          include: {
+            subject: true,
+            professor: true,
+            university: true,
+            course: true,
+          },
+        },
+        createdBy: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    if (existingLink) {
+      return existingLink;
+    }
+
     const slug = generateSlug();
     const expiresAt = getExpirationDate();
 

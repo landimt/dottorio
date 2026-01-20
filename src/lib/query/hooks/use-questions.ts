@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import { API } from "@/lib/api/fetcher";
 import type {
   QuestionsSearchResponse,
@@ -17,6 +17,9 @@ export const questionKeys = {
   detail: (id: string) => [...questionKeys.details(), id] as const,
   similar: (text: string) => [...questionKeys.all, "similar", text] as const,
   saved: () => [...questionKeys.all, "saved"] as const,
+  related: (id: string) => [...questionKeys.all, "related", id] as const,
+  variations: (id: string) => [...questionKeys.all, "variations", id] as const,
+  personalAnswer: (id: string) => [...questionKeys.all, "personal-answer", id] as const,
 };
 
 // Hooks
@@ -48,5 +51,50 @@ export function useSavedQuestions(page = 1, limit = 20) {
   return useQuery({
     queryKey: [...questionKeys.saved(), { page, limit }],
     queryFn: () => API.questions.saved({ page: String(page), limit: String(limit) }),
+  });
+}
+
+export function useRelatedQuestions(id: string, enabled = true) {
+  return useQuery({
+    queryKey: questionKeys.related(id),
+    queryFn: () => API.questions.related(id),
+    enabled: enabled && !!id,
+    staleTime: 1000 * 60 * 10, // 10 minutes - changes less frequently
+  });
+}
+
+export function useRelatedQuestionsInfinite(id: string, enabled = true, limit = 15) {
+  return useInfiniteQuery({
+    queryKey: [...questionKeys.related(id), "infinite", limit],
+    queryFn: ({ pageParam = 1 }) =>
+      API.questions.related(id, { page: String(pageParam), limit: String(limit) }),
+    enabled: enabled && !!id,
+    staleTime: 1000 * 60 * 10, // 10 minutes
+    getNextPageParam: (lastPage) => {
+      if (lastPage.pagination.hasMore) {
+        return lastPage.pagination.page + 1;
+      }
+      return undefined;
+    },
+    initialPageParam: 1,
+  });
+}
+
+export function useQuestionVariations(id: string, enabled = true) {
+  return useQuery({
+    queryKey: questionKeys.variations(id),
+    queryFn: () => API.questions.variations(id),
+    enabled: enabled && !!id,
+    staleTime: 1000 * 60 * 10, // 10 minutes - changes less frequently
+  });
+}
+
+export function usePersonalAnswer(id: string, enabled = true) {
+  return useQuery({
+    queryKey: questionKeys.personalAnswer(id),
+    queryFn: () => API.questions.personalAnswer(id),
+    enabled: enabled && !!id,
+    staleTime: 1000 * 60 * 2, // 2 minutes
+    retry: false, // Don't retry if user doesn't have an answer yet
   });
 }
