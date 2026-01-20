@@ -41,7 +41,7 @@ const INITIAL_NOTEBOOKS: Notebook[] = [
     ],
     createdAt: '2024-01-15',
     updatedAt: '2024-01-15',
-    color: '#EFF6FF',
+    color: 'primary/10',
     icon: '🫀'
   },
   {
@@ -53,7 +53,7 @@ const INITIAL_NOTEBOOKS: Notebook[] = [
     ],
     createdAt: '2024-01-20',
     updatedAt: '2024-01-20',
-    color: '#FFF7ED',
+    color: 'accent/10',
     icon: '🧬'
   },
   {
@@ -65,7 +65,7 @@ const INITIAL_NOTEBOOKS: Notebook[] = [
     ],
     createdAt: '2024-02-01',
     updatedAt: '2024-02-01',
-    color: '#F0FDF4',
+    color: 'green-50',
     icon: '💚'
   },
   {
@@ -77,7 +77,7 @@ const INITIAL_NOTEBOOKS: Notebook[] = [
     ],
     createdAt: '2024-02-10',
     updatedAt: '2024-02-10',
-    color: '#FEF2F2',
+    color: 'red-50',
     icon: '🔬'
   },
   {
@@ -89,7 +89,7 @@ const INITIAL_NOTEBOOKS: Notebook[] = [
     ],
     createdAt: '2024-02-15',
     updatedAt: '2024-02-15',
-    color: '#F5F3FF',
+    color: 'purple-50',
     icon: '⚛️'
   },
   {
@@ -101,7 +101,7 @@ const INITIAL_NOTEBOOKS: Notebook[] = [
     ],
     createdAt: '2024-03-01',
     updatedAt: '2024-03-01',
-    color: '#FFFBEB',
+    color: 'yellow-50',
     icon: '🧪'
   }
 ];
@@ -142,7 +142,7 @@ export default function NotebooksPage() {
       ],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      color: '#EFF6FF',
+      color: 'primary/10',
       icon: newNotebook.icon
     };
 
@@ -218,7 +218,7 @@ export default function NotebooksPage() {
                 {/* Color bar no topo */}
                 <div
                   className="h-1.5 w-full"
-                  style={{ backgroundColor: notebook.color || '#EFF6FF' }}
+                  style={{ backgroundColor: notebook.color || 'primary/10' }}
                 />
 
                 <CardHeader className="pb-3">

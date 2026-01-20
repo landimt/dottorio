@@ -34,7 +34,7 @@ export function CustomSelect({ value, onValueChange, options, placeholder, class
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full h-8 text-xs px-3 rounded-md border-2 border-border bg-white dark:bg-gray-800 text-foreground font-medium hover:border-[#005A9C] transition-all flex items-center justify-between gap-2"
+        className="w-full h-8 text-xs px-3 rounded-md border-2 border-border bg-card text-foreground font-medium hover:border-primary transition-all flex items-center justify-between gap-2"
       >
         <span className="flex-1 text-left">
           {selectedOption?.label || placeholder || 'Seleziona...'}
@@ -48,14 +48,14 @@ export function CustomSelect({ value, onValueChange, options, placeholder, class
             className="fixed inset-0 z-10" 
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 border-2 border-border rounded-lg shadow-xl z-20 max-h-60 overflow-y-auto">
+          <div className="absolute top-full left-0 right-0 mt-2 bg-card border-2 border-border rounded-lg shadow-xl z-20 max-h-60 overflow-y-auto">
             {options.map((option, index) => (
               <button
                 key={option.value}
                 type="button"
-                className={`w-full px-3 py-2 text-xs text-left hover:bg-[#005A9C]/5 transition-colors ${
+                className={`w-full px-3 py-2 text-xs text-left hover:bg-primary/5 transition-colors ${
                   index < options.length - 1 ? 'border-b border-border' : ''
-                } ${value === option.value ? 'bg-[#005A9C]/10 font-medium' : ''}`}
+                } ${value === option.value ? 'bg-primary/10 font-medium' : ''}`}
                 onClick={() => {
                   onValueChange(option.value);
                   setIsOpen(false);

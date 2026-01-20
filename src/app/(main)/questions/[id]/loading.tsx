@@ -12,7 +12,7 @@ export default function QuestionDetailLoading() {
 
           {/* Mobile Question Selector Skeleton */}
           <div className="md:hidden mb-4">
-            <Card className="p-3 bg-linear-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 border-2">
+            <Card className="p-3 bg-gradient-to-br from-card to-muted border-2">
               <div className="flex items-center justify-between mb-3">
                 <Skeleton className="h-5 w-32" />
                 <Skeleton className="h-5 w-12 rounded-full" />
@@ -88,7 +88,7 @@ export default function QuestionDetailLoading() {
               <div className="space-y-4">
                 {/* Header */}
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3 border-l-4 border-[#005A9C] pl-3">
+                  <div className="flex items-center space-x-3 border-l-4 border-[primary] pl-3">
                     <Skeleton className="w-5 h-5" />
                     <Skeleton className="h-5 w-24" />
                   </div>
@@ -108,7 +108,7 @@ export default function QuestionDetailLoading() {
                 </div>
 
                 {/* Callout Intro Skeleton */}
-                <div className="bg-[#EFF6FF] dark:bg-[#005A9C]/10 rounded-lg p-4 border-l-4 border-[#005A9C]">
+                <div className="bg-[primary/10] dark:bg-[primary]/10 rounded-lg p-4 border-l-4 border-[primary]">
                   <Skeleton className="h-4 w-full" />
                   <Skeleton className="h-4 w-3/4 mt-2" />
                 </div>
@@ -128,7 +128,7 @@ export default function QuestionDetailLoading() {
                 </div>
 
                 {/* Key Points Callout Skeleton */}
-                <div className="bg-[#FFF8F3] dark:bg-[#FFA78D]/5 rounded-lg p-4 border-l-4 border-[#FFA78D] mt-6">
+                <div className="bg-[accent/10] dark:bg-[accent]/5 rounded-lg p-4 border-l-4 border-[accent] mt-6">
                   <div className="flex items-start gap-3">
                     <Skeleton className="w-6 h-6 rounded-full shrink-0" />
                     <div className="flex-1 space-y-2">
