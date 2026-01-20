@@ -59,32 +59,112 @@ function capitalizeName(name: string): string {
 // Emojis por tipo de matéria
 function getSubjectEmoji(name: string): string {
   const nameUpper = name.toUpperCase();
+
+  // Anatomia
+  if (nameUpper.includes("ANATOMIA PATOLOGICA")) return "🔬";
+  if (nameUpper.includes("ANATOMIA")) return "🫀";
+
+  // Ciências básicas
   if (nameUpper.includes("FISICA")) return "⚡";
   if (nameUpper.includes("BIOLOGIA")) return "🧬";
   if (nameUpper.includes("CHIMICA") || nameUpper.includes("BIOCHIMICA")) return "🧪";
-  if (nameUpper.includes("ANATOMIA")) return "🫀";
   if (nameUpper.includes("FISIOLOGIA")) return "⚙️";
   if (nameUpper.includes("ISTOLOGIA")) return "🔬";
+
+  // Patologia e Farmacologia
+  if (nameUpper.includes("PATOLOGIA")) return "🏥";
+  if (nameUpper.includes("FARMACOLOGIA")) return "💊";
+
+  // Microbiologia e Immunologia
+  if (nameUpper.includes("MICROBIOLOGIA") || nameUpper.includes("MALATTIE INFETTIVE")) return "🦠";
+  if (nameUpper.includes("IMMUNOLOGIA")) return "🛡️";
+
+  // Neurologia e Psichiatria
+  if (nameUpper.includes("NEUROLOGIA") || nameUpper.includes("PSICHIATRIA")) return "🧠";
+
+  // Especialidades médicas
+  if (nameUpper.includes("CARDIOLOGIA")) return "❤️";
+  if (nameUpper.includes("PEDIATRIA")) return "👶";
   if (nameUpper.includes("GINECOLOGIA") || nameUpper.includes("OSTETRICIA")) return "👶";
+  if (nameUpper.includes("DERMATOLOGIA")) return "🩹";
+  if (nameUpper.includes("ONCOLOGIA")) return "🎗️";
+  if (nameUpper.includes("OTORINOLARINGOIATRIA")) return "👂";
+  if (nameUpper.includes("ORTOPEDIA")) return "🦴";
+
+  // Cirurgia e Urgência
+  if (nameUpper.includes("CHIRURGIA")) return "🔪";
+  if (nameUpper.includes("URGENZA")) return "🚑";
+  if (nameUpper.includes("ANESTESIOLOGIA")) return "💉";
+
+  // Medicina interna e diagnóstico
+  if (nameUpper.includes("MEDICINA INTERNA")) return "🏥";
+  if (nameUpper.includes("SEMEIOTICA")) return "🩺";
+  if (nameUpper.includes("DIAGNOSTICA") || nameUpper.includes("RADIOLOGIA")) return "📷";
+
+  // Saúde pública e legal
+  if (nameUpper.includes("IGIENE")) return "🏛️";
   if (nameUpper.includes("METODOLOGIA") || nameUpper.includes("LEGALE")) return "⚖️";
   if (nameUpper.includes("EPISTEMOLOGIA") || nameUpper.includes("STORIA")) return "📚";
-  if (nameUpper.includes("ADE")) return "📋";
-  if (nameUpper.includes("PROVA FINALE")) return "🎓";
+
+  // Informatica
+  if (nameUpper.includes("INFORMATICA")) return "💻";
+
   return "📖";
 }
 
-// Cores por tipo de matéria
+// Cores por tipo de matéria (usando valores do SubjectColor enum)
 function getSubjectColor(name: string): string {
   const nameUpper = name.toUpperCase();
+
+  // Anatomia
+  if (nameUpper.includes("ANATOMIA PATOLOGICA")) return "rose";
+  if (nameUpper.includes("ANATOMIA")) return "red";
+
+  // Ciências básicas
   if (nameUpper.includes("FISICA")) return "blue";
   if (nameUpper.includes("BIOLOGIA")) return "green";
   if (nameUpper.includes("CHIMICA") || nameUpper.includes("BIOCHIMICA")) return "purple";
-  if (nameUpper.includes("ANATOMIA")) return "red";
   if (nameUpper.includes("FISIOLOGIA")) return "yellow";
   if (nameUpper.includes("ISTOLOGIA")) return "pink";
+
+  // Patologia e Farmacologia
+  if (nameUpper.includes("PATOLOGIA")) return "orange";
+  if (nameUpper.includes("FARMACOLOGIA")) return "cyan";
+
+  // Microbiologia e Immunologia
+  if (nameUpper.includes("MICROBIOLOGIA") || nameUpper.includes("MALATTIE INFETTIVE")) return "green";
+  if (nameUpper.includes("IMMUNOLOGIA")) return "blue";
+
+  // Neurologia e Psichiatria
+  if (nameUpper.includes("NEUROLOGIA")) return "purple";
+  if (nameUpper.includes("PSICHIATRIA")) return "violet";
+
+  // Especialidades médicas
+  if (nameUpper.includes("CARDIOLOGIA")) return "red";
+  if (nameUpper.includes("PEDIATRIA")) return "pink";
   if (nameUpper.includes("GINECOLOGIA") || nameUpper.includes("OSTETRICIA")) return "rose";
+  if (nameUpper.includes("DERMATOLOGIA")) return "amber";
+  if (nameUpper.includes("ONCOLOGIA")) return "pink";
+  if (nameUpper.includes("OTORINOLARINGOIATRIA")) return "orange";
+  if (nameUpper.includes("ORTOPEDIA")) return "white";
+
+  // Cirurgia e Urgência
+  if (nameUpper.includes("CHIRURGIA") || nameUpper.includes("URGENZA")) return "red";
+  if (nameUpper.includes("ANESTESIOLOGIA")) return "blue";
+
+  // Medicina interna e diagnóstico
+  if (nameUpper.includes("MEDICINA INTERNA")) return "blue";
+  if (nameUpper.includes("SEMEIOTICA")) return "teal";
+  if (nameUpper.includes("DIAGNOSTICA") || nameUpper.includes("RADIOLOGIA")) return "gray";
+
+  // Saúde pública e legal
+  if (nameUpper.includes("IGIENE")) return "green";
   if (nameUpper.includes("METODOLOGIA") || nameUpper.includes("LEGALE")) return "gray";
   if (nameUpper.includes("EPISTEMOLOGIA") || nameUpper.includes("STORIA")) return "amber";
+
+  // Informatica
+  if (nameUpper.includes("INFORMATICA")) return "blue";
+
   return "slate";
 }
 

@@ -33,7 +33,9 @@ import { locales, localeNames, localeFlags, type Locale } from "@/i18n/config";
 export default function SettingsPage() {
   const { data: session } = useSession();
   const user = session?.user;
-  const t = useTranslations();
+  const t = useTranslations("settings");
+  const tNav = useTranslations("navigation");
+  const tAuth = useTranslations("auth");
   const currentLocale = useLocale();
   const router = useRouter();
 
@@ -51,7 +53,7 @@ export default function SettingsPage() {
     // Simulate save
     await new Promise((resolve) => setTimeout(resolve, 1000));
     setIsLoading(false);
-    toast.success("Impostazioni salvate con successo!");
+    toast.success(t("savedSuccess"));
   };
 
   const handleLocaleChange = (newLocale: string) => {
@@ -59,8 +61,8 @@ export default function SettingsPage() {
     router.refresh();
     toast.success(
       newLocale === "it" 
-        ? "Lingua cambiata in Italiano" 
-        : "Language changed to English"
+        ? t("languageChangedIt") 
+        : t("languageChangedEn")
     );
   };
 
@@ -74,9 +76,9 @@ export default function SettingsPage() {
           </Button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold">{t("navigation.settings")}</h1>
+          <h1 className="text-2xl font-bold">{tNav("settings")}</h1>
           <p className="text-muted-foreground">
-            Gestisci le tue preferenze e il tuo account
+            {t("description")}
           </p>
         </div>
       </div>
@@ -87,10 +89,10 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Globe className="w-5 h-5 text-primary" />
-              Lingua / Language
+              {t("language")}
             </CardTitle>
             <CardDescription>
-              Seleziona la lingua dell&apos;interfaccia / Select interface language
+              {t("languageDescription")}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -112,7 +114,7 @@ export default function SettingsPage() {
               </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground mt-3">
-              🔄 La pagina si aggiornerà automaticamente dopo il cambio lingua
+              {t("languageRefreshNotice")}
             </p>
           </CardContent>
         </Card>
@@ -122,24 +124,24 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <User className="w-5 h-5" />
-              Profilo
+              {t("profile")}
             </CardTitle>
             <CardDescription>
-              Aggiorna le informazioni del tuo profilo
+              {t("profileDescription")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Nome Completo</Label>
+                <Label htmlFor="name">{t("fullName")}</Label>
                 <Input
                   id="name"
                   defaultValue={user?.name || ""}
-                  placeholder="Il tuo nome"
+                  placeholder={t("fullNamePlaceholder")}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t("email")}</Label>
                 <Input
                   id="email"
                   type="email"
@@ -154,7 +156,7 @@ export default function SettingsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Università</Label>
+                <Label>{t("university")}</Label>
                 <Input
                   value={user?.universityName || ""}
                   disabled
@@ -162,7 +164,7 @@ export default function SettingsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Anno</Label>
+                <Label>{t("year")}</Label>
                 <Select defaultValue={String(user?.year || 1)}>
                   <SelectTrigger>
                     <SelectValue />
@@ -170,7 +172,7 @@ export default function SettingsPage() {
                   <SelectContent>
                     {[1, 2, 3, 4, 5, 6].map((year) => (
                       <SelectItem key={year} value={String(year)}>
-                        {year}º Anno
+                        {tAuth("yearLabel", { year })}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -185,18 +187,18 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Bell className="w-5 h-5" />
-              Notifiche
+              {t("notifications")}
             </CardTitle>
             <CardDescription>
-              Configura come ricevere le notifiche
+              {t("notificationsDescription")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label>Notifiche Email</Label>
+                <Label>{t("emailNotifications")}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Ricevi aggiornamenti via email
+                  {t("emailNotificationsDescription")}
                 </p>
               </div>
               <Switch
@@ -211,9 +213,9 @@ export default function SettingsPage() {
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label>Nuove Risposte</Label>
+                <Label>{t("newAnswers")}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Notifica quando qualcuno risponde alle tue domande
+                  {t("newAnswersDescription")}
                 </p>
               </div>
               <Switch
@@ -226,9 +228,9 @@ export default function SettingsPage() {
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label>Nuovi Commenti</Label>
+                <Label>{t("newComments")}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Notifica quando qualcuno commenta le tue risposte
+                  {t("newCommentsDescription")}
                 </p>
               </div>
               <Switch
@@ -241,9 +243,9 @@ export default function SettingsPage() {
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label>Riepilogo Settimanale</Label>
+                <Label>{t("weeklyDigest")}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Ricevi un riepilogo settimanale delle attività
+                  {t("weeklyDigestDescription")}
                 </p>
               </div>
               <Switch
@@ -261,18 +263,18 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Shield className="w-5 h-5" />
-              Privacy e Sicurezza
+              {t("privacySecurity")}
             </CardTitle>
             <CardDescription>
-              Gestisci le impostazioni di sicurezza del tuo account
+              {t("privacySecurityDescription")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label>Profilo Pubblico</Label>
+                <Label>{t("publicProfile")}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Permetti ad altri studenti di vedere il tuo profilo
+                  {t("publicProfileDescription")}
                 </p>
               </div>
               <Switch defaultChecked />
@@ -282,9 +284,9 @@ export default function SettingsPage() {
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label>Mostra Attività</Label>
+                <Label>{t("showActivity")}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Mostra le tue attività recenti sul tuo profilo
+                  {t("showActivityDescription")}
                 </p>
               </div>
               <Switch defaultChecked />
@@ -294,10 +296,10 @@ export default function SettingsPage() {
 
             <div className="pt-2">
               <Button variant="outline" className="text-destructive hover:text-destructive">
-                Elimina Account
+                {t("deleteAccount")}
               </Button>
               <p className="text-xs text-muted-foreground mt-2">
-                Questa azione è irreversibile. Tutti i tuoi dati saranno eliminati.
+                {t("deleteAccountWarning")}
               </p>
             </div>
           </CardContent>
@@ -306,18 +308,18 @@ export default function SettingsPage() {
         {/* Save Button */}
         <div className="flex justify-end gap-4">
           <Link href="/profile">
-            <Button variant="outline">Annulla</Button>
+            <Button variant="outline">{tNav("profile")}</Button>
           </Link>
           <Button onClick={handleSaveProfile} disabled={isLoading}>
             {isLoading ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Salvataggio...
+                {t("saving")}
               </>
             ) : (
               <>
                 <Save className="w-4 h-4 mr-2" />
-                Salva Modifiche
+                {t("saveChanges")}
               </>
             )}
           </Button>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Pencil, Search, Shield, ShieldCheck, User, UserX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,7 +35,7 @@ import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
 import { it } from "date-fns/locale";
 
-interface User {
+interface UserType {
   id: string;
   email: string;
   name: string;
@@ -61,27 +62,30 @@ interface User {
 }
 
 interface UsersTableProps {
-  users: User[];
+  users: UserType[];
 }
 
-const roleLabels: Record<string, { label: string; icon: React.ReactNode; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  student: { label: "Estudante", icon: <User className="h-3 w-3" />, variant: "secondary" },
-  representative: { label: "Representante", icon: <Shield className="h-3 w-3" />, variant: "outline" },
-  admin: { label: "Admin", icon: <ShieldCheck className="h-3 w-3" />, variant: "default" },
-  super_admin: { label: "Super Admin", icon: <ShieldCheck className="h-3 w-3" />, variant: "destructive" },
-};
-
-const statusLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  active: { label: "Ativo", variant: "default" },
-  suspended: { label: "Suspenso", variant: "outline" },
-  banned: { label: "Banido", variant: "destructive" },
-};
-
 export function UsersTable({ users: initialUsers }: UsersTableProps) {
+  const t = useTranslations("admin.usersPage");
+  const tCommon = useTranslations("admin.common");
+
+  const roleLabels: Record<string, { label: string; icon: React.ReactNode; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+    student: { label: t("roles.student"), icon: <User className="h-3 w-3" />, variant: "secondary" },
+    representative: { label: t("roles.representative"), icon: <Shield className="h-3 w-3" />, variant: "outline" },
+    admin: { label: t("roles.admin"), icon: <ShieldCheck className="h-3 w-3" />, variant: "default" },
+    super_admin: { label: t("roles.super_admin"), icon: <ShieldCheck className="h-3 w-3" />, variant: "destructive" },
+  };
+
+  const statusLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+    active: { label: t("statuses.active"), variant: "default" },
+    suspended: { label: t("statuses.suspended"), variant: "outline" },
+    banned: { label: t("statuses.banned"), variant: "destructive" },
+  };
+
   const [users, setUsers] = useState(initialUsers);
   const [search, setSearch] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [editingUser, setEditingUser] = useState<UserType | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     role: "student",
@@ -93,7 +97,7 @@ export function UsersTable({ users: initialUsers }: UsersTableProps) {
     user.email.toLowerCase().includes(search.toLowerCase())
   );
 
-  const openEditDialog = (user: User) => {
+  const openEditDialog = (user: UserType) => {
     setEditingUser(user);
     setFormData({
       name: user.name,
@@ -113,7 +117,7 @@ export function UsersTable({ users: initialUsers }: UsersTableProps) {
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) throw new Error("Erro ao salvar");
+      if (!response.ok) throw new Error("Errore nel salvataggio");
 
       const updatedUser = await response.json();
 
@@ -121,10 +125,10 @@ export function UsersTable({ users: initialUsers }: UsersTableProps) {
         u.id === updatedUser.id ? { ...u, ...updatedUser } : u
       ));
 
-      toast.success("Usuário atualizado!");
+      toast.success(t("userUpdated"));
       setIsDialogOpen(false);
     } catch {
-      toast.error("Erro ao atualizar usuário");
+      toast.error(t("updateError"));
     }
   };
 
@@ -133,13 +137,13 @@ export function UsersTable({ users: initialUsers }: UsersTableProps) {
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>Lista de Usuários</CardTitle>
-            <CardDescription>{users.length} usuários cadastrados</CardDescription>
+            <CardTitle>{t("title")}</CardTitle>
+            <CardDescription>{t("count", { count: users.length })}</CardDescription>
           </div>
           <div className="relative w-64">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Buscar usuário..."
+              placeholder={t("searchPlaceholder")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-9"
@@ -151,13 +155,13 @@ export function UsersTable({ users: initialUsers }: UsersTableProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Usuário</TableHead>
-              <TableHead>Universidade</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-center">Atividade</TableHead>
-              <TableHead>Cadastro</TableHead>
-              <TableHead className="w-[80px]">Ações</TableHead>
+              <TableHead>{t("user")}</TableHead>
+              <TableHead>{t("university")}</TableHead>
+              <TableHead>{t("role")}</TableHead>
+              <TableHead>{t("status")}</TableHead>
+              <TableHead className="text-center">{t("activity")}</TableHead>
+              <TableHead>{t("registration")}</TableHead>
+              <TableHead className="w-[80px]">{t("actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -179,7 +183,7 @@ export function UsersTable({ users: initialUsers }: UsersTableProps) {
                       <span className="text-sm">{user.university.shortName || user.university.name}</span>
                     </div>
                     {user.course && (
-                      <div className="text-xs text-muted-foreground">{user.course.name} • {user.year}º ano</div>
+                      <div className="text-xs text-muted-foreground">{user.course.name} • {t("year", { year: user.year })}</div>
                     )}
                   </TableCell>
                   <TableCell>
@@ -195,8 +199,8 @@ export function UsersTable({ users: initialUsers }: UsersTableProps) {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center justify-center gap-3 text-xs text-muted-foreground">
-                      <span title="Exames">{user._count.exams} exames</span>
-                      <span title="Respostas">{user._count.studentAnswers} resp</span>
+                      <span title={t("exams")}>{user._count.exams} {t("exams")}</span>
+                      <span title={t("answers")}>{user._count.studentAnswers} {t("answers")}</span>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -222,14 +226,14 @@ export function UsersTable({ users: initialUsers }: UsersTableProps) {
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Editar Usuário</DialogTitle>
+              <DialogTitle>{t("editUser")}</DialogTitle>
               <DialogDescription>
                 {editingUser?.email}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
-                <Label htmlFor="name">Nome</Label>
+                <Label htmlFor="name">{t("name")}</Label>
                 <Input
                   id="name"
                   value={formData.name}
@@ -237,7 +241,7 @@ export function UsersTable({ users: initialUsers }: UsersTableProps) {
                 />
               </div>
               <div className="grid gap-2">
-                <Label>Role</Label>
+                <Label>{t("role")}</Label>
                 <Select
                   value={formData.role}
                   onValueChange={(value) => setFormData({ ...formData, role: value })}
@@ -249,32 +253,32 @@ export function UsersTable({ users: initialUsers }: UsersTableProps) {
                     <SelectItem value="student">
                       <div className="flex items-center gap-2">
                         <User className="h-4 w-4" />
-                        Estudante
+                        {t("roles.student")}
                       </div>
                     </SelectItem>
                     <SelectItem value="representative">
                       <div className="flex items-center gap-2">
                         <Shield className="h-4 w-4" />
-                        Representante
+                        {t("roles.representative")}
                       </div>
                     </SelectItem>
                     <SelectItem value="admin">
                       <div className="flex items-center gap-2">
                         <ShieldCheck className="h-4 w-4" />
-                        Admin
+                        {t("roles.admin")}
                       </div>
                     </SelectItem>
                     <SelectItem value="super_admin">
                       <div className="flex items-center gap-2">
                         <ShieldCheck className="h-4 w-4 text-destructive" />
-                        Super Admin
+                        {t("roles.super_admin")}
                       </div>
                     </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="grid gap-2">
-                <Label>Status</Label>
+                <Label>{t("status")}</Label>
                 <Select
                   value={formData.status}
                   onValueChange={(value) => setFormData({ ...formData, status: value })}
@@ -286,19 +290,19 @@ export function UsersTable({ users: initialUsers }: UsersTableProps) {
                     <SelectItem value="active">
                       <div className="flex items-center gap-2">
                         <div className="h-2 w-2 rounded-full bg-green-500" />
-                        Ativo
+                        {t("statuses.active")}
                       </div>
                     </SelectItem>
                     <SelectItem value="suspended">
                       <div className="flex items-center gap-2">
                         <div className="h-2 w-2 rounded-full bg-yellow-500" />
-                        Suspenso
+                        {t("statuses.suspended")}
                       </div>
                     </SelectItem>
                     <SelectItem value="banned">
                       <div className="flex items-center gap-2">
                         <UserX className="h-4 w-4 text-destructive" />
-                        Banido
+                        {t("statuses.banned")}
                       </div>
                     </SelectItem>
                   </SelectContent>
@@ -307,10 +311,10 @@ export function UsersTable({ users: initialUsers }: UsersTableProps) {
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                Cancelar
+                {tCommon("cancel")}
               </Button>
               <Button onClick={handleSubmit}>
-                Salvar
+                {tCommon("save")}
               </Button>
             </DialogFooter>
           </DialogContent>

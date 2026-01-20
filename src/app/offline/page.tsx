@@ -1,9 +1,12 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { WifiOff, RefreshCw } from "lucide-react";
 
 export default function OfflinePage() {
+  const t = useTranslations("offline");
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4 bg-background">
       <div className="text-center max-w-md">
@@ -11,11 +14,10 @@ export default function OfflinePage() {
           <WifiOff className="w-8 h-8 text-muted-foreground" />
         </div>
 
-        <h1 className="text-2xl font-bold text-foreground mb-2">Sei offline</h1>
+        <h1 className="text-2xl font-bold text-foreground mb-2">{t("title")}</h1>
 
         <p className="text-muted-foreground mb-8">
-          Sembra che tu non sia connesso a Internet. Controlla la tua connessione
-          e riprova.
+          {t("description")}
         </p>
 
         <Button
@@ -24,12 +26,11 @@ export default function OfflinePage() {
           size="lg"
         >
           <RefreshCw className="w-4 h-4" />
-          Riprova
+          {t("retry")}
         </Button>
 
         <p className="text-sm text-muted-foreground mt-8">
-          Alcune funzionalit&agrave; potrebbero essere disponibili offline se hai
-          gi&agrave; visitato le pagine in precedenza.
+          {t("offlineNotice")}
         </p>
       </div>
     </div>

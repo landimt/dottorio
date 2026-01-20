@@ -1,4 +1,5 @@
 import { RegisterForm } from "./_components/register-form";
+import { getTranslations } from "next-intl/server";
 import {
   BookOpen,
   Users,
@@ -10,41 +11,52 @@ import {
   Zap
 } from "lucide-react";
 
-const benefits = [
-  {
-    icon: Brain,
-    title: "Risposte AI Intelligenti",
-    description: "Ottieni risposte dettagliate e strutturate per ogni domanda d'esame",
-    color: "from-violet-500 to-purple-600",
-  },
-  {
-    icon: Users,
-    title: "Community Attiva",
-    description: "Condividi e impara dalle esperienze di altri studenti del tuo corso",
-    color: "from-blue-500 to-cyan-600",
-  },
-  {
-    icon: TrendingUp,
-    title: "Traccia i Progressi",
-    description: "Monitora le tue sessioni di studio e vedi i tuoi miglioramenti",
-    color: "from-emerald-500 to-green-600",
-  },
-  {
-    icon: Zap,
-    title: "Accesso Immediato",
-    description: "Inizia subito a studiare con migliaia di domande già disponibili",
-    color: "from-amber-500 to-orange-600",
-  },
+const benefitIcons = [Brain, Users, TrendingUp, Zap];
+const benefitColors = [
+  "from-violet-500 to-purple-600",
+  "from-blue-500 to-cyan-600",
+  "from-emerald-500 to-green-600",
+  "from-amber-500 to-orange-600",
 ];
 
-const stats = [
-  { value: "10K+", label: "Domande" },
-  { value: "500+", label: "Studenti" },
-  { value: "50+", label: "Professori" },
-  { value: "95%", label: "Soddisfazione" },
-];
+export default async function RegisterPage() {
+  const t = await getTranslations("registerPage");
+  const tCommon = await getTranslations("common");
 
-export default function RegisterPage() {
+  const benefits = [
+    {
+      icon: benefitIcons[0],
+      title: t("benefits.aiAnswers.title"),
+      description: t("benefits.aiAnswers.description"),
+      color: benefitColors[0],
+    },
+    {
+      icon: benefitIcons[1],
+      title: t("benefits.community.title"),
+      description: t("benefits.community.description"),
+      color: benefitColors[1],
+    },
+    {
+      icon: benefitIcons[2],
+      title: t("benefits.progress.title"),
+      description: t("benefits.progress.description"),
+      color: benefitColors[2],
+    },
+    {
+      icon: benefitIcons[3],
+      title: t("benefits.instant.title"),
+      description: t("benefits.instant.description"),
+      color: benefitColors[3],
+    },
+  ];
+
+  const stats = [
+    { value: "10K+", label: t("stats.questions") },
+    { value: "500+", label: t("stats.students") },
+    { value: "50+", label: t("stats.professors") },
+    { value: "95%", label: t("stats.satisfaction") },
+  ];
+
   return (
     <div className="min-h-screen flex bg-background relative overflow-hidden">
       {/* Decorative background elements */}
@@ -65,19 +77,19 @@ export default function RegisterPage() {
                 <BookOpen className="w-7 h-7 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-foreground">Dottorio</h1>
-                <p className="text-sm text-muted-foreground">Assistente AI per lo Studio</p>
+                <h1 className="text-3xl font-bold text-foreground">{tCommon("appName")}</h1>
+                <p className="text-sm text-muted-foreground">{t("tagline")}</p>
               </div>
             </div>
 
             <h2 className="text-3xl xl:text-4xl font-bold text-foreground leading-tight mb-4">
-              Preparati agli esami orali con{" "}
+              {t("heroTitle")}{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
-                l&apos;intelligenza artificiale
+                {t("heroHighlight")}
               </span>
             </h2>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Unisciti alla community di studenti che stanno rivoluzionando il modo di prepararsi agli esami universitari.
+              {t("heroDescription")}
             </p>
           </div>
 
@@ -117,15 +129,15 @@ export default function RegisterPage() {
           <div className="mt-10 flex items-center gap-6 text-muted-foreground animate-fade-in" style={{ animationDelay: "600ms" }}>
             <div className="flex items-center gap-2">
               <Shield className="w-5 h-5 text-emerald-500" />
-              <span className="text-sm">Dati protetti</span>
+              <span className="text-sm">{t("trustBadges.dataProtected")}</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle className="w-5 h-5 text-emerald-500" />
-              <span className="text-sm">100% Gratuito</span>
+              <span className="text-sm">{t("trustBadges.free")}</span>
             </div>
             <div className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-amber-500" />
-              <span className="text-sm">AI Avanzata</span>
+              <span className="text-sm">{t("trustBadges.advancedAI")}</span>
             </div>
           </div>
         </div>
@@ -141,15 +153,15 @@ export default function RegisterPage() {
                 <BookOpen className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-foreground">Dottorio</h1>
-                <p className="text-xs text-muted-foreground">Assistente AI per lo Studio</p>
+                <h1 className="text-2xl font-bold text-foreground">{tCommon("appName")}</h1>
+                <p className="text-xs text-muted-foreground">{t("tagline")}</p>
               </div>
             </div>
 
             <div className="space-y-2">
-              <h2 className="text-xl font-semibold text-foreground">Crea il tuo Account</h2>
+              <h2 className="text-xl font-semibold text-foreground">{t("createAccount")}</h2>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Registrati gratuitamente e inizia a studiare con l&apos;aiuto dell&apos;IA
+                {t("registerFreeStart")}
               </p>
             </div>
           </div>
@@ -158,11 +170,11 @@ export default function RegisterPage() {
           <div className="hidden lg:block text-center mb-8 animate-fade-in">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
               <Sparkles className="w-4 h-4" />
-              Registrazione Gratuita
+              {t("freeRegistration")}
             </div>
-            <h2 className="text-2xl font-bold text-foreground mb-2">Crea il tuo Account</h2>
+            <h2 className="text-2xl font-bold text-foreground mb-2">{t("createAccount")}</h2>
             <p className="text-muted-foreground">
-              Inizia il tuo percorso di studio intelligente
+              {t("startStudying")}
             </p>
           </div>
 
@@ -172,7 +184,7 @@ export default function RegisterPage() {
           <div className="lg:hidden mt-8 p-4 rounded-xl bg-primary/5 border border-primary/10">
             <h3 className="font-medium text-foreground mb-3 flex items-center gap-2">
               <CheckCircle className="w-5 h-5 text-primary" />
-              Cosa ottieni con Dottorio
+              {t("whatYouGet")}
             </h3>
             <ul className="space-y-2">
               {benefits.slice(0, 3).map((benefit, index) => (

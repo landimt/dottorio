@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { getTranslations } from "next-intl/server";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ScrollText, User, FileText, AlertTriangle } from "lucide-react";
@@ -55,13 +56,14 @@ function formatDate(date: Date) {
 
 export default async function AuditLogsPage() {
   const { logs, todayCount, totalCount } = await getAuditLogs();
+  const t = await getTranslations("admin.auditPage");
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Log di Audit</h1>
+        <h1 className="text-3xl font-bold">{t("title")}</h1>
         <p className="text-muted-foreground">
-          Cronologia di tutte le azioni amministrative
+          {t("description")}
         </p>
       </div>
 
@@ -69,22 +71,22 @@ export default async function AuditLogsPage() {
       <div className="grid gap-4 sm:grid-cols-2">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Azioni oggi</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("actionsToday")}</CardTitle>
             <ScrollText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{todayCount}</div>
-            <p className="text-xs text-muted-foreground">Azioni eseguite oggi</p>
+            <p className="text-xs text-muted-foreground">{t("executedToday")}</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Totale azioni</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("totalActions")}</CardTitle>
             <ScrollText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalCount}</div>
-            <p className="text-xs text-muted-foreground">Tutte le azioni registrate</p>
+            <p className="text-xs text-muted-foreground">{t("allActions")}</p>
           </CardContent>
         </Card>
       </div>
@@ -92,18 +94,18 @@ export default async function AuditLogsPage() {
       {/* Logs List */}
       <Card>
         <CardHeader>
-          <CardTitle>Cronologia recente</CardTitle>
+          <CardTitle>{t("recentHistory")}</CardTitle>
           <CardDescription>
-            Ultime 100 azioni amministrative
+            {t("last100")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           {logs.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <ScrollText className="mb-4 h-12 w-12 text-muted-foreground/50" />
-              <h3 className="mb-2 text-lg font-medium">Nessuna azione registrata</h3>
+              <h3 className="mb-2 text-lg font-medium">{t("noActions")}</h3>
               <p className="text-sm text-muted-foreground">
-                Le azioni amministrative appariranno qui.
+                {t("noActionsDesc")}
               </p>
             </div>
           ) : (
@@ -130,20 +132,20 @@ export default async function AuditLogsPage() {
                         </div>
                         <p className="text-sm">
                           <span className="font-medium">{log.admin.name || log.admin.email}</span>
-                          {" "}ha eseguito l&apos;azione su{" "}
+                          {" "}{t("executedAction")}{" "}
                           <code className="rounded bg-muted px-1 text-xs">
                             {log.entityId || "N/A"}
                           </code>
                         </p>
                         {log.reason && (
                           <p className="text-sm text-muted-foreground">
-                            Motivo: {log.reason}
+                            {t("reason")}: {log.reason}
                           </p>
                         )}
                         {log.changes && (
                           <details className="text-xs">
                             <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
-                              Mostra dettagli
+                              {t("showDetails")}
                             </summary>
                             <pre className="mt-2 overflow-auto rounded bg-muted p-2">
                               {JSON.stringify(JSON.parse(log.changes), null, 2)}

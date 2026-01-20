@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -43,6 +44,7 @@ const years = [1, 2, 3, 4, 5, 6];
 
 export function RegisterForm() {
   const router = useRouter();
+  const t = useTranslations("auth");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [universities, setUniversities] = useState<University[]>([]);
@@ -108,37 +110,37 @@ export function RegisterForm() {
 
     // Validate required fields
     if (!name.trim()) {
-      setError("Inserisci il tuo nome");
+      setError(t("enterName"));
       setIsLoading(false);
       return;
     }
 
     if (!universityId) {
-      setError("Seleziona la tua università");
+      setError(t("selectYourUniversity"));
       setIsLoading(false);
       return;
     }
 
     if (!email.trim()) {
-      setError("Inserisci la tua email istituzionale");
+      setError(t("enterInstitutionalEmail"));
       setIsLoading(false);
       return;
     }
 
     if (isInstitutionalEmail === false) {
-      setError("Utilizza un'email istituzionale della tua università");
+      setError(t("useInstitutionalEmail"));
       setIsLoading(false);
       return;
     }
 
     if (!courseId) {
-      setError("Seleziona il tuo corso");
+      setError(t("selectYourCourse"));
       setIsLoading(false);
       return;
     }
 
     if (!password || password.length < 6) {
-      setError("La password deve avere almeno 6 caratteri");
+      setError(t("passwordTooShort"));
       setIsLoading(false);
       return;
     }
@@ -162,7 +164,7 @@ export function RegisterForm() {
 
       if (!res.ok) {
         const errorResult = await res.json();
-        setError(errorResult.error?.message || "Errore durante la registrazione");
+        setError(errorResult.error?.message || t("registrationError"));
         setIsLoading(false);
         return;
       }
@@ -171,7 +173,7 @@ export function RegisterForm() {
       // For now, redirect to login with success message
       router.push("/login?registered=true");
     } catch {
-      setError("Si è verificato un errore. Riprova.");
+      setError(t("genericError"));
       setIsLoading(false);
     }
   }
@@ -191,12 +193,12 @@ export function RegisterForm() {
           <div className="space-y-2">
             <Label htmlFor="name" className="text-sm font-medium flex items-center gap-2">
               <User className="w-4 h-4 text-muted-foreground" />
-              Nome Completo
+              {t("fullName")}
             </Label>
             <Input
               id="name"
               type="text"
-              placeholder="Il tuo nome e cognome"
+              placeholder={t("fullNamePlaceholder")}
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
@@ -209,14 +211,14 @@ export function RegisterForm() {
           <div className="space-y-2">
             <Label htmlFor="university" className="text-sm font-medium flex items-center gap-2">
               <Building2 className="w-4 h-4 text-muted-foreground" />
-              Università
+              {t("university")}
             </Label>
             <Select value={universityId} onValueChange={handleUniversityChange} disabled={isLoading}>
               <SelectTrigger className="h-11 text-left">
                 {universityId ? (
                   <span>{universities.find((u) => u.id === universityId)?.name}</span>
                 ) : (
-                  <SelectValue placeholder="Seleziona la tua università" />
+                  <SelectValue placeholder={t("selectUniversity")} />
                 )}
               </SelectTrigger>
               <SelectContent>
@@ -233,13 +235,13 @@ export function RegisterForm() {
           <div className="space-y-2">
             <Label htmlFor="email" className="text-sm font-medium flex items-center gap-2">
               <Mail className="w-4 h-4 text-muted-foreground" />
-              Email Istituzionale
+              {t("institutionalEmail")}
             </Label>
             <div className="relative">
               <Input
                 id="email"
                 type="email"
-                placeholder="nome.cognome@studenti.uniroma1.it"
+                placeholder={t("institutionalEmailPlaceholder")}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -265,7 +267,7 @@ export function RegisterForm() {
             {email && isInstitutionalEmail === false && (
               <p className="text-xs text-amber-600 dark:text-amber-400 flex items-start gap-1.5">
                 <Info className="w-3.5 h-3.5 mt-0.5 shrink-0" />
-                Usa l&apos;email fornita dalla tua università per verificare la tua identità
+                {t("useInstitutionalEmail")}
               </p>
             )}
           </div>
@@ -274,7 +276,7 @@ export function RegisterForm() {
           <div className="space-y-2">
             <Label htmlFor="course" className="text-sm font-medium flex items-center gap-2">
               <GraduationCap className="w-4 h-4 text-muted-foreground" />
-              Corso di Laurea
+              {t("course")}
             </Label>
             <Select
               value={courseId}
@@ -288,10 +290,10 @@ export function RegisterForm() {
                   <SelectValue
                     placeholder={
                       !universityId
-                        ? "Seleziona prima l'università"
+                        ? t("selectUniversityFirst")
                         : universityCourses.length === 0
-                        ? "Nessun corso disponibile"
-                        : "Seleziona il tuo corso"
+                        ? t("noCourses")
+                        : t("selectCourse")
                     }
                   />
                 )}
@@ -309,7 +311,7 @@ export function RegisterForm() {
           {/* Anno (Opzionale) */}
           <div className="space-y-2">
             <Label htmlFor="year" className="text-sm font-medium text-muted-foreground">
-              Anno di corso <span className="text-xs">(opzionale)</span>
+              {t("year")} <span className="text-xs">{t("yearOptional")}</span>
             </Label>
             <Select
               value={year ? String(year) : ""}
@@ -318,15 +320,15 @@ export function RegisterForm() {
             >
               <SelectTrigger className="h-11 text-left">
                 {year ? (
-                  <span>{year}º Anno</span>
+                  <span>{t("yearLabel", { year })}</span>
                 ) : (
-                  <SelectValue placeholder="Seleziona l'anno" />
+                  <SelectValue placeholder={t("selectYear")} />
                 )}
               </SelectTrigger>
               <SelectContent>
                 {years.map((y) => (
                   <SelectItem key={y} value={String(y)}>
-                    {y}º Anno
+                    {t("yearLabel", { year: y })}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -336,12 +338,12 @@ export function RegisterForm() {
           {/* Password */}
           <div className="space-y-2">
             <Label htmlFor="password" className="text-sm font-medium">
-              Password
+              {t("password")}
             </Label>
             <Input
               id="password"
               type="password"
-              placeholder="Minimo 6 caratteri"
+              placeholder={t("passwordMinLength")}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               minLength={6}
@@ -361,10 +363,10 @@ export function RegisterForm() {
             />
             <div className="flex-1 space-y-1">
               <Label htmlFor="isRepresentative" className="text-sm cursor-pointer font-medium">
-                Sono rappresentante di classe
+                {t("isRepresentative")}
               </Label>
               <p className="text-xs text-muted-foreground">
-                Potrai generare link condivisibili per raccogliere domande d&apos;esame dalla tua classe
+                {t("representativeDescription")}
               </p>
             </div>
           </div>
@@ -374,8 +376,7 @@ export function RegisterForm() {
             <p className="flex items-start gap-2">
               <Info className="w-4 h-4 mt-0.5 text-primary shrink-0" />
               <span>
-                Dopo la registrazione, riceverai un&apos;email per verificare il tuo account.
-                {/* TODO: Implement email verification */}
+                {t("emailVerificationNotice")}
               </span>
             </p>
           </div>
@@ -388,19 +389,19 @@ export function RegisterForm() {
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                Creazione account...
+                {t("creatingAccount")}
               </>
             ) : (
-              "Crea Account Gratuito"
+              t("createAccount")
             )}
           </Button>
         </form>
 
         <div className="mt-6 text-center">
           <p className="text-sm text-muted-foreground">
-            Hai già un account?{" "}
+            {t("hasAccount")}{" "}
             <Link href="/login" className="text-primary hover:underline font-medium">
-              Accedi
+              {t("login")}
             </Link>
           </p>
         </div>

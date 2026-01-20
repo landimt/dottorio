@@ -18,6 +18,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 async function getUserStats(userId: string) {
   const [
@@ -69,6 +70,9 @@ async function getRecentActivity(userId: string) {
 export default async function ProfilePage() {
   const session = await auth();
   const user = session?.user;
+  const t = await getTranslations("profile");
+  const tNav = await getTranslations("navigation");
+  const tHeader = await getTranslations("header");
 
   if (!user?.id) {
     return null;
@@ -115,7 +119,7 @@ export default async function ProfilePage() {
                 {user.isRepresentative && (
                   <Badge variant="secondary" className="w-fit mx-auto md:mx-0">
                     <Award className="w-3 h-3 mr-1" />
-                    Rappresentante
+                    {t("representative")}
                   </Badge>
                 )}
               </div>
@@ -128,7 +132,7 @@ export default async function ProfilePage() {
                 </div>
                 <div className="flex items-center gap-1">
                   <BookOpen className="w-4 h-4" />
-                  <span>{user.year}º Anno</span>
+                  <span>{tHeader("year", { year: user.year || 1 })}</span>
                 </div>
                 {user.courseName && (
                   <div className="flex items-center gap-1">
@@ -144,7 +148,7 @@ export default async function ProfilePage() {
               <Link href="/settings">
                 <Button variant="outline" size="sm">
                   <Settings className="w-4 h-4 mr-2" />
-                  Impostazioni
+                  {tNav("settings")}
                 </Button>
               </Link>
             </div>
@@ -158,28 +162,28 @@ export default async function ProfilePage() {
           <CardContent className="pt-6 text-center">
             <Plus className="w-6 h-6 mx-auto mb-2 text-blue-500" />
             <p className="text-2xl font-bold">{stats.questionsAdded}</p>
-            <p className="text-xs text-muted-foreground">Domande Aggiunte</p>
+            <p className="text-xs text-muted-foreground">{t("questionsAdded")}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6 text-center">
             <Star className="w-6 h-6 mx-auto mb-2 text-yellow-500" />
             <p className="text-2xl font-bold">{stats.questionsSaved}</p>
-            <p className="text-xs text-muted-foreground">Domande Salvate</p>
+            <p className="text-xs text-muted-foreground">{t("questionsSaved")}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6 text-center">
             <MessageSquare className="w-6 h-6 mx-auto mb-2 text-green-500" />
             <p className="text-2xl font-bold">{stats.commentsCount}</p>
-            <p className="text-xs text-muted-foreground">Commenti</p>
+            <p className="text-xs text-muted-foreground">{t("comments")}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6 text-center">
             <TrendingUp className="w-6 h-6 mx-auto mb-2 text-purple-500" />
             <p className="text-2xl font-bold">{stats.answersCount}</p>
-            <p className="text-xs text-muted-foreground">Risposte</p>
+            <p className="text-xs text-muted-foreground">{t("answers")}</p>
           </CardContent>
         </Card>
       </div>
@@ -189,7 +193,7 @@ export default async function ProfilePage() {
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <Calendar className="w-5 h-5" />
-            Attività Recente
+            {t("recentActivity")}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -226,12 +230,12 @@ export default async function ProfilePage() {
             <div className="text-center py-8">
               <Eye className="w-12 h-12 mx-auto text-muted-foreground/50 mb-4" />
               <p className="text-muted-foreground mb-4">
-                Non hai ancora aggiunto domande
+                {t("noQuestionsYet")}
               </p>
               <Link href="/exams/new">
                 <Button>
                   <Plus className="w-4 h-4 mr-2" />
-                  Aggiungi la tua prima domanda
+                  {t("addFirstQuestion")}
                 </Button>
               </Link>
             </div>

@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { getTranslations } from "next-intl/server";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { School, BookOpen, GraduationCap } from "lucide-react";
 import { UniversitiesTab } from "./_components/universities-tab";
@@ -53,13 +54,14 @@ async function getCadastrosData() {
 
 export default async function CadastrosPage() {
   const { universities, subjects, professors } = await getCadastrosData();
+  const t = await getTranslations("admin.registriesPage");
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Cadastros</h1>
+        <h1 className="text-3xl font-bold">{t("title")}</h1>
         <p className="text-muted-foreground">
-          Gerencie universidades, matérias e professores
+          {t("description")}
         </p>
       </div>
 
@@ -67,15 +69,15 @@ export default async function CadastrosPage() {
         <TabsList className="grid w-full max-w-lg grid-cols-3">
           <TabsTrigger value="universities" className="flex items-center gap-2">
             <School className="h-4 w-4" />
-            Universidades
+            {t("universitiesTab")}
           </TabsTrigger>
           <TabsTrigger value="subjects" className="flex items-center gap-2">
             <BookOpen className="h-4 w-4" />
-            Matérias
+            {t("subjectsTab")}
           </TabsTrigger>
           <TabsTrigger value="professors" className="flex items-center gap-2">
             <GraduationCap className="h-4 w-4" />
-            Professores
+            {t("professorsTab")}
           </TabsTrigger>
         </TabsList>
 

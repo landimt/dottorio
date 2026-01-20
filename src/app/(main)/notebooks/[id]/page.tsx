@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, use } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { BookOpen, ArrowLeft, Plus, Search, Save, Clock, ChevronDown, ChevronRight, FileText, Trash2, Edit2, Menu } from 'lucide-react';
@@ -116,6 +117,9 @@ interface NotebookEditorPageProps {
 
 export default function NotebookEditorPage({ params }: NotebookEditorPageProps) {
   const { id } = use(params);
+  const t = useTranslations('notebooks.editor');
+  const tCommon = useTranslations('common');
+  
   const initialNotebook = ALL_NOTEBOOKS.find(nb => nb.id === id) || ALL_NOTEBOOKS[0];
 
   const [allNotebooks, setAllNotebooks] = useState<Notebook[]>(ALL_NOTEBOOKS);
@@ -159,8 +163,8 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
       setLastSaved(new Date());
       setIsSaving(false);
 
-      toast.success('Página salvata!', {
-        description: 'Le tue modifiche sono state salvate con successo.'
+      toast.success(t('pageSaved'), {
+        description: t('pageSavedDescription')
       });
     }, 500);
   };
@@ -222,15 +226,15 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
     setNewPageTitle('');
     setTargetNotebookId(null);
 
-    toast.success('Nuova pagina creata!', {
-      description: `Pagina "${newPage.title}" aggiunta a "${updatedNotebook.title}".`
+    toast.success(t('newPageCreated'), {
+      description: t('pageAddedTo', { page: newPage.title, notebook: updatedNotebook.title })
     });
   };
 
   const handleDeletePage = (pageId: string) => {
     if (currentNotebook.pages.length === 1) {
-      toast.error('Impossibile eliminare', {
-        description: 'Ogni caderno deve avere almeno una pagina.'
+      toast.error(t('cannotDelete'), {
+        description: t('minOnePage')
       });
       return;
     }
@@ -250,8 +254,8 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
       setContent(updatedPages[0].content || '');
     }
 
-    toast.success('Pagina eliminata', {
-      description: 'La pagina è stata rimossa dal caderno.'
+    toast.success(t('pageDeleted'), {
+      description: t('pageDeletedDescription')
     });
   };
 
@@ -277,8 +281,8 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
     setEditingPageId(null);
     setEditingPageTitle('');
 
-    toast.success('Pagina rinominata', {
-      description: 'Il titolo è stato aggiornato.'
+    toast.success(t('pageRenamed'), {
+      description: t('titleUpdated')
     });
   };
 
@@ -299,8 +303,8 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
     const now = new Date();
     const diff = Math.floor((now.getTime() - lastSaved.getTime()) / 1000);
 
-    if (diff < 60) return 'salvato ora';
-    if (diff < 3600) return `salvato ${Math.floor(diff / 60)} min fa`;
+    if (diff < 60) return t('savedNow');
+    if (diff < 3600) return t('savedMinAgo', { minutes: Math.floor(diff / 60) });
     return lastSaved.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
   };
 
@@ -327,14 +331,14 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <BookOpen className="w-4 h-4 text-primary" />
-              <h2 className="font-medium text-foreground">Caderni</h2>
+              <h2 className="font-medium text-foreground">{t('notebooks')}</h2>
             </div>
             <Link href="/notebooks">
               <Button
                 size="sm"
                 variant="ghost"
                 className="h-8 w-8 p-0 hover:bg-primary/10 hover:text-primary transition-all"
-                title="Gestisci caderni"
+                title={t('manageNotebooks')}
               >
                 <Plus className="w-4 h-4" />
               </Button>
@@ -346,7 +350,7 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
             <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="Cerca..."
+              placeholder={tCommon('search') + '...'}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-7 h-8 text-sm bg-background border-border focus-visible:ring-primary/20"
@@ -368,14 +372,14 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
                     className="flex items-center gap-2 flex-1 text-left"
                   >
                     {expandedNotebooks.has(nb.id) ? (
-                      <ChevronDown className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+                      <ChevronDown className="w-3 h-3 text-muted-foreground shrink-0" />
                     ) : (
-                      <ChevronRight className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+                      <ChevronRight className="w-3 h-3 text-muted-foreground shrink-0" />
                     )}
-                    <span className="text-lg flex-shrink-0">{nb.icon}</span>
+                    <span className="text-lg shrink-0">{nb.icon}</span>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate text-foreground">{nb.title}</p>
-                      <p className="text-xs text-muted-foreground truncate">{nb.pages.length} pagine</p>
+                      <p className="text-xs text-muted-foreground truncate">{nb.pages.length} {nb.pages.length === 1 ? 'pagina' : 'pagine'}</p>
                     </div>
                   </button>
 
@@ -388,7 +392,7 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
                         setShowNewPageDialog(true);
                       }}
                       className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all"
-                      title="Nuova pagina"
+                      title={t('newPage')}
                     >
                       <Plus className="w-5 h-5" />
                     </Button>
@@ -424,7 +428,7 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
                               onClick={() => handleSwitchPage(nb, page)}
                               className="flex items-center gap-2 flex-1 min-w-0"
                             >
-                              <FileText className="w-3 h-3 flex-shrink-0" />
+                              <FileText className="w-3 h-3 shrink-0" />
                               <span className={`text-sm truncate ${currentPage.id === page.id && currentNotebook.id === nb.id ? 'font-medium' : ''}`}>
                                 {page.title}
                               </span>
@@ -439,7 +443,7 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
                                   setEditingPageTitle(page.title);
                                 }}
                                 className="h-6 w-6 p-0 text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all"
-                                title="Rinomina"
+                                title={t('rename')}
                               >
                                 <Edit2 className="w-5 h-5" />
                               </Button>
@@ -448,7 +452,7 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
                                 variant="ghost"
                                 onClick={() => handleDeletePage(page.id)}
                                 className="h-6 w-6 p-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all"
-                                title="Elimina"
+                                title={t('delete')}
                               >
                                 <Trash2 className="w-5 h-5" />
                               </Button>
@@ -472,7 +476,7 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
               className="w-full justify-start text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all group"
             >
               <ArrowLeft className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" />
-              Tutti i Caderni
+              {t('allNotebooks')}
             </Button>
           </Link>
         </div>
@@ -489,12 +493,12 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
                 size="sm"
                 variant="ghost"
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="lg:hidden h-8 w-8 p-0 flex-shrink-0"
+                className="lg:hidden h-8 w-8 p-0 shrink-0"
               >
                 <Menu className="w-4 h-4" />
               </Button>
 
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center border border-primary/10 shadow-sm flex-shrink-0">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center border border-primary/10 shadow-sm shrink-0">
                 <span className="text-lg sm:text-2xl">{currentNotebook.icon}</span>
               </div>
               <div className="flex-1 min-w-0">
@@ -513,7 +517,7 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
               </div>
             </div>
 
-            <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
               {/* Status de salvamento */}
               {lastSaved && (
                 <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/50 text-xs text-muted-foreground">
@@ -529,7 +533,7 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
                 className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5"
               >
                 <Save className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
-                <span className="hidden sm:inline">{isSaving ? 'Salvando...' : 'Salva'}</span>
+                <span className="hidden sm:inline">{isSaving ? t('saving') : t('save')}</span>
               </Button>
             </div>
           </div>
@@ -542,7 +546,7 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
               key={`tiptap-${currentNotebook.id}-${currentPage.id}`}
               content={content}
               onChange={setContent}
-              placeholder={`Inizia a scrivere gli appunti di ${currentPage.title}...`}
+              placeholder={t('editorPlaceholder', { page: currentPage.title })}
             />
           </div>
         </div>
@@ -558,18 +562,18 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
       }}>
         <DialogContent className="sm:max-w-md bg-card border-border">
           <DialogHeader>
-            <DialogTitle className="text-foreground">Nuova Pagina</DialogTitle>
+            <DialogTitle className="text-foreground">{t('newPageDialog.title')}</DialogTitle>
             <DialogDescription className="text-muted-foreground">
-              Crea una nuova pagina in &quot;{allNotebooks.find(nb => nb.id === targetNotebookId)?.title || currentNotebook.title}&quot;
+              {t('newPageDialog.description', { notebook: allNotebooks.find(nb => nb.id === targetNotebookId)?.title || currentNotebook.title })}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="page-title" className="text-foreground">Titolo della Pagina</Label>
+              <Label htmlFor="page-title" className="text-foreground">{t('newPageDialog.pageTitle')}</Label>
               <Input
                 id="page-title"
-                placeholder="es. Sistema Cardiovascolare"
+                placeholder={t('newPageDialog.pageTitlePlaceholder')}
                 value={newPageTitle}
                 onChange={(e) => setNewPageTitle(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleCreatePage()}
@@ -584,7 +588,7 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
                 className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
                 disabled={!newPageTitle.trim()}
               >
-                Crea Pagina
+                {t('newPageDialog.create')}
               </Button>
               <Button
                 onClick={() => {
@@ -595,7 +599,7 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
                 variant="outline"
                 className="flex-1"
               >
-                Annulla
+                {t('newPageDialog.cancel')}
               </Button>
             </div>
           </div>

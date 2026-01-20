@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -76,6 +77,9 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: session } = useSession();
+  const t = useTranslations("exam");
+  const tCommon = useTranslations("common");
+  const tQuestion = useTranslations("question");
 
   // Prefill data from URL params (shared links)
   const prefillData = {
@@ -269,11 +273,11 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
       });
 
       if (!examResponse.ok) {
-        throw new Error("Errore nella creazione dell'esame");
+        throw new Error(t("creationError"));
       }
 
       const examResult = await examResponse.json();
-      const exam = examResult.data; // API returns { success: true, data: {...} }
+      const exam = examResult.data;
 
       // Then, create all questions for this exam and capture the responses
       const questionResponses = await Promise.all(
@@ -288,7 +292,7 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
           });
           if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.error?.message || "Errore nella creazione della domanda");
+            throw new Error(errorData.error?.message || t("questionCreationError"));
           }
           const questionResult = await response.json();
           return { id: questionResult.data.id, text };
@@ -312,7 +316,7 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
         }, 2000);
       }
     } catch {
-      toast.error("Errore durante l'invio delle domande");
+      toast.error(t("submitError"));
     } finally {
       setIsSubmitting(false);
     }
@@ -357,16 +361,16 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
       });
 
       if (!response.ok) {
-        throw new Error("Errore nel collegamento");
+        throw new Error(tQuestion("linking.linkError"));
       }
 
       const result = await response.json();
-      toast.success(`Domanda collegata! Ora fa parte di un gruppo con ${result.data.group.totalQuestions} domande`);
+      toast.success(tQuestion("linking.linkedSuccess", { count: result.data.group.totalQuestions }));
 
       // Move to next question or finish
       moveToNextQuestion();
     } catch {
-      toast.error("Errore nel collegamento della domanda");
+      toast.error(tQuestion("linking.linkError"));
     } finally {
       setIsLinking(false);
     }
@@ -401,7 +405,7 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
   // Generate shareable link (only for class representatives)
   const handleGenerateShareableLink = () => {
     if (!formData.subjectId || !formData.professorId) {
-      toast.error("Seleziona materia e professore prima di generare il link");
+      toast.error(t("selectSubjectAndProfessor"));
       return;
     }
 
@@ -421,9 +425,9 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(shareableLink);
-      toast.success("Link copiato negli appunti!");
+      toast.success(t("shareDialog.linkCopied"));
     } catch {
-      toast.error("Errore durante la copia del link");
+      toast.error(tCommon("error"));
     }
   };
 
@@ -436,6 +440,8 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
   const getUniversityName = (id: string) => universities.find((u) => u.id === id)?.name || id;
   const getCourseName = (id: string) => courses.find((c) => c.id === id)?.name || id;
 
+  const filledQuestionsCount = formData.questions.filter((q) => q.trim()).length;
+
   if (showSuccess) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-6">
@@ -445,20 +451,14 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
               <CheckCircle className="w-8 h-8 text-accent-foreground" />
             </div>
             <h2 className="text-xl font-medium text-foreground mb-2">
-              {formData.questions.filter((q) => q.trim()).length > 1
-                ? "Domande Inviate!"
-                : "Domanda Inviata!"}
+              {filledQuestionsCount > 1
+                ? t("success.titlePlural")
+                : t("success.title")}
             </h2>
             <p className="text-muted-foreground">
-              Grazie per aver contribuito alla comunità.{" "}
-              {formData.questions.filter((q) => q.trim()).length > 1
-                ? "Le tue domande saranno verificate"
-                : "La tua domanda sarà verificata"}{" "}
-              e presto{" "}
-              {formData.questions.filter((q) => q.trim()).length > 1
-                ? "saranno disponibili"
-                : "sarà disponibile"}{" "}
-              per altri studenti.
+              {filledQuestionsCount > 1
+                ? t("success.descriptionPlural")
+                : t("success.description")}
             </p>
           </CardContent>
         </Card>
@@ -484,10 +484,10 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-primary">
-                    Link Condiviso dal Rappresentante! 🎉
+                    {t("sharedLink.title")}
                   </h3>
                   <p className="text-sm text-primary/80">
-                    I campi sono già precompilati - aggiungi solo le tue domande
+                    {t("sharedLink.description")}
                   </p>
                 </div>
               </div>
@@ -496,7 +496,7 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {prefillData.subject && (
                   <div className="bg-white/60 dark:bg-black/20 rounded-lg p-3 border border-primary/20 backdrop-blur-sm">
-                    <p className="text-xs text-muted-foreground mb-1">Materia</p>
+                    <p className="text-xs text-muted-foreground mb-1">{t("subject")}</p>
                     <p className="font-medium text-foreground">
                       {getSubjectName(prefillData.subject)}
                     </p>
@@ -504,7 +504,7 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
                 )}
                 {prefillData.professor && (
                   <div className="bg-white/60 dark:bg-black/20 rounded-lg p-3 border border-primary/20 backdrop-blur-sm">
-                    <p className="text-xs text-muted-foreground mb-1">Professore</p>
+                    <p className="text-xs text-muted-foreground mb-1">{t("professor")}</p>
                     <p className="font-medium text-foreground">
                       {getProfessorName(prefillData.professor)}
                     </p>
@@ -512,7 +512,7 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
                 )}
                 {prefillData.courseId && (
                   <div className="bg-white/60 dark:bg-black/20 rounded-lg p-3 border border-primary/20 backdrop-blur-sm">
-                    <p className="text-xs text-muted-foreground mb-1">Corso</p>
+                    <p className="text-xs text-muted-foreground mb-1">{t("course")}</p>
                     <p className="font-medium text-foreground">{getCourseName(prefillData.courseId)}</p>
                   </div>
                 )}
@@ -521,7 +521,7 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
               {/* CTA */}
               <div className="flex items-center gap-2 text-sm text-primary/90">
                 <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                <span>Scorri in basso per aggiungere le domande dell&apos;esame</span>
+                <span>{t("sharedLink.scrollDown")}</span>
               </div>
             </div>
           </div>
@@ -535,17 +535,16 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
             className="text-muted-foreground hover:text-foreground transition-all"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Torna alla Dashboard
+            {t("backToDashboard")}
           </Button>
 
           {!hasPrefill && (
             <div className="text-center space-y-2">
               <h1 className="text-2xl font-medium text-foreground">
-                Contribuisci alla Comunità
+                {t("contributeTitle")}
               </h1>
               <p className="text-muted-foreground">
-                Aggiungi le domande che sono state fatte nel tuo esame orale per aiutare
-                altri studenti
+                {t("contributeDescription")}
               </p>
             </div>
           )}
@@ -557,11 +556,10 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
             <div className="flex items-start justify-between">
               <div className="space-y-1.5">
                 <CardTitle className="text-foreground">
-                  Informazioni sulla Domanda
+                  {t("formTitle")}
                 </CardTitle>
                 <CardDescription className="text-muted-foreground">
-                  Compila i campi con precisione in modo che altri studenti possano
-                  trovarle facilmente
+                  {t("formDescription")}
                 </CardDescription>
               </div>
 
@@ -577,7 +575,7 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
                     disabled={!formData.subjectId || !formData.professorId}
                   >
                     <Link2 className="w-4 h-4 mr-2" />
-                    Genera Link
+                    {t("generateLink")}
                     <span className="ml-2 text-xs opacity-75">✨</span>
                   </Button>
                 </div>
@@ -591,7 +589,7 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="university" className="text-foreground">
-                    Università
+                    {t("university")}
                   </Label>
                   <Input
                     id="university"
@@ -603,10 +601,10 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
 
                 <div className="space-y-2 relative">
                   <Label htmlFor="course" className="text-foreground flex items-center gap-2">
-                    Corso
+                    {t("course")}
                     {(prefillData.courseId || session?.user?.courseId) && formData.courseId && (
                       <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
-                        Dal tuo profilo
+                        {t("fromProfile")}
                       </span>
                     )}
                   </Label>
@@ -621,16 +619,12 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
                       {formData.courseId ? (
                         <span>{getCourseName(formData.courseId)}</span>
                       ) : (
-                        <SelectValue placeholder={universityCourses.length === 0 ? "Nessun corso disponibile" : "Seleziona il corso"} />
+                        <SelectValue placeholder={universityCourses.length === 0 ? t("noCourses") : t("selectCourse")} />
                       )}
                     </SelectTrigger>
                     <SelectContent className="bg-card border-border">
                       {universityCourses.map((course) => (
-                        <SelectItem
-                          key={course.id}
-                          value={course.id}
-                          className="text-foreground focus:bg-[#FEF2F2] focus:text-[#DC2626] data-[state=checked]:bg-[#FFE4E6] data-[state=checked]:text-[#DC2626] hover:bg-[#FEF2F2] hover:text-[#DC2626]"
-                        >
+                        <SelectItem key={course.id} value={course.id}>
                           {course.name}
                         </SelectItem>
                       ))}
@@ -643,7 +637,7 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="year" className="text-foreground">
-                    Anno
+                    {t("year")}
                   </Label>
                   <Select
                     value={formData.year ? String(formData.year) : ""}
@@ -651,19 +645,15 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
                   >
                     <SelectTrigger className="bg-input border-border text-foreground text-left">
                       {formData.year ? (
-                        <span>{formData.year}º Anno</span>
+                        <span>{t("yearLabel", { year: formData.year })}</span>
                       ) : (
-                        <SelectValue placeholder="Seleziona l'anno" />
+                        <SelectValue placeholder={t("selectYear")} />
                       )}
                     </SelectTrigger>
                     <SelectContent className="bg-card border-border">
                       {years.map((year) => (
-                        <SelectItem
-                          key={year}
-                          value={String(year)}
-                          className="text-foreground focus:bg-[#FEF2F2] focus:text-[#DC2626] data-[state=checked]:bg-[#FFE4E6] data-[state=checked]:text-[#DC2626] hover:bg-[#FEF2F2] hover:text-[#DC2626]"
-                        >
-                          {year}º Anno
+                        <SelectItem key={year} value={String(year)}>
+                          {t("yearLabel", { year })}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -672,10 +662,10 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
 
                 <div className="space-y-2 relative">
                   <Label htmlFor="subject" className="text-foreground flex items-center gap-2">
-                    Materia
+                    {t("subject")}
                     {prefillData.subject && (
                       <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
-                        Precompilato
+                        {t("prefilled")}
                       </span>
                     )}
                   </Label>
@@ -692,20 +682,16 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
                       }`}
                     >
                       {isLoadingSubjects ? (
-                        <span className="text-muted-foreground">Caricamento...</span>
+                        <span className="text-muted-foreground">{tCommon("loading")}</span>
                       ) : formData.subjectId ? (
                         <span>{getSubjectName(formData.subjectId)}</span>
                       ) : (
-                        <SelectValue placeholder={!formData.courseId ? "Seleziona prima il corso" : subjects.length === 0 ? "Nessuna materia disponibile" : "Seleziona la materia"} />
+                        <SelectValue placeholder={!formData.courseId ? t("selectCourseFirst") : subjects.length === 0 ? t("noSubjects") : t("selectSubject")} />
                       )}
                     </SelectTrigger>
                     <SelectContent className="bg-card border-border">
                       {subjects.map((subject) => (
-                        <SelectItem
-                          key={subject.id}
-                          value={subject.id}
-                          className="text-foreground focus:bg-[#FEF2F2] focus:text-[#DC2626] data-[state=checked]:bg-[#FFE4E6] data-[state=checked]:text-[#DC2626] hover:bg-[#FEF2F2] hover:text-[#DC2626]"
-                        >
+                        <SelectItem key={subject.id} value={subject.id}>
                           {subject.name}
                         </SelectItem>
                       ))}
@@ -716,10 +702,10 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
 
               <div className="space-y-2 relative">
                 <Label htmlFor="professor" className="text-foreground flex items-center gap-2">
-                  Professore
+                  {t("professor")}
                   {prefillData.professor && (
                     <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
-                      Precompilato
+                      {t("prefilled")}
                     </span>
                   )}
                 </Label>
@@ -736,20 +722,16 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
                     }`}
                   >
                     {isLoadingProfessors ? (
-                      <span className="text-muted-foreground">Caricamento...</span>
+                      <span className="text-muted-foreground">{tCommon("loading")}</span>
                     ) : formData.professorId ? (
                       <span>{getProfessorName(formData.professorId)}</span>
                     ) : (
-                      <SelectValue placeholder={!formData.subjectId ? "Seleziona prima la materia" : professors.length === 0 ? "Nessun professore disponibile" : "Seleziona il professore"} />
+                      <SelectValue placeholder={!formData.subjectId ? t("selectSubjectFirst") : professors.length === 0 ? t("noProfessors") : t("selectProfessor")} />
                     )}
                   </SelectTrigger>
                   <SelectContent className="bg-card border-border">
                     {professors.map((professor) => (
-                      <SelectItem
-                        key={professor.id}
-                        value={professor.id}
-                        className="text-foreground focus:bg-[#FEF2F2] focus:text-[#DC2626] data-[state=checked]:bg-[#FFE4E6] data-[state=checked]:text-[#DC2626] hover:bg-[#FEF2F2] hover:text-[#DC2626]"
-                      >
+                      <SelectItem key={professor.id} value={professor.id}>
                         {professor.name}
                       </SelectItem>
                     ))}
@@ -760,10 +742,9 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
               {/* Multiple Questions Section */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <Label className="text-foreground">Domande dell&apos;Esame</Label>
+                  <Label className="text-foreground">{t("examQuestions")}</Label>
                   <span className="text-xs text-muted-foreground">
-                    {formData.questions.length}{" "}
-                    {formData.questions.length === 1 ? "domanda" : "domande"}
+                    {filledQuestionsCount} {filledQuestionsCount === 1 ? "domanda" : "domande"}
                   </span>
                 </div>
 
@@ -787,8 +768,8 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
                           <Textarea
                             placeholder={
                               index === 0
-                                ? "Scrivi qui la prima domanda..."
-                                : `Domanda ${index + 1}...`
+                                ? t("firstQuestionPlaceholder")
+                                : t("questionPlaceholder", { number: index + 1 })
                             }
                             value={question}
                             onChange={(e) => handleQuestionChange(index, e.target.value)}
@@ -805,7 +786,7 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
                             size="sm"
                             onClick={() => handleRemoveQuestion(index)}
                             className="flex-shrink-0 mt-2 h-8 w-8 p-0 border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground transition-all"
-                            title="Rimuovi domanda"
+                            title={t("removeQuestion")}
                           >
                             <X className="w-4 h-4" />
                           </Button>
@@ -823,12 +804,11 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
                   className="w-full border-dashed hover:border-primary hover:bg-primary/5 hover:text-primary transition-all group"
                 >
                   <Plus className="w-4 h-4 mr-2 transition-transform group-hover:scale-110" />
-                  Aggiungi un&apos;altra domanda
+                  {t("addAnotherQuestion")}
                 </Button>
 
                 <p className="text-xs text-muted-foreground italic">
-                  💡 I professori spesso fanno più domande durante l&apos;esame orale.
-                  Aggiungile tutte per aiutare altri studenti!
+                  {t("tip")}
                 </p>
               </div>
 
@@ -839,7 +819,7 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
                   onClick={() => router.push("/dashboard")}
                   className="flex-1"
                 >
-                  Annulla
+                  {tCommon("cancel")}
                 </Button>
                 <Button
                   type="submit"
@@ -852,12 +832,10 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
                   }
                 >
                   {isSubmitting
-                    ? "Invio..."
-                    : `Invia ${
-                        formData.questions.filter((q) => q.trim()).length > 1
-                          ? "Domande"
-                          : "Domanda"
-                      }`}
+                    ? t("submitting")
+                    : filledQuestionsCount > 1
+                      ? t("submitQuestions")
+                      : t("submitQuestion")}
                 </Button>
               </div>
             </form>
@@ -868,15 +846,9 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
         {!hasPrefill && (
           <Alert className="bg-card border-border animate-fade-in">
             <AlertDescription className="text-foreground">
-              💡{" "}
-              {formData.questions.filter((q) => q.trim()).length > 1
-                ? "Le tue domande saranno esaminate"
-                : "La tua domanda sarà esaminata"}{" "}
-              dal nostro team prima di essere{" "}
-              {formData.questions.filter((q) => q.trim()).length > 1
-                ? "disponibili"
-                : "disponibile"}{" "}
-              per altri studenti. Questo processo richiede solitamente fino a 24 ore.
+              {filledQuestionsCount > 1
+                ? t("reviewNoticePlural")
+                : t("reviewNotice")}
             </AlertDescription>
           </Alert>
         )}
@@ -897,10 +869,10 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
                 </div>
                 <div>
                   <DialogTitle className="text-foreground text-xl">
-                    Link Generato con Successo! 🎉
+                    {t("shareDialog.title")}
                   </DialogTitle>
                   <DialogDescription className="text-primary/80">
-                    Pronto per essere condiviso con la classe
+                    {t("shareDialog.description")}
                   </DialogDescription>
                 </div>
               </div>
@@ -911,20 +883,20 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
             {/* Info cards */}
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-gradient-to-br from-[#EFF6FF] to-[#DBEAFE] dark:from-[#005A9C]/10 dark:to-[#005A9C]/5 rounded-lg p-3 border border-primary/20">
-                <p className="text-xs text-muted-foreground mb-1">📚 Materia</p>
+                <p className="text-xs text-muted-foreground mb-1">{t("shareDialog.subjectLabel")}</p>
                 <p className="font-semibold text-primary">
                   {getSubjectName(formData.subjectId)}
                 </p>
               </div>
               <div className="bg-gradient-to-br from-[#EFF6FF] to-[#DBEAFE] dark:from-[#005A9C]/10 dark:to-[#005A9C]/5 rounded-lg p-3 border border-primary/20">
-                <p className="text-xs text-muted-foreground mb-1">👨‍🏫 Professore</p>
+                <p className="text-xs text-muted-foreground mb-1">{t("shareDialog.professorLabel")}</p>
                 <p className="font-semibold text-primary">
                   {getProfessorName(formData.professorId)}
                 </p>
               </div>
               {formData.courseId && (
                 <div className="col-span-2 bg-gradient-to-br from-[#EFF6FF] to-[#DBEAFE] dark:from-[#005A9C]/10 dark:to-[#005A9C]/5 rounded-lg p-3 border border-primary/20">
-                  <p className="text-xs text-muted-foreground mb-1">📍 Corso</p>
+                  <p className="text-xs text-muted-foreground mb-1">{t("shareDialog.courseLabel")}</p>
                   <p className="font-semibold text-primary">{getCourseName(formData.courseId)}</p>
                 </div>
               )}
@@ -936,7 +908,7 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
               <div className="relative bg-white/80 dark:bg-black/40 backdrop-blur-sm rounded-lg border border-primary/30 p-4">
                 <p className="text-xs text-muted-foreground mb-2 flex items-center gap-2">
                   <Link2 className="w-3 h-3" />
-                  Link Condivisibile
+                  {t("shareDialog.shareableLink")}
                 </p>
                 <p className="text-sm text-foreground break-all font-mono bg-muted/50 p-2 rounded">
                   {shareableLink}
@@ -951,14 +923,14 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
                 className="flex-1 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5"
               >
                 <Copy className="w-4 h-4 mr-2" />
-                Copia Link
+                {t("shareDialog.copyLink")}
               </Button>
               <Button
                 onClick={() => setShowShareDialog(false)}
                 variant="outline"
                 className="flex-1 border-primary/30 hover:bg-primary/5 transition-all"
               >
-                Chiudi
+                {tCommon("close")}
               </Button>
             </div>
 
@@ -970,20 +942,20 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
                 </div>
                 <div className="flex-1 space-y-2">
                   <p className="text-sm font-medium text-[#92400E] dark:text-[#FFA78D]">
-                    Come Condividere:
+                    {t("shareDialog.howToShare")}
                   </p>
                   <ul className="text-xs text-[#92400E]/80 dark:text-[#FFA78D]/80 space-y-1">
                     <li className="flex items-center gap-2">
                       <span className="w-1 h-1 rounded-full bg-[#FFA78D]" />
-                      Copia il link cliccando sul pulsante sopra
+                      {t("shareDialog.step1")}
                     </li>
                     <li className="flex items-center gap-2">
                       <span className="w-1 h-1 rounded-full bg-[#FFA78D]" />
-                      Incollalo nel gruppo WhatsApp/Telegram della classe
+                      {t("shareDialog.step2")}
                     </li>
                     <li className="flex items-center gap-2">
                       <span className="w-1 h-1 rounded-full bg-[#FFA78D]" />
-                      Gli studenti avranno i campi già precompilati!
+                      {t("shareDialog.step3")}
                     </li>
                   </ul>
                 </div>
@@ -1008,10 +980,10 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
                 </div>
                 <div>
                   <DialogTitle className="text-foreground text-xl flex items-center gap-2">
-                    Vincolare Domanda
+                    {tQuestion("linking.title")}
                   </DialogTitle>
                   <DialogDescription className="text-green-700/80 dark:text-green-400/80">
-                    {currentLinkingIndex + 1} di {createdQuestions.length} domande
+                    {tQuestion("linking.ofTotal", { current: currentLinkingIndex + 1, total: createdQuestions.length })}
                   </DialogDescription>
                 </div>
               </div>
@@ -1023,7 +995,7 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
               <p className="text-xs text-muted-foreground mb-2 flex items-center gap-2">
                 <BookOpen className="w-3.5 h-3.5" />
-                La tua domanda:
+                {tQuestion("linking.yourQuestion")}
               </p>
               <p className="text-foreground font-medium">
                 {createdQuestions[currentLinkingIndex]?.text}
@@ -1033,18 +1005,18 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
             {/* Explanation */}
             <div className="bg-[#EFF6FF] dark:bg-[#005A9C]/10 rounded-lg p-3 border-l-4 border-[#005A9C]">
               <p className="text-sm text-foreground leading-relaxed m-0">
-                🔗 Questa domanda è uguale o simile a una già esistente? Cerca e collega per unire statistiche e risposte.
+                {tQuestion("linking.explanation")}
               </p>
             </div>
 
             {/* Search Input */}
             <div className="space-y-3">
-              <Label className="text-sm font-medium">Cerca domanda esistente:</Label>
+              <Label className="text-sm font-medium">{tQuestion("linking.searchExisting")}</Label>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   type="text"
-                  placeholder="Digita per cercare..."
+                  placeholder={tQuestion("linking.searchPlaceholder")}
                   value={searchQuery}
                   onChange={(e) => handleSearchCanonical(e.target.value)}
                   className="pl-10"
@@ -1055,13 +1027,13 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
               {isSearching && (
                 <div className="flex items-center justify-center py-4">
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary" />
-                  <span className="ml-2 text-sm text-muted-foreground">Cercando...</span>
+                  <span className="ml-2 text-sm text-muted-foreground">{tCommon("loading")}</span>
                 </div>
               )}
 
               {!isSearching && searchQuery.length >= 2 && searchResults.length === 0 && (
                 <p className="text-sm text-muted-foreground text-center py-4">
-                  Nessuna domanda trovata
+                  {tQuestion("linking.noResults")}
                 </p>
               )}
 
@@ -1093,7 +1065,7 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
                             {question.variationsCount > 0 && (
                               <Badge variant="secondary" className="text-xs">
                                 <Users className="w-3 h-3 mr-1" />
-                                {question.variationsCount + 1}x chiesta
+                                {tQuestion("variations.timesAsked", { count: question.variationsCount + 1 })}
                               </Badge>
                             )}
                             <span className="text-xs text-muted-foreground">
@@ -1111,7 +1083,7 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
               {selectedCanonical && (
                 <div className="p-3 rounded-lg border border-green-500/50 bg-green-50 dark:bg-green-900/20">
                   <p className="text-xs text-green-700 dark:text-green-400 mb-1 font-medium">
-                    Domanda selezionata:
+                    {tQuestion("linking.selectedQuestion")}
                   </p>
                   <p className="text-sm text-foreground line-clamp-2">
                     {selectedCanonical.text}
@@ -1129,7 +1101,7 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
               disabled={isLinking}
               className="text-muted-foreground hover:text-foreground"
             >
-              {currentLinkingIndex + 1 >= createdQuestions.length ? "Termina senza collegare" : "Salta"}
+              {currentLinkingIndex + 1 >= createdQuestions.length ? tQuestion("linking.finishWithoutLinking") : tQuestion("linking.skip")}
             </Button>
             <Button
               onClick={handleLinkSelected}
@@ -1139,12 +1111,12 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
               {isLinking ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                  Collegando...
+                  {tQuestion("linking.linking")}
                 </>
               ) : (
                 <>
                   <Link2 className="w-4 h-4 mr-2" />
-                  Collega
+                  {tQuestion("linking.link")}
                 </>
               )}
             </Button>

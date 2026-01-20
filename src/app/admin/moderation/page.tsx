@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { getTranslations } from "next-intl/server";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle, CheckCircle, Flag, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -27,13 +28,14 @@ async function getModerationStats() {
 
 export default async function ModerationPage() {
   const stats = await getModerationStats();
+  const t = await getTranslations("admin.moderationPage");
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Moderazione</h1>
+        <h1 className="text-3xl font-bold">{t("title")}</h1>
         <p className="text-muted-foreground">
-          Gestisci contenuti segnalati e reclami
+          {t("description")}
         </p>
       </div>
 
@@ -41,32 +43,32 @@ export default async function ModerationPage() {
       <div className="grid gap-4 sm:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Pendentes</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("pending")}</CardTitle>
             <Clock className="h-4 w-4 text-amber-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.pending}</div>
-            <p className="text-xs text-muted-foreground">In attesa di revisione</p>
+            <p className="text-xs text-muted-foreground">{t("awaitingReview")}</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Revisados</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("reviewed")}</CardTitle>
             <CheckCircle className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.reviewed}</div>
-            <p className="text-xs text-muted-foreground">Azione presa</p>
+            <p className="text-xs text-muted-foreground">{t("actionTaken")}</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Dispensados</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("dismissed")}</CardTitle>
             <AlertCircle className="h-4 w-4 text-gray-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.dismissed}</div>
-            <p className="text-xs text-muted-foreground">Nessuna azione necessaria</p>
+            <p className="text-xs text-muted-foreground">{t("noActionNeeded")}</p>
           </CardContent>
         </Card>
       </div>
@@ -74,18 +76,18 @@ export default async function ModerationPage() {
       {/* Recent Flags */}
       <Card>
         <CardHeader>
-          <CardTitle>Segnalazioni in sospeso</CardTitle>
+          <CardTitle>{t("pendingReports")}</CardTitle>
           <CardDescription>
-            Contenuti segnalati in attesa di revisione
+            {t("pendingReportsDesc")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           {stats.recentFlags.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <Flag className="mb-4 h-12 w-12 text-muted-foreground/50" />
-              <h3 className="mb-2 text-lg font-medium">Nessuna segnalazione in sospeso</h3>
+              <h3 className="mb-2 text-lg font-medium">{t("noReports")}</h3>
               <p className="text-sm text-muted-foreground">
-                Quando gli utenti segnalano contenuti, appariranno qui per la revisione.
+                {t("noReportsDesc")}
               </p>
             </div>
           ) : (
@@ -99,7 +101,7 @@ export default async function ModerationPage() {
                     <div className="flex items-center gap-2">
                       <Badge variant="outline">{flag.type}</Badge>
                       <span className="text-sm text-muted-foreground">
-                        Segnalato da {flag.reporter?.name || flag.reporter?.email || "Utente anonimo"}
+                        {t("reportedBy", { name: flag.reporter?.name || flag.reporter?.email || t("anonymousUser") })}
                       </span>
                     </div>
                     <p className="text-sm">{flag.reason}</p>

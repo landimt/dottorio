@@ -13,6 +13,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SubjectColorHex, SubjectColor } from "@/lib/constants/subject-colors";
 import { useQuestions } from "@/lib/query";
 import {
     Bookmark,
@@ -30,6 +31,7 @@ import {
     X,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -86,24 +88,18 @@ interface SearchClientProps {
   courses: Course[];
 }
 
-// Subject colors and icons mapping
-const subjectStyles: Record<string, { icon: string; color: string }> = {
-  "Anatomia I": { icon: "🫀", color: "#F7B29D" },
-  "Anatomia II": { icon: "🦴", color: "#FFC857" },
-  Fisiologia: { icon: "🧠", color: "#A5D6F6" },
-  Biochimica: { icon: "🧬", color: "#C9B3F9" },
-  Istologia: { icon: "🔍", color: "#FFC857" },
-  Patologia: { icon: "🔬", color: "#A5D6F6" },
-  Farmacologia: { icon: "💊", color: "#F7B29D" },
-  Microbiologia: { icon: "🦠", color: "#C9B3F9" },
-  Immunologia: { icon: "🛡️", color: "#FF6B9D" },
-  Neurologia: { icon: "🧠", color: "#FF6B9D" },
-  Cardiologia: { icon: "❤️", color: "#F7B29D" },
-};
+// Helper para obter cor hexadecimal a partir do nome da cor do banco
+function getColorHex(colorName: string | null): string {
+  if (!colorName) return SubjectColorHex[SubjectColor.SLATE];
+  const color = colorName as SubjectColor;
+  return SubjectColorHex[color] || SubjectColorHex[SubjectColor.SLATE];
+}
 
 export function SearchClient({ subjects, professors, universities, courses }: SearchClientProps) {
   const searchParams = useSearchParams();
   const { data: session } = useSession();
+  const t = useTranslations("search");
+  const tCommon = useTranslations("common");
 
   const [filters, setFilters] = useState({
     query: searchParams.get("query") || "",
@@ -312,7 +308,7 @@ export function SearchClient({ subjects, professors, universities, courses }: Se
     if (filters.professorId) parts.push(getProfessorName(filters.professorId));
     if (filters.query) parts.push(`"${filters.query}"`);
 
-    return parts.length > 0 ? parts.join(" • ") : "Tutte le domande";
+    return parts.length > 0 ? parts.join(" • ") : t("allQuestions");
   };
 
   // Years array for select
@@ -325,7 +321,7 @@ export function SearchClient({ subjects, professors, universities, courses }: Se
         <div className="space-y-4 animate-fade-in">
           <div className="text-center space-y-2">
             <h1 className="text-2xl font-medium text-foreground">
-              {showResults ? "Risultati della Ricerca" : "Trova Domande"}
+              {showResults ? t("resultsTitle") : t("title")}
             </h1>
             {showResults && (
               <p className="text-muted-foreground">{getFilterDescription()}</p>
@@ -344,7 +340,7 @@ export function SearchClient({ subjects, professors, universities, courses }: Se
                 <div className="icon-container w-8 h-8 rounded-lg flex items-center justify-center bg-muted">
                   <Search className="w-5 h-5 text-primary" />
                 </div>
-                <span>Filtri di Ricerca</span>
+                <span>{t("searchFilters")}</span>
               </div>
               <div className="flex items-center gap-2">
                 {showResults && isFiltersExpanded && (
@@ -358,7 +354,7 @@ export function SearchClient({ subjects, professors, universities, courses }: Se
                     className="border-border text-foreground"
                   >
                     <Filter className="w-4 h-4 mr-2" />
-                    Modifica Filtri
+                    {t("modifyFilters")}
                   </Button>
                 )}
                 {isFiltersExpanded ? (
@@ -449,11 +445,11 @@ export function SearchClient({ subjects, professors, universities, courses }: Se
                 {/* Cerca per termine - 2 columns (half width) */}
                 <div className="space-y-1.5 md:col-span-2">
                   <Label htmlFor="keyword" className="text-foreground text-sm">
-                    Cerca per termine
+                    {t("searchByTerm")}
                   </Label>
                   <Input
                     id="keyword"
-                    placeholder="Parole chiave..."
+                    placeholder={t("keywordsPlaceholder")}
                     value={filters.query}
                     onChange={(e) => handleFilterChange("query", e.target.value)}
                     className="bg-input border-border text-foreground placeholder:text-muted-foreground h-10"
@@ -463,7 +459,7 @@ export function SearchClient({ subjects, professors, universities, courses }: Se
                 {/* Università - 1 column (quarter width) */}
                 <div className="space-y-1.5">
                   <Label htmlFor="university" className="text-foreground text-sm">
-                    Università
+                    {t("university")}
                   </Label>
                   <Select
                     value={filters.universityId}
@@ -477,11 +473,11 @@ export function SearchClient({ subjects, professors, universities, courses }: Se
                       {filters.universityId ? (
                         <span>{getUniversityName(filters.universityId)}</span>
                       ) : (
-                        <SelectValue placeholder="Tutte" />
+                        <SelectValue placeholder={t("allUniversities")} />
                       )}
                     </SelectTrigger>
                     <SelectContent className="bg-card border-border">
-                      <SelectItem value="all">Tutte</SelectItem>
+                      <SelectItem value="all">{t("allUniversities")}</SelectItem>
                       {universities.map((university) => (
                         <SelectItem key={university.id} value={university.id}>
                           {university.shortName || university.name}
@@ -494,7 +490,7 @@ export function SearchClient({ subjects, professors, universities, courses }: Se
                 {/* Corso */}
                 <div className="space-y-1.5">
                   <Label htmlFor="course" className="text-foreground text-sm">
-                    Corso
+                    {t("course")}
                   </Label>
                   <Select
                     value={filters.courseId}
@@ -508,11 +504,11 @@ export function SearchClient({ subjects, professors, universities, courses }: Se
                       {filters.courseId ? (
                         <span>{getCourseName(filters.courseId)}</span>
                       ) : (
-                        <SelectValue placeholder="Tutti" />
+                        <SelectValue placeholder={t("allCourses")} />
                       )}
                     </SelectTrigger>
                     <SelectContent className="bg-card border-border">
-                      <SelectItem value="all">Tutti</SelectItem>
+                      <SelectItem value="all">{t("allCourses")}</SelectItem>
                       {filteredCourses.map((course) => (
                         <SelectItem key={course.id} value={course.id}>
                           {course.name}
@@ -528,7 +524,7 @@ export function SearchClient({ subjects, professors, universities, courses }: Se
                 {/* Anno */}
                 <div className="space-y-1.5">
                   <Label htmlFor="year" className="text-foreground text-sm">
-                    Anno
+                    {t("year")}
                   </Label>
                   <Select
                     value={filters.year}
@@ -542,11 +538,11 @@ export function SearchClient({ subjects, professors, universities, courses }: Se
                       {filters.year ? (
                         <span>{getYearName(filters.year)}</span>
                       ) : (
-                        <SelectValue placeholder="Tutti" />
+                        <SelectValue placeholder={t("allYears")} />
                       )}
                     </SelectTrigger>
                     <SelectContent className="bg-card border-border">
-                      <SelectItem value="all">Tutti</SelectItem>
+                      <SelectItem value="all">{t("allYears")}</SelectItem>
                       {years.map((year) => (
                         <SelectItem key={year} value={String(year)}>
                           {year}º Anno
@@ -559,7 +555,7 @@ export function SearchClient({ subjects, professors, universities, courses }: Se
                 {/* Materia */}
                 <div className="space-y-1.5">
                   <Label htmlFor="subject" className="text-foreground text-sm">
-                    Materia
+                    {t("subject")}
                   </Label>
                   <Select
                     value={filters.subjectId}
@@ -573,11 +569,11 @@ export function SearchClient({ subjects, professors, universities, courses }: Se
                       {filters.subjectId ? (
                         <span>{getSubjectName(filters.subjectId)}</span>
                       ) : (
-                        <SelectValue placeholder="Tutte" />
+                        <SelectValue placeholder={t("allSubjects")} />
                       )}
                     </SelectTrigger>
                     <SelectContent className="bg-card border-border">
-                      <SelectItem value="all">Tutte</SelectItem>
+                      <SelectItem value="all">{t("allSubjects")}</SelectItem>
                       {filteredSubjects.map((subject) => (
                         <SelectItem key={subject.id} value={subject.id}>
                           {subject.name}
@@ -590,7 +586,7 @@ export function SearchClient({ subjects, professors, universities, courses }: Se
                 {/* Professore */}
                 <div className="space-y-1.5">
                   <Label htmlFor="professor" className="text-foreground text-sm">
-                    Professore
+                    {t("professor")}
                   </Label>
                   <Select
                     value={filters.professorId}
@@ -604,11 +600,11 @@ export function SearchClient({ subjects, professors, universities, courses }: Se
                       {filters.professorId ? (
                         <span>{getProfessorName(filters.professorId)}</span>
                       ) : (
-                        <SelectValue placeholder="Tutti" />
+                        <SelectValue placeholder={t("allProfessors")} />
                       )}
                     </SelectTrigger>
                     <SelectContent className="bg-card border-border">
-                      <SelectItem value="all">Tutti</SelectItem>
+                      <SelectItem value="all">{t("allProfessors")}</SelectItem>
                       {filteredProfessors.map((professor) => (
                         <SelectItem key={professor.id} value={professor.id}>
                           {professor.name}
@@ -630,7 +626,7 @@ export function SearchClient({ subjects, professors, universities, courses }: Se
                   ) : (
                     <Search className="w-4 h-4 mr-2 transition-transform duration-300 group-hover:scale-110" />
                   )}
-                  {(isLoading || isFetching) ? "Cercando..." : "Cerca Domande"}
+                  {(isLoading || isFetching) ? t("searching") : t("searchButton")}
                 </Button>
 
                 {hasActiveFilters && (
@@ -639,7 +635,7 @@ export function SearchClient({ subjects, professors, universities, courses }: Se
                     onClick={handleClearFilters}
                     className="border-destructive/50 text-destructive hover:bg-destructive/10 hover:border-destructive hover:text-destructive transition-all duration-300 h-9"
                   >
-                    Cancella Filtri
+                    {t("clearFilters")}
                   </Button>
                 )}
               </div>
@@ -652,37 +648,35 @@ export function SearchClient({ subjects, professors, universities, courses }: Se
           <div className="space-y-6">
             <div className="text-center space-y-2">
               <h2 className="text-xl font-medium text-foreground">
-                Esplora per Materia
+                {t("exploreBySubject")}
               </h2>
               <p className="text-muted-foreground">
-                Clicca su una materia per vedere tutte le domande disponibili
+                {t("exploreDescription")}
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {subjects.map((subject) => {
-                const style = subjectStyles[subject.name] || {
-                  icon: "📚",
-                  color: "#A5D6F6",
-                };
+                const colorHex = getColorHex(subject.color);
+                const emoji = subject.emoji || "📖";
                 return (
                   <Card
                     key={subject.id}
                     className="cursor-pointer transition-all duration-200 hover:scale-105 bg-card border-border hover:border-accent/50"
                     onClick={() => handleSubjectClick(subject.id)}
                     style={{
-                      background: `linear-gradient(135deg, ${style.color}15 0%, transparent 100%)`,
+                      background: `linear-gradient(135deg, ${colorHex}15 0%, transparent 100%)`,
                     }}
                   >
                     <CardContent className="p-6 text-center space-y-4">
-                      <div className="text-4xl">{style.icon}</div>
+                      <div className="text-4xl">{emoji}</div>
                       <div>
                         <h3 className="font-medium text-foreground">
                           {subject.name}
                         </h3>
                         <div className="flex items-center justify-center space-x-1 text-sm text-muted-foreground mt-2">
                           <BookOpen className="w-4 h-4" />
-                          <span>{subject._count.exams} esami</span>
+                          <span>{t("exams", { count: subject._count.exams })}</span>
                         </div>
                       </div>
                     </CardContent>
@@ -698,10 +692,10 @@ export function SearchClient({ subjects, professors, universities, courses }: Se
                 {(isLoading || isFetching) ? (
                   <span className="flex items-center justify-center gap-2">
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Cercando...
+                    {t("searching")}
                   </span>
                 ) : (
-                  `${pagination.total} domanda/e trovata/e`
+                  t("questionsFound", { count: pagination.total })
                 )}
               </p>
             </div>
@@ -742,7 +736,7 @@ export function SearchClient({ subjects, professors, universities, courses }: Se
               ) : (
                 questions.map((question) => (
                   <Link key={question.id} href={`/questions/${question.id}`} className="block">
-                    <Card className="cursor-pointer transition-all duration-200 hover:scale-[1.01] hover:border-primary/50 hover:shadow-md bg-card border-border">
+                    <Card className="cursor-pointer transition-all duration-200 hover:scale-[1.01] hover:border-accent/50 hover:shadow-md bg-card border-border">
                       <CardContent className="p-6">
                         <div className="space-y-4">
                           <p className="font-medium text-foreground leading-relaxed">
@@ -785,7 +779,7 @@ export function SearchClient({ subjects, professors, universities, courses }: Se
                               </div>
                             </div>
                             <span className="text-accent font-medium">
-                              Vedi risposta →
+                              {t("viewAnswer")}
                             </span>
                           </div>
                         </div>
@@ -803,17 +797,17 @@ export function SearchClient({ subjects, professors, universities, courses }: Se
                     <Search className="w-8 h-8 text-muted-foreground" />
                   </div>
                   <h3 className="text-lg font-medium text-foreground mb-2">
-                    Nessuna domanda trovata
+                    {t("noQuestionsFound")}
                   </h3>
                   <p className="text-muted-foreground mb-4">
-                    Prova ad adattare i filtri o usare parole chiave diverse.
+                    {t("noQuestionsDescription")}
                   </p>
                   <Button
                     onClick={handleClearFilters}
                     variant="outline"
                     className="border-destructive/50 text-destructive hover:bg-destructive/10 hover:border-destructive hover:text-destructive"
                   >
-                    Cancella Filtri
+                    {t("clearFilters")}
                   </Button>
                 </CardContent>
               </Card>
@@ -827,17 +821,17 @@ export function SearchClient({ subjects, professors, universities, courses }: Se
                   disabled={page === 1 || isFetching}
                   onClick={() => setPage((p) => p - 1)}
                 >
-                  Precedente
+                  {tCommon("previous")}
                 </Button>
                 <span className="flex items-center px-4 text-muted-foreground">
-                  Pagina {page} di {pagination.totalPages}
+                  {t("page", { current: page, total: pagination.totalPages })}
                 </span>
                 <Button
                   variant="outline"
                   disabled={page === pagination.totalPages || isFetching}
                   onClick={() => setPage((p) => p + 1)}
                 >
-                  Successiva
+                  {tCommon("next")}
                 </Button>
               </div>
             )}
@@ -862,7 +856,7 @@ export function SearchClient({ subjects, professors, universities, courses }: Se
                 <Edit className="w-5 h-5 text-white" />
               </div>
               <span className="pr-2 text-sm font-medium whitespace-nowrap">
-                Aggiungi Domanda
+                {t("addQuestion")}
               </span>
             </button>
           </Link>
@@ -870,7 +864,7 @@ export function SearchClient({ subjects, professors, universities, courses }: Se
           <button
             onClick={() => {
               setIsFabOpen(false);
-              alert("Funzionalità in arrivo!");
+              alert(t("comingSoon"));
             }}
             className="flex items-center gap-3 bg-white hover:bg-gray-50 text-foreground px-4 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 group hover:scale-105 border border-border"
           >
@@ -878,7 +872,7 @@ export function SearchClient({ subjects, professors, universities, courses }: Se
               <Upload className="w-5 h-5 text-white" />
             </div>
             <span className="pr-2 text-sm font-medium whitespace-nowrap">
-              Importa Domande
+              {t("importQuestions")}
             </span>
           </button>
         </div>

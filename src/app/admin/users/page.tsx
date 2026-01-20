@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { getTranslations } from "next-intl/server";
 import { UsersTable } from "./_components/users-table";
 
 async function getUsers() {
@@ -22,13 +23,14 @@ async function getUsers() {
 
 export default async function UsersPage() {
   const users = await getUsers();
+  const t = await getTranslations("admin");
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Usuários</h1>
+        <h1 className="text-3xl font-bold">{t("users")}</h1>
         <p className="text-muted-foreground">
-          Gerencie contas e permissões dos usuários
+          {t("quickActions.manageUsersDesc")}
         </p>
       </div>
 

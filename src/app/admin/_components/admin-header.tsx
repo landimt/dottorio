@@ -2,44 +2,46 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { ArrowLeft, LayoutDashboard, Users, Database, MessageSquare, Flag, ScrollText } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const navItems = [
-  {
-    href: "/admin",
-    label: "Dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    href: "/admin/users",
-    label: "Utenti",
-    icon: Users,
-  },
-  {
-    href: "/admin/cadastros",
-    label: "Anagrafiche",
-    icon: Database,
-  },
-  {
-    href: "/admin/questions",
-    label: "Domande",
-    icon: MessageSquare,
-  },
-  {
-    href: "/admin/moderation",
-    label: "Moderazione",
-    icon: Flag,
-  },
-  {
-    href: "/admin/audit-logs",
-    label: "Audit Log",
-    icon: ScrollText,
-  },
-];
-
 export function AdminHeader() {
   const pathname = usePathname();
+  const t = useTranslations("admin.nav");
+
+  const navItems = [
+    {
+      href: "/admin",
+      label: t("dashboard"),
+      icon: LayoutDashboard,
+    },
+    {
+      href: "/admin/users",
+      label: t("users"),
+      icon: Users,
+    },
+    {
+      href: "/admin/cadastros",
+      label: t("registries"),
+      icon: Database,
+    },
+    {
+      href: "/admin/questions",
+      label: t("questions"),
+      icon: MessageSquare,
+    },
+    {
+      href: "/admin/moderation",
+      label: t("moderation"),
+      icon: Flag,
+    },
+    {
+      href: "/admin/audit-logs",
+      label: t("auditLog"),
+      icon: ScrollText,
+    },
+  ];
 
   return (
     <header className="border-b bg-background">

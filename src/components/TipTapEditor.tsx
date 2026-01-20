@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useEditor, EditorContent, Editor } from '@tiptap/react';
 import Document from '@tiptap/extension-document';
 import Paragraph from '@tiptap/extension-paragraph';
@@ -106,29 +107,29 @@ const MenuButton = ({
   </Button>
 );
 
-const ColorPicker = ({ editor, type }: { editor: Editor; type: 'text' | 'highlight' }) => {
+const ColorPicker = ({ editor, type, t }: { editor: Editor; type: 'text' | 'highlight'; t: ReturnType<typeof useTranslations> }) => {
   const colors = [
-    { name: 'Nero', value: '#000000' },
-    { name: 'Grigio', value: '#6B7280' },
-    { name: 'Rosso', value: '#DC2626' },
-    { name: 'Arancione', value: '#FFA78D' },
-    { name: 'Giallo', value: '#F59E0B' },
-    { name: 'Verde', value: '#16A34A' },
-    { name: 'Blu', value: '#005A9C' },
-    { name: 'Viola', value: '#9333EA' },
-    { name: 'Rosa', value: '#EC4899' },
+    { name: t('colors.black'), value: '#000000' },
+    { name: t('colors.gray'), value: '#6B7280' },
+    { name: t('colors.red'), value: '#DC2626' },
+    { name: t('colors.orange'), value: '#FFA78D' },
+    { name: t('colors.yellow'), value: '#F59E0B' },
+    { name: t('colors.green'), value: '#16A34A' },
+    { name: t('colors.blue'), value: '#005A9C' },
+    { name: t('colors.purple'), value: '#9333EA' },
+    { name: t('colors.pink'), value: '#EC4899' },
   ];
 
   const bgColors = [
-    { name: 'Nessuno', value: 'transparent' },
-    { name: 'Grigio', value: '#F3F4F6' },
-    { name: 'Rosso', value: '#FEF2F2' },
-    { name: 'Arancione', value: '#FFF7ED' },
-    { name: 'Giallo', value: '#FEFCE8' },
-    { name: 'Verde', value: '#F0FDF4' },
-    { name: 'Blu', value: '#EFF6FF' },
-    { name: 'Viola', value: '#FAF5FF' },
-    { name: 'Rosa', value: '#FDF2F8' },
+    { name: t('colors.none'), value: 'transparent' },
+    { name: t('colors.gray'), value: '#F3F4F6' },
+    { name: t('colors.red'), value: '#FEF2F2' },
+    { name: t('colors.orange'), value: '#FFF7ED' },
+    { name: t('colors.yellow'), value: '#FEFCE8' },
+    { name: t('colors.green'), value: '#F0FDF4' },
+    { name: t('colors.blue'), value: '#EFF6FF' },
+    { name: t('colors.purple'), value: '#FAF5FF' },
+    { name: t('colors.pink'), value: '#FDF2F8' },
   ];
 
   const colorList = type === 'text' ? colors : bgColors;
@@ -158,7 +159,7 @@ const ColorPicker = ({ editor, type }: { editor: Editor; type: 'text' | 'highlig
   );
 };
 
-const LinkMenu = ({ editor }: { editor: Editor }) => {
+const LinkMenu = ({ editor, t }: { editor: Editor; t: ReturnType<typeof useTranslations> }) => {
   const [url, setUrl] = useState('');
   const [isOpen, setIsOpen] = useState(false);
 
@@ -177,7 +178,7 @@ const LinkMenu = ({ editor }: { editor: Editor }) => {
           "h-8 w-8 p-0 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
           editor.isActive('link') && "bg-primary/10 text-primary"
         )}
-        title="Link"
+        title={t('link')}
       >
         <LinkIcon className="w-4 h-4" />
       </PopoverTrigger>
@@ -187,7 +188,7 @@ const LinkMenu = ({ editor }: { editor: Editor }) => {
             <Label htmlFor="url">URL</Label>
             <Input
               id="url"
-              placeholder="https://esempio.it"
+              placeholder={t('urlPlaceholder')}
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && setLink()}
@@ -195,7 +196,7 @@ const LinkMenu = ({ editor }: { editor: Editor }) => {
           </div>
           <div className="flex gap-2">
             <Button onClick={setLink} size="sm" className="flex-1">
-              Aggiungi Link
+              {t('addLink')}
             </Button>
             {editor.isActive('link') && (
               <Button
@@ -206,7 +207,7 @@ const LinkMenu = ({ editor }: { editor: Editor }) => {
                 size="sm"
                 variant="outline"
               >
-                Rimuovi
+                {t('removeLink')}
               </Button>
             )}
           </div>
@@ -216,7 +217,7 @@ const LinkMenu = ({ editor }: { editor: Editor }) => {
   );
 };
 
-const ImageMenu = ({ editor }: { editor: Editor }) => {
+const ImageMenu = ({ editor, t }: { editor: Editor; t: ReturnType<typeof useTranslations> }) => {
   const [url, setUrl] = useState('');
   const [isOpen, setIsOpen] = useState(false);
 
@@ -232,24 +233,24 @@ const ImageMenu = ({ editor }: { editor: Editor }) => {
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger
         className="h-8 w-8 p-0 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-        title="Immagine"
+        title={t('image')}
       >
         <ImageIcon className="w-4 h-4" />
       </PopoverTrigger>
       <PopoverContent className="w-80">
         <div className="space-y-3">
           <div>
-            <Label htmlFor="image-url">URL Immagine</Label>
+            <Label htmlFor="image-url">{t('imageUrl')}</Label>
             <Input
               id="image-url"
-              placeholder="https://esempio.it/immagine.jpg"
+              placeholder={t('imageUrlPlaceholder')}
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && addImage()}
             />
           </div>
           <Button onClick={addImage} size="sm" className="w-full">
-            Aggiungi Immagine
+            {t('addImage')}
           </Button>
         </div>
       </PopoverContent>
@@ -257,12 +258,12 @@ const ImageMenu = ({ editor }: { editor: Editor }) => {
   );
 };
 
-const TableMenu = ({ editor }: { editor: Editor }) => {
+const TableMenu = ({ editor, t }: { editor: Editor; t: ReturnType<typeof useTranslations> }) => {
   return (
     <Popover>
       <PopoverTrigger
         className="h-8 w-8 p-0 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-        title="Tabella"
+        title={t('table')}
       >
         <TableIcon className="w-4 h-4" />
       </PopoverTrigger>
@@ -274,10 +275,10 @@ const TableMenu = ({ editor }: { editor: Editor }) => {
             variant="outline"
             className="w-full justify-start"
           >
-            Inserisci Tabella 3×3
+            {t('insertTable')}
           </Button>
           <Separator />
-          <div className="text-xs text-muted-foreground mb-2">Azioni Tabella:</div>
+          <div className="text-xs text-muted-foreground mb-2">{t('tableActions')}</div>
           <div className="grid grid-cols-2 gap-1">
             <Button
               onClick={() => editor.chain().focus().addColumnBefore().run()}
@@ -286,7 +287,7 @@ const TableMenu = ({ editor }: { editor: Editor }) => {
               className="text-xs"
               disabled={!editor.can().addColumnBefore()}
             >
-              + Colonna Sx
+              {t('addColumnLeft')}
             </Button>
             <Button
               onClick={() => editor.chain().focus().addColumnAfter().run()}
@@ -295,7 +296,7 @@ const TableMenu = ({ editor }: { editor: Editor }) => {
               className="text-xs"
               disabled={!editor.can().addColumnAfter()}
             >
-              + Colonna Dx
+              {t('addColumnRight')}
             </Button>
             <Button
               onClick={() => editor.chain().focus().addRowBefore().run()}
@@ -304,7 +305,7 @@ const TableMenu = ({ editor }: { editor: Editor }) => {
               className="text-xs"
               disabled={!editor.can().addRowBefore()}
             >
-              + Riga Sopra
+              {t('addRowAbove')}
             </Button>
             <Button
               onClick={() => editor.chain().focus().addRowAfter().run()}
@@ -313,7 +314,7 @@ const TableMenu = ({ editor }: { editor: Editor }) => {
               className="text-xs"
               disabled={!editor.can().addRowAfter()}
             >
-              + Riga Sotto
+              {t('addRowBelow')}
             </Button>
             <Button
               onClick={() => editor.chain().focus().deleteColumn().run()}
@@ -322,7 +323,7 @@ const TableMenu = ({ editor }: { editor: Editor }) => {
               className="text-xs text-destructive"
               disabled={!editor.can().deleteColumn()}
             >
-              - Colonna
+              {t('deleteColumn')}
             </Button>
             <Button
               onClick={() => editor.chain().focus().deleteRow().run()}
@@ -331,7 +332,7 @@ const TableMenu = ({ editor }: { editor: Editor }) => {
               className="text-xs text-destructive"
               disabled={!editor.can().deleteRow()}
             >
-              - Riga
+              {t('deleteRow')}
             </Button>
           </div>
           <Separator />
@@ -342,7 +343,7 @@ const TableMenu = ({ editor }: { editor: Editor }) => {
             className="w-full text-xs"
             disabled={!editor.can().deleteTable()}
           >
-            Elimina Tabella
+            {t('deleteTable')}
           </Button>
         </div>
       </PopoverContent>
@@ -350,7 +351,7 @@ const TableMenu = ({ editor }: { editor: Editor }) => {
   );
 };
 
-const MenuBar = ({ editor }: { editor: Editor | null }) => {
+const MenuBar = ({ editor, t }: { editor: Editor | null; t: ReturnType<typeof useTranslations> }) => {
   if (!editor) return null;
 
   return (
@@ -361,14 +362,14 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
         <MenuButton
           onClick={() => editor.chain().focus().undo().run()}
           disabled={!editor.can().undo()}
-          title="Annulla"
+          title={t('undo')}
         >
           <Undo className="w-4 h-4" />
         </MenuButton>
         <MenuButton
           onClick={() => editor.chain().focus().redo().run()}
           disabled={!editor.can().redo()}
-          title="Ripeti"
+          title={t('redo')}
         >
           <Redo className="w-4 h-4" />
         </MenuButton>
@@ -379,21 +380,21 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
         <MenuButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
           isActive={editor.isActive('heading', { level: 1 })}
-          title="Titolo 1"
+          title={t('heading1')}
         >
           <Heading1 className="w-4 h-4" />
         </MenuButton>
         <MenuButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
           isActive={editor.isActive('heading', { level: 2 })}
-          title="Titolo 2"
+          title={t('heading2')}
         >
           <Heading2 className="w-4 h-4" />
         </MenuButton>
         <MenuButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
           isActive={editor.isActive('heading', { level: 3 })}
-          title="Titolo 3"
+          title={t('heading3')}
         >
           <Heading3 className="w-4 h-4" />
         </MenuButton>
@@ -404,35 +405,35 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
         <MenuButton
           onClick={() => editor.chain().focus().toggleBold().run()}
           isActive={editor.isActive('bold')}
-          title="Grassetto"
+          title={t('bold')}
         >
           <BoldIcon className="w-4 h-4" />
         </MenuButton>
         <MenuButton
           onClick={() => editor.chain().focus().toggleItalic().run()}
           isActive={editor.isActive('italic')}
-          title="Corsivo"
+          title={t('italic')}
         >
           <ItalicIcon className="w-4 h-4" />
         </MenuButton>
         <MenuButton
           onClick={() => editor.chain().focus().toggleUnderline().run()}
           isActive={editor.isActive('underline')}
-          title="Sottolineato"
+          title={t('underline')}
         >
           <UnderlineIcon className="w-4 h-4" />
         </MenuButton>
         <MenuButton
           onClick={() => editor.chain().focus().toggleStrike().run()}
           isActive={editor.isActive('strike')}
-          title="Barrato"
+          title={t('strikethrough')}
         >
           <Strikethrough className="w-4 h-4" />
         </MenuButton>
         <MenuButton
           onClick={() => editor.chain().focus().toggleCode().run()}
           isActive={editor.isActive('code')}
-          title="Codice"
+          title={t('code')}
         >
           <CodeIcon className="w-4 h-4" />
         </MenuButton>
@@ -443,14 +444,14 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
         <MenuButton
           onClick={() => editor.chain().focus().toggleSubscript().run()}
           isActive={editor.isActive('subscript')}
-          title="Pedice"
+          title={t('subscript')}
         >
           <SubIcon className="w-4 h-4" />
         </MenuButton>
         <MenuButton
           onClick={() => editor.chain().focus().toggleSuperscript().run()}
           isActive={editor.isActive('superscript')}
-          title="Apice"
+          title={t('superscript')}
         >
           <SupIcon className="w-4 h-4" />
         </MenuButton>
@@ -461,12 +462,12 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
         <Popover>
           <PopoverTrigger
             className="h-8 w-8 p-0 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-            title="Colore Testo"
+            title={t('textColor')}
           >
             <Type className="w-4 h-4" />
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0">
-            <ColorPicker editor={editor} type="text" />
+            <ColorPicker editor={editor} type="text" t={t} />
           </PopoverContent>
         </Popover>
 
@@ -477,12 +478,12 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
               "h-8 w-8 p-0 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
               editor.isActive('highlight') && "bg-primary/10 text-primary"
             )}
-            title="Evidenziatore"
+            title={t('highlighter')}
           >
             <Highlighter className="w-4 h-4" />
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0">
-            <ColorPicker editor={editor} type="highlight" />
+            <ColorPicker editor={editor} type="highlight" t={t} />
           </PopoverContent>
         </Popover>
 
@@ -492,21 +493,21 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
         <MenuButton
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           isActive={editor.isActive('bulletList')}
-          title="Elenco puntato"
+          title={t('bulletList')}
         >
           <List className="w-4 h-4" />
         </MenuButton>
         <MenuButton
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           isActive={editor.isActive('orderedList')}
-          title="Elenco numerato"
+          title={t('numberedList')}
         >
           <ListOrdered className="w-4 h-4" />
         </MenuButton>
         <MenuButton
           onClick={() => editor.chain().focus().toggleTaskList().run()}
           isActive={editor.isActive('taskList')}
-          title="Lista Attività"
+          title={t('taskList')}
         >
           <CheckSquare className="w-4 h-4" />
         </MenuButton>
@@ -517,21 +518,21 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
         <MenuButton
           onClick={() => editor.chain().focus().setTextAlign('left').run()}
           isActive={editor.isActive({ textAlign: 'left' })}
-          title="Allinea a sinistra"
+          title={t('alignLeft')}
         >
           <AlignLeft className="w-4 h-4" />
         </MenuButton>
         <MenuButton
           onClick={() => editor.chain().focus().setTextAlign('center').run()}
           isActive={editor.isActive({ textAlign: 'center' })}
-          title="Allinea al centro"
+          title={t('alignCenter')}
         >
           <AlignCenter className="w-4 h-4" />
         </MenuButton>
         <MenuButton
           onClick={() => editor.chain().focus().setTextAlign('right').run()}
           isActive={editor.isActive({ textAlign: 'right' })}
-          title="Allinea a destra"
+          title={t('alignRight')}
         >
           <AlignRight className="w-4 h-4" />
         </MenuButton>
@@ -542,13 +543,13 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
         <MenuButton
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           isActive={editor.isActive('blockquote')}
-          title="Citazione"
+          title={t('quote')}
         >
           <Quote className="w-4 h-4" />
         </MenuButton>
         <MenuButton
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
-          title="Linea orizzontale"
+          title={t('horizontalRule')}
         >
           <Minus className="w-4 h-4" />
         </MenuButton>
@@ -556,13 +557,13 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
         <Separator orientation="vertical" className="h-6 mx-1" />
 
         {/* Link */}
-        <LinkMenu editor={editor} />
+        <LinkMenu editor={editor} t={t} />
 
         {/* Image */}
-        <ImageMenu editor={editor} />
+        <ImageMenu editor={editor} t={t} />
 
         {/* Table */}
-        <TableMenu editor={editor} />
+        <TableMenu editor={editor} t={t} />
       </div>
 
       {/* Mobile - toolbar simplificada */}
@@ -572,14 +573,14 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
           <MenuButton
             onClick={() => editor.chain().focus().undo().run()}
             disabled={!editor.can().undo()}
-            title="Annulla"
+            title={t('undo')}
           >
             <Undo className="w-4 h-4" />
           </MenuButton>
           <MenuButton
             onClick={() => editor.chain().focus().redo().run()}
             disabled={!editor.can().redo()}
-            title="Ripeti"
+            title={t('redo')}
           >
             <Redo className="w-4 h-4" />
           </MenuButton>
@@ -589,21 +590,21 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
           <MenuButton
             onClick={() => editor.chain().focus().toggleBold().run()}
             isActive={editor.isActive('bold')}
-            title="Grassetto"
+            title={t('bold')}
           >
             <BoldIcon className="w-4 h-4" />
           </MenuButton>
           <MenuButton
             onClick={() => editor.chain().focus().toggleItalic().run()}
             isActive={editor.isActive('italic')}
-            title="Corsivo"
+            title={t('italic')}
           >
             <ItalicIcon className="w-4 h-4" />
           </MenuButton>
           <MenuButton
             onClick={() => editor.chain().focus().toggleUnderline().run()}
             isActive={editor.isActive('underline')}
-            title="Sottolineato"
+            title={t('underline')}
           >
             <UnderlineIcon className="w-4 h-4" />
           </MenuButton>
@@ -613,31 +614,31 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
           <MenuButton
             onClick={() => editor.chain().focus().toggleBulletList().run()}
             isActive={editor.isActive('bulletList')}
-            title="Elenco"
+            title={t('bulletList')}
           >
             <List className="w-4 h-4" />
           </MenuButton>
           <MenuButton
             onClick={() => editor.chain().focus().toggleOrderedList().run()}
             isActive={editor.isActive('orderedList')}
-            title="Numerato"
+            title={t('numberedList')}
           >
             <ListOrdered className="w-4 h-4" />
           </MenuButton>
 
           <div className="flex-1" />
 
-          {/* Menu "Mais opções" */}
+          {/* Menu "More options" */}
           <Popover>
             <PopoverTrigger
               className="h-8 w-8 p-0 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-primary/10 bg-muted/50"
-              title="Mais opções"
+              title={t('moreOptions')}
             >
               <MoreHorizontal className="w-4 h-4" />
             </PopoverTrigger>
             <PopoverContent className="w-64 p-2" align="end">
               <div className="space-y-1">
-                <div className="text-xs font-medium text-muted-foreground px-2 py-1">Títulos</div>
+                <div className="text-xs font-medium text-muted-foreground px-2 py-1">{t('titles')}</div>
                 <div className="grid grid-cols-3 gap-1">
                   <Button
                     variant="ghost"
@@ -679,7 +680,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 
                 <Separator className="my-2" />
 
-                <div className="text-xs font-medium text-muted-foreground px-2 py-1">Formatação</div>
+                <div className="text-xs font-medium text-muted-foreground px-2 py-1">{t('formatting')}</div>
                 <div className="grid grid-cols-2 gap-1">
                   <Button
                     variant="ghost"
@@ -691,7 +692,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
                     )}
                   >
                     <Strikethrough className="w-3 h-3 mr-2" />
-                    Barrato
+                    {t('strikethrough')}
                   </Button>
                   <Button
                     variant="ghost"
@@ -703,13 +704,13 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
                     )}
                   >
                     <CodeIcon className="w-3 h-3 mr-2" />
-                    Codice
+                    {t('code')}
                   </Button>
                 </div>
 
                 <Separator className="my-2" />
 
-                <div className="text-xs font-medium text-muted-foreground px-2 py-1">Alinhamento</div>
+                <div className="text-xs font-medium text-muted-foreground px-2 py-1">{t('alignment')}</div>
                 <div className="grid grid-cols-3 gap-1">
                   <Button
                     variant="ghost"
@@ -748,7 +749,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 
                 <Separator className="my-2" />
 
-                <div className="text-xs font-medium text-muted-foreground px-2 py-1">Outros</div>
+                <div className="text-xs font-medium text-muted-foreground px-2 py-1">{t('other')}</div>
                 <div className="space-y-1">
                   <Button
                     variant="ghost"
@@ -760,7 +761,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
                     )}
                   >
                     <Quote className="w-3 h-3 mr-2" />
-                    Citazione
+                    {t('quote')}
                   </Button>
                   <Button
                     variant="ghost"
@@ -772,7 +773,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
                     )}
                   >
                     <CheckSquare className="w-3 h-3 mr-2" />
-                    Checklist
+                    {t('checklist')}
                   </Button>
                   <Button
                     variant="ghost"
@@ -781,7 +782,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
                     className="w-full h-9 justify-start text-xs"
                   >
                     <Minus className="w-3 h-3 mr-2" />
-                    Separatore
+                    {t('separator')}
                   </Button>
                 </div>
               </div>
@@ -793,7 +794,10 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
   );
 };
 
-export function TipTapEditor({ content, onChange, placeholder = 'Inizia a scrivere...' }: TipTapEditorProps) {
+export function TipTapEditor({ content, onChange, placeholder }: TipTapEditorProps) {
+  const t = useTranslations('editor');
+  const effectivePlaceholder = placeholder || t('defaultPlaceholder');
+  
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
@@ -903,7 +907,7 @@ export function TipTapEditor({ content, onChange, placeholder = 'Inizia a scrive
 
       // Placeholder
       Placeholder.configure({
-        placeholder
+        placeholder: effectivePlaceholder
       })
     ],
     content,
@@ -942,7 +946,7 @@ export function TipTapEditor({ content, onChange, placeholder = 'Inizia a scrive
 
   return (
     <div className="flex flex-col h-full border border-border rounded-lg overflow-hidden bg-card">
-      <MenuBar editor={editor} />
+      <MenuBar editor={editor} t={t} />
       <div className="flex-1 overflow-y-auto">
         <EditorContent editor={editor} className="h-full" />
       </div>

@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { ArrowRight, LucideIcon } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface QuickAction {
   title: string;
@@ -14,16 +17,17 @@ interface QuickActionsProps {
 }
 
 export function QuickActions({ actions }: QuickActionsProps) {
+  const t = useTranslations("admin.quickActions");
+
   return (
     <Card>
       <CardHeader>
         <div className="flex items-center gap-2">
-          <CardTitle>Ações Rápidas</CardTitle>
+          <CardTitle>{t("title")}</CardTitle>
         </div>
       </CardHeader>
       <CardContent className="space-y-1">
         {actions.map((action) => {
-          const Icon = action.icon;
           return (
             <Link
               key={action.href}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -42,6 +43,9 @@ interface FlagActionsProps {
 
 export function FlagActions({ flag }: FlagActionsProps) {
   const router = useRouter();
+  const t = useTranslations("admin.moderationPage");
+  const tCommon = useTranslations("admin.common");
+  
   const [isLoading, setIsLoading] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
@@ -56,19 +60,19 @@ export function FlagActions({ flag }: FlagActionsProps) {
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error?.message || "Errore nell'azione");
+        throw new Error(data.error?.message || t("actionError"));
       }
 
       const statusMessages = {
-        reviewed: "Segnalazione rivista con successo",
-        dismissed: "Segnalazione archiviata",
-        deleted: "Contenuto eliminato con successo",
+        reviewed: t("reviewedSuccess"),
+        dismissed: t("dismissedSuccess"),
+        deleted: t("deletedSuccess"),
       };
 
       toast.success(statusMessages[action]);
       router.refresh();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Errore nell'azione");
+      toast.error(error instanceof Error ? error.message : t("actionError"));
     } finally {
       setIsLoading(false);
       setShowDeleteDialog(false);
@@ -78,7 +82,7 @@ export function FlagActions({ flag }: FlagActionsProps) {
   if (flag.status !== "pending") {
     return (
       <Badge variant={flag.status === "dismissed" ? "secondary" : "default"}>
-        {flag.status === "reviewed" ? "Rivisto" : "Archiviato"}
+        {flag.status === "reviewed" ? t("reviewedStatus") : t("archivedStatus")}
       </Badge>
     );
   }
@@ -98,18 +102,18 @@ export function FlagActions({ flag }: FlagActionsProps) {
         <DropdownMenuContent align="end">
           <DropdownMenuItem onClick={() => handleAction("reviewed")}>
             <Check className="mr-2 h-4 w-4 text-green-500" />
-            Segna come rivisto
+            {t("markReviewed")}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => handleAction("dismissed")}>
             <X className="mr-2 h-4 w-4 text-gray-500" />
-            Archivia
+            {t("archive")}
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => setShowDeleteDialog(true)}
             className="text-destructive"
           >
             <Trash2 className="mr-2 h-4 w-4" />
-            Elimina contenuto
+            {t("deleteContent")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -117,18 +121,18 @@ export function FlagActions({ flag }: FlagActionsProps) {
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Conferma eliminazione</AlertDialogTitle>
+            <AlertDialogTitle>{t("confirmDelete")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Sei sicuro di voler eliminare questo contenuto ({flag.type})? Questa azione non può essere annullata.
+              {t("confirmDeleteDesc", { type: flag.type })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annulla</AlertDialogCancel>
+            <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => handleAction("deleted")}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Elimina
+              {tCommon("delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

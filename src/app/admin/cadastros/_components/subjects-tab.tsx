@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Plus, Pencil, Trash2, GraduationCap, BookMarked } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -41,20 +42,23 @@ interface SubjectsTabProps {
 }
 
 const colorOptions = [
-  { value: "red", label: "Vermelho", class: "bg-red-500" },
-  { value: "orange", label: "Laranja", class: "bg-orange-500" },
-  { value: "yellow", label: "Amarelo", class: "bg-yellow-500" },
-  { value: "green", label: "Verde", class: "bg-green-500" },
-  { value: "teal", label: "Teal", class: "bg-teal-500" },
-  { value: "blue", label: "Azul", class: "bg-blue-500" },
-  { value: "indigo", label: "Indigo", class: "bg-indigo-500" },
-  { value: "purple", label: "Roxo", class: "bg-purple-500" },
-  { value: "pink", label: "Rosa", class: "bg-pink-500" },
-  { value: "rose", label: "Rose", class: "bg-rose-500" },
-  { value: "gray", label: "Cinza", class: "bg-gray-500" },
+  { value: "red", class: "bg-red-500" },
+  { value: "orange", class: "bg-orange-500" },
+  { value: "yellow", class: "bg-yellow-500" },
+  { value: "green", class: "bg-green-500" },
+  { value: "teal", class: "bg-teal-500" },
+  { value: "blue", class: "bg-blue-500" },
+  { value: "indigo", class: "bg-indigo-500" },
+  { value: "purple", class: "bg-purple-500" },
+  { value: "pink", class: "bg-pink-500" },
+  { value: "rose", class: "bg-rose-500" },
+  { value: "gray", class: "bg-gray-500" },
 ];
 
 export function SubjectsTab({ subjects: initialSubjects }: SubjectsTabProps) {
+  const t = useTranslations("admin.subjectsTab");
+  const tCommon = useTranslations("admin.common");
+
   const [subjects, setSubjects] = useState(initialSubjects);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingSubject, setEditingSubject] = useState<Subject | null>(null);
@@ -81,7 +85,7 @@ export function SubjectsTab({ subjects: initialSubjects }: SubjectsTabProps) {
 
   const handleSubmit = async () => {
     if (!formData.name.trim()) {
-      toast.error("Nome é obrigatório");
+      toast.error(tCommon("nameRequired"));
       return;
     }
 
@@ -97,7 +101,7 @@ export function SubjectsTab({ subjects: initialSubjects }: SubjectsTabProps) {
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) throw new Error("Erro ao salvar");
+      if (!response.ok) throw new Error("Errore nel salvataggio");
 
       const savedSubject = await response.json();
 
@@ -105,33 +109,33 @@ export function SubjectsTab({ subjects: initialSubjects }: SubjectsTabProps) {
         setSubjects(subjects.map(s =>
           s.id === savedSubject.id ? { ...savedSubject, _count: s._count } : s
         ));
-        toast.success("Matéria atualizada!");
+        toast.success(t("subjectUpdated"));
       } else {
         setSubjects([...subjects, { ...savedSubject, _count: { professors: 0, exams: 0 } }]);
-        toast.success("Matéria criada!");
+        toast.success(t("subjectCreated"));
       }
 
       setIsDialogOpen(false);
       resetForm();
     } catch {
-      toast.error("Erro ao salvar matéria");
+      toast.error(t("saveError"));
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Tem certeza que deseja excluir esta matéria?")) return;
+    if (!confirm(t("confirmDelete"))) return;
 
     try {
       const response = await fetch(`/api/admin/subjects/${id}`, {
         method: "DELETE",
       });
 
-      if (!response.ok) throw new Error("Erro ao excluir");
+      if (!response.ok) throw new Error("Errore nell'eliminazione");
 
       setSubjects(subjects.filter(s => s.id !== id));
-      toast.success("Matéria excluída!");
+      toast.success(t("subjectDeleted"));
     } catch {
-      toast.error("Erro ao excluir matéria");
+      toast.error(t("deleteError"));
     }
   };
 
@@ -144,8 +148,8 @@ export function SubjectsTab({ subjects: initialSubjects }: SubjectsTabProps) {
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>Matérias</CardTitle>
-            <CardDescription>{subjects.length} matérias cadastradas</CardDescription>
+            <CardTitle>{t("title")}</CardTitle>
+            <CardDescription>{t("count", { count: subjects.length })}</CardDescription>
           </div>
           <Dialog open={isDialogOpen} onOpenChange={(open) => {
             setIsDialogOpen(open);
@@ -154,40 +158,40 @@ export function SubjectsTab({ subjects: initialSubjects }: SubjectsTabProps) {
             <DialogTrigger asChild>
               <Button>
                 <Plus className="mr-2 h-4 w-4" />
-                Nova Matéria
+                {t("newSubject")}
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>
-                  {editingSubject ? "Editar Matéria" : "Nova Matéria"}
+                  {editingSubject ? t("editSubject") : t("newSubject")}
                 </DialogTitle>
                 <DialogDescription>
-                  Preencha os dados da matéria
+                  {t("fillData")}
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="name">Nome *</Label>
+                  <Label htmlFor="name">{t("name")} *</Label>
                   <Input
                     id="name"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="Anatomia I"
+                    placeholder={t("namePlaceholder")}
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="emoji">Emoji</Label>
+                    <Label htmlFor="emoji">{t("emoji")}</Label>
                     <Input
                       id="emoji"
                       value={formData.emoji}
                       onChange={(e) => setFormData({ ...formData, emoji: e.target.value })}
-                      placeholder="🫀"
+                      placeholder={t("emojiPlaceholder")}
                     />
                   </div>
                   <div className="grid gap-2">
-                    <Label>Cor</Label>
+                    <Label>{t("color")}</Label>
                     <div className="flex flex-wrap gap-2">
                       {colorOptions.map((color) => (
                         <button
@@ -197,7 +201,7 @@ export function SubjectsTab({ subjects: initialSubjects }: SubjectsTabProps) {
                             formData.color === color.value ? "ring-2 ring-offset-2 ring-primary" : ""
                           }`}
                           onClick={() => setFormData({ ...formData, color: color.value })}
-                          title={color.label}
+                          title={color.value}
                         />
                       ))}
                     </div>
@@ -206,10 +210,10 @@ export function SubjectsTab({ subjects: initialSubjects }: SubjectsTabProps) {
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                  Cancelar
+                  {tCommon("cancel")}
                 </Button>
                 <Button onClick={handleSubmit}>
-                  {editingSubject ? "Salvar" : "Criar"}
+                  {editingSubject ? tCommon("save") : tCommon("create")}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -220,21 +224,21 @@ export function SubjectsTab({ subjects: initialSubjects }: SubjectsTabProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Nome</TableHead>
-              <TableHead>Cor</TableHead>
+              <TableHead>{t("name")}</TableHead>
+              <TableHead>{t("color")}</TableHead>
               <TableHead className="text-center">
                 <div className="flex items-center justify-center gap-1">
                   <GraduationCap className="h-4 w-4" />
-                  Profs
+                  {t("profs")}
                 </div>
               </TableHead>
               <TableHead className="text-center">
                 <div className="flex items-center justify-center gap-1">
                   <BookMarked className="h-4 w-4" />
-                  Exames
+                  {t("exams")}
                 </div>
               </TableHead>
-              <TableHead className="w-[100px]">Ações</TableHead>
+              <TableHead className="w-[100px]">{tCommon("actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

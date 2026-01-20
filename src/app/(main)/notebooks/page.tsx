@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -106,6 +107,8 @@ const INITIAL_NOTEBOOKS: Notebook[] = [
 ];
 
 export default function NotebooksPage() {
+  const t = useTranslations('notebooks');
+  const tCommon = useTranslations('common');
   const [notebooks, setNotebooks] = useState<Notebook[]>(INITIAL_NOTEBOOKS);
   const [searchQuery, setSearchQuery] = useState('');
   const [showCreateDialog, setShowCreateDialog] = useState(false);
@@ -164,16 +167,16 @@ export default function NotebooksPage() {
               className="text-muted-foreground hover:text-foreground transition-all -ml-2"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              <span className="hidden sm:inline">Torna alla Dashboard</span>
-              <span className="sm:hidden">Indietro</span>
+              <span className="hidden sm:inline">{t('backToDashboard')}</span>
+              <span className="sm:hidden">{t('back')}</span>
             </Button>
           </Link>
 
           <div className="flex items-start sm:items-center justify-between flex-col sm:flex-row gap-3 sm:gap-4">
             <div>
-              <h1 className="text-xl sm:text-2xl font-medium text-foreground">I Miei Caderni</h1>
+              <h1 className="text-xl sm:text-2xl font-medium text-foreground">{t('title')}</h1>
               <p className="text-sm text-muted-foreground">
-                {notebooks.length} {notebooks.length === 1 ? 'caderno' : 'caderni'}
+                {notebooks.length} {notebooks.length === 1 ? 'quaderno' : 'quaderni'}
               </p>
             </div>
 
@@ -184,7 +187,7 @@ export default function NotebooksPage() {
                 className="relative w-full sm:w-auto bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Nuovo Caderno
+                {t('newNotebook')}
               </Button>
             </div>
           </div>
@@ -194,7 +197,7 @@ export default function NotebooksPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="Cerca nei caderni..."
+              placeholder={t('searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 bg-card border-border"
@@ -265,9 +268,9 @@ export default function NotebooksPage() {
             <div className="w-16 h-16 rounded-full bg-muted mx-auto mb-4 flex items-center justify-center">
               <BookOpen className="w-8 h-8 text-muted-foreground" />
             </div>
-            <h3 className="font-medium text-foreground mb-2">Nessun caderno trovato</h3>
+            <h3 className="font-medium text-foreground mb-2">{t('noNotebooksFound')}</h3>
             <p className="text-muted-foreground text-sm mb-4">
-              {searchQuery ? 'Prova con una ricerca diversa' : 'Crea il tuo primo caderno per iniziare'}
+              {searchQuery ? t('tryDifferentSearch') : t('noNotebooksDescription')}
             </p>
             {!searchQuery && (
               <Button
@@ -276,7 +279,7 @@ export default function NotebooksPage() {
                 className="border-primary/30 text-primary hover:bg-primary/5"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Crea Caderno
+                {t('createNotebook')}
               </Button>
             )}
           </div>
@@ -286,18 +289,18 @@ export default function NotebooksPage() {
         <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
           <DialogContent className="sm:max-w-md bg-card border-border">
             <DialogHeader>
-              <DialogTitle className="text-foreground">Nuovo Caderno</DialogTitle>
+              <DialogTitle className="text-foreground">{t('createDialog.title')}</DialogTitle>
               <DialogDescription className="text-muted-foreground">
-                Crea un nuovo caderno per organizzare i tuoi appunti
+                {t('createDialog.description')}
               </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="title" className="text-foreground">Titolo del Caderno</Label>
+                <Label htmlFor="title" className="text-foreground">{t('createDialog.notebookTitle')}</Label>
                 <Input
                   id="title"
-                  placeholder="es. Anatomia Umana I"
+                  placeholder={t('createDialog.notebookTitlePlaceholder')}
                   value={newNotebook.title}
                   onChange={(e) => setNewNotebook({ ...newNotebook, title: e.target.value })}
                   className="bg-input border-border"
@@ -305,10 +308,10 @@ export default function NotebooksPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="subject" className="text-foreground">Materia</Label>
+                <Label htmlFor="subject" className="text-foreground">{t('createDialog.subject')}</Label>
                 <Input
                   id="subject"
-                  placeholder="es. Anatomia"
+                  placeholder={t('createDialog.subjectPlaceholder')}
                   value={newNotebook.subject}
                   onChange={(e) => setNewNotebook({ ...newNotebook, subject: e.target.value })}
                   className="bg-input border-border"
@@ -316,7 +319,7 @@ export default function NotebooksPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="icon" className="text-foreground">Emoji/Icona</Label>
+                <Label htmlFor="icon" className="text-foreground">{t('createDialog.emoji')}</Label>
                 <Input
                   id="icon"
                   placeholder="📓"
@@ -333,14 +336,14 @@ export default function NotebooksPage() {
                   className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
                   disabled={!newNotebook.title.trim()}
                 >
-                  Crea Caderno
+                  {t('createNotebook')}
                 </Button>
                 <Button
                   onClick={() => setShowCreateDialog(false)}
                   variant="outline"
                   className="flex-1"
                 >
-                  Annulla
+                  {tCommon('cancel')}
                 </Button>
               </div>
             </div>

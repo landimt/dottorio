@@ -55,11 +55,13 @@ export function Header() {
     <>
       {/* Header Desktop */}
       <header className="hidden md:flex bg-card/95 backdrop-blur-md border-b border-border h-14 items-center px-6 sticky top-0 z-50 shadow-sm">
-        <div className="flex items-center justify-between w-full max-w-7xl mx-auto">
-          {/* Logo */}
-          <Link href="/dashboard" className="flex items-center space-x-3 group">
-            <span className="text-lg font-semibold text-foreground">Dottorio</span>
-          </Link>
+        <div className="flex items-center w-full max-w-7xl mx-auto">
+          {/* Logo - Left */}
+          <div className="flex-1">
+            <Link href="/dashboard" className="flex items-center space-x-3 group w-fit">
+              <span className="text-lg font-semibold text-foreground">Dottorio</span>
+            </Link>
+          </div>
 
           {/* Navigation Icons - Center */}
           <nav className="flex items-center space-x-1">
@@ -86,22 +88,7 @@ export function Header() {
           </nav>
 
           {/* Right Section */}
-          <div className="flex items-center space-x-3">
-            {/* Theme Toggle */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={toggleTheme}
-              className="w-10 h-10 p-0 text-muted-foreground hover:text-foreground hover:bg-muted transition-all duration-200"
-              title={theme === "dark" ? tHeader("lightMode") : tHeader("darkMode")}
-            >
-              {theme === "dark" ? (
-                <Sun className="w-5 h-5 transition-transform duration-300 hover:rotate-12" />
-              ) : (
-                <Moon className="w-5 h-5 transition-transform duration-300 hover:-rotate-12" />
-              )}
-            </Button>
-
+          <div className="flex-1 flex items-center justify-end space-x-3">
             {/* Notifications */}
             <Button
               variant="ghost"
@@ -172,6 +159,16 @@ export function Header() {
                   </Link>
                 </DropdownMenuItem>
 
+                {/* Theme Toggle */}
+                <DropdownMenuItem onClick={toggleTheme} className="cursor-pointer">
+                  {theme === "dark" ? (
+                    <Sun className="mr-2 h-4 w-4" />
+                  ) : (
+                    <Moon className="mr-2 h-4 w-4" />
+                  )}
+                  <span>{theme === "dark" ? tHeader("lightMode") : tHeader("darkMode")}</span>
+                </DropdownMenuItem>
+
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem
@@ -195,21 +192,6 @@ export function Header() {
           </Link>
 
           <div className="flex items-center gap-1">
-            {/* Theme Toggle Mobile */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={toggleTheme}
-              className="h-9 w-9 p-0 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all"
-              title={theme === "dark" ? tHeader("lightMode") : tHeader("darkMode")}
-            >
-              {theme === "dark" ? (
-                <Sun className="w-5 h-5" />
-              ) : (
-                <Moon className="w-5 h-5" />
-              )}
-            </Button>
-
             <Button
               variant="ghost"
               size="sm"
@@ -251,6 +233,23 @@ export function Header() {
                     <User className="mr-2 h-4 w-4" />
                     <span>{tHeader("myProfile")}</span>
                   </Link>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem asChild>
+                  <Link href="/settings" className="cursor-pointer">
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>{tHeader("settings")}</span>
+                  </Link>
+                </DropdownMenuItem>
+
+                {/* Theme Toggle Mobile */}
+                <DropdownMenuItem onClick={toggleTheme} className="cursor-pointer">
+                  {theme === "dark" ? (
+                    <Sun className="mr-2 h-4 w-4" />
+                  ) : (
+                    <Moon className="mr-2 h-4 w-4" />
+                  )}
+                  <span>{theme === "dark" ? tHeader("lightMode") : tHeader("darkMode")}</span>
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator />

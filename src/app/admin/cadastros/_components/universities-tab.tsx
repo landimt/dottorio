@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Plus, Pencil, Trash2, Users, GraduationCap, Hash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -43,6 +44,9 @@ interface UniversitiesTabProps {
 }
 
 export function UniversitiesTab({ universities: initialUniversities }: UniversitiesTabProps) {
+  const t = useTranslations("admin.universitiesTab");
+  const tCommon = useTranslations("admin.common");
+
   const [universities, setUniversities] = useState(initialUniversities);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingUniversity, setEditingUniversity] = useState<University | null>(null);
@@ -71,7 +75,7 @@ export function UniversitiesTab({ universities: initialUniversities }: Universit
 
   const handleSubmit = async () => {
     if (!formData.name.trim()) {
-      toast.error("Nome é obrigatório");
+      toast.error(tCommon("nameRequired"));
       return;
     }
 
@@ -87,7 +91,7 @@ export function UniversitiesTab({ universities: initialUniversities }: Universit
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) throw new Error("Erro ao salvar");
+      if (!response.ok) throw new Error("Errore nel salvataggio");
 
       const savedUniversity = await response.json();
 
@@ -95,33 +99,33 @@ export function UniversitiesTab({ universities: initialUniversities }: Universit
         setUniversities(universities.map(u =>
           u.id === savedUniversity.id ? { ...savedUniversity, _count: u._count } : u
         ));
-        toast.success("Universidade atualizada!");
+        toast.success(t("universityUpdated"));
       } else {
         setUniversities([...universities, { ...savedUniversity, _count: { professors: 0, users: 0, courses: 0 } }]);
-        toast.success("Universidade criada!");
+        toast.success(t("universityCreated"));
       }
 
       setIsDialogOpen(false);
       resetForm();
     } catch {
-      toast.error("Erro ao salvar universidade");
+      toast.error(t("saveError"));
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Tem certeza que deseja excluir esta universidade?")) return;
+    if (!confirm(t("confirmDelete"))) return;
 
     try {
       const response = await fetch(`/api/admin/universities/${id}`, {
         method: "DELETE",
       });
 
-      if (!response.ok) throw new Error("Erro ao excluir");
+      if (!response.ok) throw new Error("Errore nell'eliminazione");
 
       setUniversities(universities.filter(u => u.id !== id));
-      toast.success("Universidade excluída!");
+      toast.success(t("universityDeleted"));
     } catch {
-      toast.error("Erro ao excluir universidade");
+      toast.error(t("deleteError"));
     }
   };
 
@@ -130,8 +134,8 @@ export function UniversitiesTab({ universities: initialUniversities }: Universit
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>Universidades</CardTitle>
-            <CardDescription>{universities.length} universidades cadastradas</CardDescription>
+            <CardTitle>{t("title")}</CardTitle>
+            <CardDescription>{t("count", { count: universities.length })}</CardDescription>
           </div>
           <Dialog open={isDialogOpen} onOpenChange={(open) => {
             setIsDialogOpen(open);
@@ -140,64 +144,64 @@ export function UniversitiesTab({ universities: initialUniversities }: Universit
             <DialogTrigger asChild>
               <Button>
                 <Plus className="mr-2 h-4 w-4" />
-                Nova Universidade
+                {t("newUniversity")}
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>
-                  {editingUniversity ? "Editar Universidade" : "Nova Universidade"}
+                  {editingUniversity ? t("editUniversity") : t("newUniversity")}
                 </DialogTitle>
                 <DialogDescription>
-                  Preencha os dados da universidade
+                  {t("fillData")}
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="name">Nome *</Label>
+                  <Label htmlFor="name">{t("name")} *</Label>
                   <Input
                     id="name"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="Sapienza Università di Roma"
+                    placeholder={t("namePlaceholder")}
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="shortName">Sigla</Label>
+                    <Label htmlFor="shortName">{t("shortName")}</Label>
                     <Input
                       id="shortName"
                       value={formData.shortName}
                       onChange={(e) => setFormData({ ...formData, shortName: e.target.value })}
-                      placeholder="Sapienza"
+                      placeholder={t("shortNamePlaceholder")}
                     />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="emoji">Emoji</Label>
+                    <Label htmlFor="emoji">{t("emoji")}</Label>
                     <Input
                       id="emoji"
                       value={formData.emoji}
                       onChange={(e) => setFormData({ ...formData, emoji: e.target.value })}
-                      placeholder="🏛️"
+                      placeholder={t("emojiPlaceholder")}
                     />
                   </div>
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="city">Cidade</Label>
+                  <Label htmlFor="city">{t("city")}</Label>
                   <Input
                     id="city"
                     value={formData.city}
                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                    placeholder="Roma"
+                    placeholder={t("cityPlaceholder")}
                   />
                 </div>
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                  Cancelar
+                  {tCommon("cancel")}
                 </Button>
                 <Button onClick={handleSubmit}>
-                  {editingUniversity ? "Salvar" : "Criar"}
+                  {editingUniversity ? tCommon("save") : tCommon("create")}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -208,12 +212,12 @@ export function UniversitiesTab({ universities: initialUniversities }: Universit
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Nome</TableHead>
-              <TableHead>Cidade</TableHead>
+              <TableHead>{t("name")}</TableHead>
+              <TableHead>{t("city")}</TableHead>
               <TableHead className="text-center">
                 <div className="flex items-center justify-center gap-1">
                   <GraduationCap className="h-4 w-4" />
-                  Profs
+                  {t("profs")}
                 </div>
               </TableHead>
               <TableHead className="text-center">
@@ -225,10 +229,10 @@ export function UniversitiesTab({ universities: initialUniversities }: Universit
               <TableHead className="text-center">
                 <div className="flex items-center justify-center gap-1">
                   <Hash className="h-4 w-4" />
-                  Canais
+                  {t("channels")}
                 </div>
               </TableHead>
-              <TableHead className="w-[100px]">Ações</TableHead>
+              <TableHead className="w-[100px]">{tCommon("actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

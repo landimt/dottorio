@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { getTranslations } from "next-intl/server";
 import { QuestionsTable } from "./_components/questions-table";
 
 async function getQuestions() {
@@ -29,13 +30,14 @@ async function getQuestions() {
 
 export default async function QuestionsPage() {
   const questions = await getQuestions();
+  const t = await getTranslations("admin");
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Questões</h1>
+        <h1 className="text-3xl font-bold">{t("questions")}</h1>
         <p className="text-muted-foreground">
-          Visualize e gerencie as questões cadastradas
+          {t("quickActions.manageQuestionsDesc")}
         </p>
       </div>
 

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,6 +19,7 @@ import { Loader2 } from "lucide-react";
 
 export function LoginForm() {
   const router = useRouter();
+  const t = useTranslations("auth");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -38,7 +40,7 @@ export function LoginForm() {
       });
 
       if (result?.error) {
-        setError("Email o password non validi");
+        setError(t("invalidCredentials"));
         setIsLoading(false);
         return;
       }
@@ -46,7 +48,7 @@ export function LoginForm() {
       router.push("/dashboard");
       router.refresh();
     } catch {
-      setError("Si è verificato un errore. Riprova.");
+      setError(t("genericError"));
       setIsLoading(false);
     }
   }
@@ -54,9 +56,9 @@ export function LoginForm() {
   return (
     <Card className="shadow-2xl">
       <CardHeader className="space-y-1 pb-4">
-        <CardTitle className="text-xl text-center">Accedi</CardTitle>
+        <CardTitle className="text-xl text-center">{t("loginTitle")}</CardTitle>
         <CardDescription className="text-center">
-          Accedi al tuo account per continuare a studiare
+          {t("loginDescription")}
         </CardDescription>
       </CardHeader>
 
@@ -69,24 +71,24 @@ export function LoginForm() {
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t("email")}</Label>
             <Input
               id="email"
               name="email"
               type="email"
-              placeholder="tua@email.it"
+              placeholder={t("emailPlaceholder")}
               required
               disabled={isLoading}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t("password")}</Label>
             <Input
               id="password"
               name="password"
               type="password"
-              placeholder="La tua password"
+              placeholder={t("passwordPlaceholder")}
               required
               disabled={isLoading}
             />
@@ -100,23 +102,23 @@ export function LoginForm() {
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Accesso in corso...
+                {t("loggingIn")}
               </>
             ) : (
-              "Accedi"
+              t("login")
             )}
           </Button>
         </form>
 
         <div className="mt-6 text-center space-y-3">
           <Button variant="link" className="text-muted-foreground hover:text-foreground">
-            Ho dimenticato la password
+            {t("forgotPassword")}
           </Button>
 
           <div className="text-sm text-muted-foreground">
-            Non hai un account?{" "}
+            {t("noAccount")}{" "}
             <Link href="/register" className="text-primary hover:underline font-medium">
-              Registrati
+              {t("register")}
             </Link>
           </div>
         </div>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -147,6 +148,9 @@ export function QuestionDetail({
   userId,
 }: QuestionDetailProps) {
   const router = useRouter();
+  const t = useTranslations("question");
+  const tCommon = useTranslations("common");
+  const tHeader = useTranslations("header");
 
   // States
   const [saved, setSaved] = useState(question.isSaved);
@@ -220,7 +224,7 @@ export function QuestionDetail({
 
   const handleToggleSave = async () => {
     if (!userId) {
-      toast.error("Devi effettuare il login per salvare le domande");
+      toast.error(t("loginToSave"));
       return;
     }
 
@@ -231,10 +235,10 @@ export function QuestionDetail({
 
       if (response.ok) {
         setSaved(!saved);
-        toast.success(saved ? "Rimosso dai salvati" : "Aggiunto ai salvati");
+        toast.success(saved ? t("removedFromSaved") : t("addedToSaved"));
       }
     } catch {
-      toast.error("Errore durante il salvataggio");
+      toast.error(tCommon("error"));
     }
   };
 
@@ -242,14 +246,14 @@ export function QuestionDetail({
     if (question.aiAnswer) {
       await navigator.clipboard.writeText(question.aiAnswer.content);
       setCopied(true);
-      toast.success("Risposta copiata negli appunti!");
+      toast.success(tCommon("copied"));
       setTimeout(() => setCopied(false), 2000);
     }
   };
 
   const handleSavePersonalAnswer = async () => {
     if (!userId) {
-      toast.error("Devi effettuare il login");
+      toast.error(t("loginToSave"));
       return;
     }
 
@@ -271,12 +275,12 @@ export function QuestionDetail({
         setIsEditingPersonalAnswer(false);
         toast.success(
           isAnswerPublic
-            ? "Risposta salvata e condivisa con la community!"
-            : "Risposta salvata con successo!"
+            ? t("myAnswer.savedAndShared")
+            : t("myAnswer.savedSuccess")
         );
       }
     } catch {
-      toast.error("Errore durante il salvataggio");
+      toast.error(tCommon("error"));
     } finally {
       setIsSubmitting(false);
     }
@@ -284,7 +288,7 @@ export function QuestionDetail({
 
   const handleToggleLikeAnswer = async (answerId: string) => {
     if (!userId) {
-      toast.error("Devi effettuare il login");
+      toast.error(t("loginToSave"));
       return;
     }
 
@@ -308,13 +312,13 @@ export function QuestionDetail({
         );
       }
     } catch {
-      toast.error("Errore");
+      toast.error(tCommon("error"));
     }
   };
 
   const handleToggleLikeComment = async (commentId: string) => {
     if (!userId) {
-      toast.error("Devi effettuare il login");
+      toast.error(t("loginToSave"));
       return;
     }
 
@@ -338,13 +342,13 @@ export function QuestionDetail({
         );
       }
     } catch {
-      toast.error("Errore");
+      toast.error(tCommon("error"));
     }
   };
 
   const handlePublishComment = async () => {
     if (!userId) {
-      toast.error("Devi effettuare il login");
+      toast.error(t("loginToSave"));
       return;
     }
 
@@ -370,10 +374,10 @@ export function QuestionDetail({
           ...prev,
         ]);
         setNewComment("");
-        toast.success("Commento pubblicato!");
+        toast.success(t("experiences.published"));
       }
     } catch {
-      toast.error("Errore durante la pubblicazione");
+      toast.error(tCommon("error"));
     } finally {
       setIsSubmitting(false);
     }
@@ -389,7 +393,7 @@ export function QuestionDetail({
     } else {
       setShowFeedbackInput(false);
       setAiRatingFeedback("");
-      toast.success(`Grazie per la tua valutazione: ${rating} stelle!`);
+      toast.success(t("aiAnswer.ratingThanks", { rating }));
 
       try {
         await fetch(`/api/ai-answers/${question.aiAnswer.id}/rate`, {
@@ -412,8 +416,8 @@ export function QuestionDetail({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ rating: aiRating, feedback: aiRatingFeedback }),
       });
-      toast.success("Feedback inviato!", {
-        description: "Grazie per aiutarci a migliorare le risposte dell'IA.",
+      toast.success(t("aiAnswer.feedbackSent"), {
+        description: t("aiAnswer.feedbackThanks"),
       });
       setShowFeedbackInput(false);
       setAiRatingFeedback("");
@@ -473,7 +477,7 @@ export function QuestionDetail({
             className="mb-4"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Torna alla Ricerca
+            {t("backToSearch")}
           </Button>
 
           {/* Mobile Question Selector */}
@@ -502,12 +506,12 @@ export function QuestionDetail({
                 >
                   <SelectTrigger className="h-8 text-xs">
                     <SelectValue>
-                      {questionFilter === "all" ? "Tutte" : "Solo salvate"}
+                      {questionFilter === "all" ? t("sidebar.filterAll") : t("sidebar.filterSaved")}
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Tutte</SelectItem>
-                    <SelectItem value="saved">Solo salvate</SelectItem>
+                    <SelectItem value="all">{t("sidebar.filterAll")}</SelectItem>
+                    <SelectItem value="saved">{t("sidebar.filterSaved")}</SelectItem>
                   </SelectContent>
                 </Select>
 
@@ -519,12 +523,12 @@ export function QuestionDetail({
                 >
                   <SelectTrigger className="h-8 text-xs">
                     <SelectValue>
-                      {questionSort === "views" ? "Più chieste" : "Recenti"}
+                      {questionSort === "views" ? t("sidebar.sortViews") : t("sidebar.sortRecent")}
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="views">Più chieste</SelectItem>
-                    <SelectItem value="recent">Recenti</SelectItem>
+                    <SelectItem value="views">{t("sidebar.sortViews")}</SelectItem>
+                    <SelectItem value="recent">{t("sidebar.sortRecent")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -595,10 +599,10 @@ export function QuestionDetail({
             <div className="p-4 border-b border-border bg-muted/30 space-y-3">
               <div>
                 <h3 className="font-semibold text-foreground">
-                  Domande - {question.exam.subject.name}
+                  {t("sidebar.questions", { subject: question.exam.subject.name })}
                 </h3>
                 <p className="text-xs text-muted-foreground mt-1">
-                  {filteredQuestions.length} di {filteredQuestions.length} domande
+                  {t("sidebar.questionsCount", { shown: filteredQuestions.length, total: filteredQuestions.length })}
                 </p>
               </div>
 
@@ -612,12 +616,12 @@ export function QuestionDetail({
                 >
                   <SelectTrigger className="h-9 text-sm border-2">
                     <SelectValue>
-                      {questionFilter === "all" ? "Tutte" : "Solo salvate"}
+                      {questionFilter === "all" ? t("sidebar.filterAll") : t("sidebar.filterSaved")}
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Tutte</SelectItem>
-                    <SelectItem value="saved">Solo salvate</SelectItem>
+                    <SelectItem value="all">{t("sidebar.filterAll")}</SelectItem>
+                    <SelectItem value="saved">{t("sidebar.filterSaved")}</SelectItem>
                   </SelectContent>
                 </Select>
 
@@ -629,12 +633,12 @@ export function QuestionDetail({
                 >
                   <SelectTrigger className="h-9 text-sm border-2">
                     <SelectValue>
-                      {questionSort === "views" ? "Più chieste" : "Recenti"}
+                      {questionSort === "views" ? t("sidebar.sortViews") : t("sidebar.sortRecent")}
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="views">Più chieste</SelectItem>
-                    <SelectItem value="recent">Recenti</SelectItem>
+                    <SelectItem value="views">{t("sidebar.sortViews")}</SelectItem>
+                    <SelectItem value="recent">{t("sidebar.sortRecent")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -687,7 +691,7 @@ export function QuestionDetail({
                             }
                           }}
                           className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#005A9C]/10 text-[#005A9C] hover:bg-[#005A9C]/20 hover:scale-105 transition-all duration-200 border border-[#005A9C]/30 hover:border-[#005A9C] cursor-pointer"
-                          title="Vedi variazioni della domanda"
+                          title={t("variations.title")}
                         >
                           <GitBranch className="w-3 h-3" />
                           <span className="font-medium">{variationsCount}x</span>
@@ -724,7 +728,7 @@ export function QuestionDetail({
                     <Bookmark className="w-4 h-4 md:mr-2" />
                   )}
                   <span className="hidden md:inline">
-                    {saved ? "Salvato" : "Salva"}
+                    {saved ? t("saved") : t("save")}
                   </span>
                 </Button>
               </div>
@@ -744,7 +748,7 @@ export function QuestionDetail({
                 </Badge>
                 <div className="flex items-center gap-1">
                   <Eye className="w-4 h-4" />
-                  <span>{question.views} visualizzazioni</span>
+                  <span>{t("views", { count: question.views })}</span>
                 </div>
               </div>
             </div>
@@ -762,14 +766,14 @@ export function QuestionDetail({
                     className="flex-1 gap-2 text-sm px-4 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm"
                   >
                     <BookOpen className="w-4 h-4" />
-                    <span>Risposta IA</span>
+                    <span>{t("tabs.aiAnswer")}</span>
                   </TabsTrigger>
                   <TabsTrigger
                     value="student-answers"
                     className="flex-1 gap-2 text-sm px-4 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm"
                   >
                     <Users className="w-4 h-4" />
-                    <span>Studenti</span>
+                    <span>{t("tabs.studentAnswers")}</span>
                     <span className="text-xs text-muted-foreground">
                       {studentAnswers.length}
                     </span>
@@ -779,14 +783,14 @@ export function QuestionDetail({
                     className="flex-1 gap-2 text-sm px-4 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm"
                   >
                     <StickyNote className="w-4 h-4" />
-                    <span>Mia Risposta</span>
+                    <span>{t("tabs.myAnswer")}</span>
                   </TabsTrigger>
                   <TabsTrigger
                     value="comments"
                     className="col-span-2 md:hidden flex-1 gap-2 text-sm px-4 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm"
                   >
                     <MessageCircle className="w-4 h-4" />
-                    <span>Esperienze</span>
+                    <span>{t("tabs.experiences")}</span>
                     <span className="text-xs text-muted-foreground">
                       {comments.length}
                     </span>
@@ -799,7 +803,7 @@ export function QuestionDetail({
                     <div className="flex items-center space-x-3 border-l-4 border-[#005A9C] pl-3">
                       <BookOpen className="w-5 h-5 text-[#005A9C]" />
                       <h2 className="font-medium text-foreground">
-                        Risposta IA
+                        {t("aiAnswer.title")}
                       </h2>
                     </div>
                     <Button
@@ -812,7 +816,7 @@ export function QuestionDetail({
                       ) : (
                         <Copy className="w-4 h-4 mr-2" />
                       )}
-                      {copied ? "Copiato!" : "Copia"}
+                      {copied ? tCommon("copied") : tCommon("copy")}
                     </Button>
                   </div>
 
@@ -822,7 +826,7 @@ export function QuestionDetail({
                       <div className="flex items-center gap-2">
                         <Star className="w-5 h-5 text-[#005A9C]" />
                         <span className="text-sm font-medium">
-                          Valuta la Risposta
+                          {t("aiAnswer.rateAnswer")}
                         </span>
                       </div>
                       <div className="flex items-center gap-1">
@@ -847,12 +851,12 @@ export function QuestionDetail({
                     {showFeedbackInput && aiRating && aiRating < 3 && (
                       <div className="space-y-2 pt-2 border-t border-border">
                         <label className="text-sm font-medium">
-                          Cosa non ti è piaciuto?
+                          {t("aiAnswer.whatDidntYouLike")}
                         </label>
                         <Textarea
                           value={aiRatingFeedback}
                           onChange={(e) => setAiRatingFeedback(e.target.value)}
-                          placeholder="Descrivi cosa non ha funzionato..."
+                          placeholder={t("aiAnswer.describeProblem")}
                           className="min-h-[80px] text-sm"
                         />
                         <div className="flex justify-end gap-2">
@@ -864,7 +868,7 @@ export function QuestionDetail({
                               setAiRatingFeedback("");
                             }}
                           >
-                            Annulla
+                            {tCommon("cancel")}
                           </Button>
                           <Button
                             size="sm"
@@ -872,7 +876,7 @@ export function QuestionDetail({
                             disabled={!aiRatingFeedback.trim()}
                             className="bg-[#005A9C] hover:bg-[#004d85] text-white"
                           >
-                            Invia
+                            {tCommon("submit")}
                           </Button>
                         </div>
                       </div>
@@ -885,8 +889,7 @@ export function QuestionDetail({
                       {/* Callout intro */}
                       <div className="bg-[#EFF6FF] dark:bg-[#005A9C]/10 rounded-lg p-4 border-l-4 border-[#005A9C] mb-4">
                         <p className="text-sm leading-relaxed text-foreground m-0">
-                          Ecco una risposta dettagliata alla tua domanda,
-                          strutturata per facilitare lo studio.
+                          {t("aiAnswer.intro")}
                         </p>
                       </div>
 
@@ -903,12 +906,10 @@ export function QuestionDetail({
                           <span className="text-lg">💡</span>
                           <div>
                             <p className="text-sm font-semibold text-foreground mb-2 mt-0">
-                              Punti chiave da ricordare
+                              {t("aiAnswer.keyPoints")}
                             </p>
                             <p className="text-sm text-muted-foreground m-0">
-                              Studia attentamente i concetti principali e
-                              preparati a rispondere alle domande di
-                              approfondimento.
+                              {t("aiAnswer.keyPointsDescription")}
                             </p>
                           </div>
                         </div>
@@ -917,9 +918,9 @@ export function QuestionDetail({
                   ) : (
                     <div className="text-center py-12 text-muted-foreground">
                       <BookOpen className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                      <p>Risposta IA non disponibile</p>
+                      <p>{t("aiAnswer.notAvailable")}</p>
                       <p className="text-sm">
-                        La risposta sarà generata a breve
+                        {t("aiAnswer.comingSoon")}
                       </p>
                     </div>
                   )}
@@ -931,15 +932,13 @@ export function QuestionDetail({
                     <div className="flex items-center space-x-3 border-l-4 border-[#005A9C] pl-3">
                       <Users className="w-5 h-5 text-[#005A9C]" />
                       <h2 className="font-medium text-foreground">
-                        Risposte della Community
+                        {t("studentAnswers.title")}
                       </h2>
                     </div>
                   </div>
 
                   <div className="text-sm text-muted-foreground bg-muted/30 rounded-lg p-3 border border-border">
-                    💡 <strong>{studentAnswers.length} studenti</strong> hanno
-                    condiviso la loro risposta. Leggi, impara e lascia un like
-                    alle risposte più utili!
+                    💡 <strong>{studentAnswers.length}</strong> {t("studentAnswers.description").replace("<strong>{count} studenti</strong>", `<strong>${studentAnswers.length}</strong>`).replace("💡 ", "")}
                   </div>
 
                   {studentAnswers.length > 0 ? (
@@ -979,7 +978,7 @@ export function QuestionDetail({
                                       variant="outline"
                                       className="text-xs bg-muted"
                                     >
-                                      {answer.user.year}º Anno
+                                      {tHeader("year", { year: answer.user.year })}
                                     </Badge>
                                   )}
                                 </div>
@@ -1009,21 +1008,19 @@ export function QuestionDetail({
                                   }`}
                                 />
                                 {answer.likesCount}{" "}
-                                {answer.likesCount === 1 ? "like" : "likes"}
+                                {answer.likesCount === 1 ? t("studentAnswers.like") : t("studentAnswers.likes")}
                               </Button>
                               <Button
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => {
                                   navigator.clipboard.writeText(answer.content);
-                                  toast.success(
-                                    "Risposta copiata negli appunti!"
-                                  );
+                                  toast.success(tCommon("copied"));
                                 }}
                                 className="h-8"
                               >
                                 <Copy className="w-4 h-4 mr-2" />
-                                Copia
+                                {tCommon("copy")}
                               </Button>
                             </div>
                           </Card>
@@ -1034,10 +1031,10 @@ export function QuestionDetail({
                     <div className="text-center py-12">
                       <Users className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-50" />
                       <p className="text-muted-foreground mb-2">
-                        Nessuna risposta condivisa ancora
+                        {t("studentAnswers.noAnswers")}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        Sii il primo a condividere la tua risposta!
+                        {t("studentAnswers.beFirst")}
                       </p>
                     </div>
                   )}
@@ -1050,8 +1047,8 @@ export function QuestionDetail({
                       <StickyNote className="w-5 h-5 text-[#FFA78D]" />
                       <h2 className="font-medium text-foreground">
                         {isEditingPersonalAnswer
-                          ? "Scrivi la Tua Risposta"
-                          : "La Tua Risposta"}
+                          ? t("myAnswer.writeTitle")
+                          : t("myAnswer.title")}
                       </h2>
                     </div>
 
@@ -1062,7 +1059,7 @@ export function QuestionDetail({
                         onClick={() => setIsEditingPersonalAnswer(true)}
                         className="border-[#FFA78D] text-[#FFA78D] hover:bg-[#FFA78D]/10"
                       >
-                        Modifica
+                        {tCommon("edit")}
                       </Button>
                     )}
                   </div>
@@ -1072,14 +1069,14 @@ export function QuestionDetail({
                       <Textarea
                         value={personalAnswer}
                         onChange={(e) => setPersonalAnswer(e.target.value)}
-                        placeholder="Scrivi qui la tua risposta... Cerca di essere dettagliato come in un esame orale."
+                        placeholder={t("myAnswer.placeholder")}
                         className="min-h-[200px] text-sm"
                       />
                     ) : (
                       <div className="min-h-[200px] text-sm leading-relaxed whitespace-pre-wrap">
                         {personalAnswer || (
                           <span className="text-muted-foreground">
-                            Nessuna risposta salvata.
+                            {t("myAnswer.noAnswer")}
                           </span>
                         )}
                       </div>
@@ -1093,12 +1090,7 @@ export function QuestionDetail({
                           <div className="flex items-center gap-2">
                             <CheckCircle className="w-4 h-4 text-green-600" />
                             <span className="text-sm text-muted-foreground">
-                              {
-                                personalAnswer
-                                  .split(/\s+/)
-                                  .filter((word) => word.length > 0).length
-                              }{" "}
-                              parole
+                              {t("myAnswer.words", { count: personalAnswer.split(/\s+/).filter((word) => word.length > 0).length })}
                             </span>
                           </div>
                           <div className="h-4 w-px bg-border" />
@@ -1110,14 +1102,14 @@ export function QuestionDetail({
                               <>
                                 <Globe className="w-4 h-4 text-[#005A9C]" />
                                 <span className="text-[#005A9C] font-medium">
-                                  Pubblico
+                                  {t("myAnswer.public")}
                                 </span>
                               </>
                             ) : (
                               <>
                                 <Lock className="w-4 h-4 text-muted-foreground" />
                                 <span className="text-muted-foreground">
-                                  Privato
+                                  {t("myAnswer.private")}
                                 </span>
                               </>
                             )}
@@ -1130,7 +1122,7 @@ export function QuestionDetail({
                           disabled={isSubmitting}
                         >
                           <CheckCircle className="w-4 h-4 mr-2" />
-                          {isSubmitting ? "Salvo..." : "Salva"}
+                          {isSubmitting ? t("myAnswer.saving") : tCommon("save")}
                         </Button>
                       </div>
 
@@ -1138,8 +1130,7 @@ export function QuestionDetail({
                         <div className="bg-[#EFF6FF] border border-[#005A9C]/20 rounded-lg p-3 flex items-start gap-2">
                           <Users className="w-4 h-4 text-[#005A9C] mt-0.5" />
                           <p className="text-sm text-[#005A9C]">
-                            La tua risposta sarà visibile a tutti gli studenti e
-                            potrà aiutare la community!
+                            {t("myAnswer.publicNotice")}
                           </p>
                         </div>
                       )}
@@ -1151,13 +1142,8 @@ export function QuestionDetail({
                       <div className="flex items-center gap-2 text-sm text-green-700 dark:text-green-400">
                         <CheckCircle className="w-4 h-4" />
                         <span>
-                          Salvata •{" "}
-                          {
-                            personalAnswer
-                              .split(/\s+/)
-                              .filter((word) => word.length > 0).length
-                          }{" "}
-                          parole
+                          {t("myAnswer.savedLabel")} •{" "}
+                          {t("myAnswer.words", { count: personalAnswer.split(/\s+/).filter((word) => word.length > 0).length })}
                         </span>
                       </div>
                       <Button
@@ -1166,7 +1152,7 @@ export function QuestionDetail({
                         size="sm"
                       >
                         <BookOpen className="w-4 h-4 mr-2" />
-                        Confronta con IA
+                        {t("myAnswer.compareWithAI")}
                       </Button>
                     </div>
                   )}
@@ -1188,6 +1174,8 @@ export function QuestionDetail({
                     getUniversityInfo={getUniversityInfo}
                     sortBy={sortBy}
                     setSortBy={setSortBy}
+                    t={t}
+                    tCommon={tCommon}
                   />
                 </TabsContent>
               </Tabs>
@@ -1201,7 +1189,7 @@ export function QuestionDetail({
                 <div className="flex items-center gap-2">
                   <MessageCircle className="w-5 h-5 text-muted-foreground" />
                   <h3 className="font-semibold text-foreground">
-                    Esperienze d&apos;Esame
+                    {t("experiences.title")}
                   </h3>
                 </div>
                 <Badge variant="outline" className="rounded-full px-2.5">
@@ -1214,12 +1202,12 @@ export function QuestionDetail({
               >
                 <SelectTrigger className="h-9 text-sm border-2">
                   <SelectValue>
-                    {sortBy === "likes" ? "Più apprezzati" : "Più recenti"}
+                    {sortBy === "likes" ? t("experiences.sortByLikes") : t("experiences.sortByRecent")}
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="likes">Più apprezzati</SelectItem>
-                  <SelectItem value="recent">Più recenti</SelectItem>
+                  <SelectItem value="likes">{t("experiences.sortByLikes")}</SelectItem>
+                  <SelectItem value="recent">{t("experiences.sortByRecent")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -1235,6 +1223,8 @@ export function QuestionDetail({
                 getInitials={getInitials}
                 getUniversityInfo={getUniversityInfo}
                 isDesktop
+                t={t}
+                tCommon={tCommon}
               />
             </div>
           </div>
@@ -1250,11 +1240,10 @@ export function QuestionDetail({
           <DialogHeader>
             <DialogTitle className="text-foreground flex items-center gap-2">
               <GitBranch className="w-5 h-5 text-[#005A9C]" />
-              Variazioni della Domanda
+              {t("variations.title")}
             </DialogTitle>
             <DialogDescription className="text-muted-foreground">
-              Questa domanda è stata posta {variationsCount} volte in forme
-              diverse da professori e università differenti
+              {t("variations.description", { count: variationsCount })}
             </DialogDescription>
           </DialogHeader>
 
@@ -1275,7 +1264,7 @@ export function QuestionDetail({
                       : "bg-muted text-muted-foreground shrink-0"
                   }
                 >
-                  {question.isCanonical ? "Principale" : "Attuale"}
+                  {question.isCanonical ? t("variations.main") : t("variations.current")}
                 </Badge>
                 <div className="flex-1 space-y-2">
                   <p className="text-sm font-medium text-foreground">
@@ -1298,14 +1287,14 @@ export function QuestionDetail({
               >
                 <div className="flex items-start gap-3">
                   <Badge className="bg-[#005A9C] text-white shrink-0">
-                    Principale
+                    {t("variations.main")}
                   </Badge>
                   <div className="flex-1 space-y-2">
                     <p className="text-sm font-medium text-foreground">
                       {question.canonical.text}
                     </p>
                     <p className="text-xs text-[#005A9C]">
-                      Clicca per vedere la versione principale →
+                      {t("variations.viewMain")}
                     </p>
                   </div>
                 </div>
@@ -1316,7 +1305,7 @@ export function QuestionDetail({
             {variations.length > 0 && (
               <div className="pt-2">
                 <p className="text-xs text-muted-foreground mb-3 font-medium uppercase tracking-wide">
-                  Altre variazioni
+                  {t("variations.otherVariations")}
                 </p>
                 <div className="space-y-2">
                   {variations.map((variation, index) => (
@@ -1354,7 +1343,7 @@ export function QuestionDetail({
                                 <div className="flex items-center gap-1">
                                   <Users className="w-3 h-3" />
                                   <span>
-                                    {variation._count.studentAnswers} risposte
+                                    {t("variations.answers", { count: variation._count.studentAnswers })}
                                   </span>
                                 </div>
                               </>
@@ -1375,7 +1364,7 @@ export function QuestionDetail({
               variant="outline"
               className="border-border text-foreground hover:bg-muted"
             >
-              Chiudi
+              {tCommon("close")}
             </Button>
           </div>
         </DialogContent>
@@ -1397,6 +1386,8 @@ function CommentsSection({
   isDesktop = false,
   sortBy,
   setSortBy,
+  t,
+  tCommon,
 }: {
   comments: Comment[];
   newComment: string;
@@ -1409,6 +1400,8 @@ function CommentsSection({
   isDesktop?: boolean;
   sortBy?: "likes" | "recent";
   setSortBy?: (v: "likes" | "recent") => void;
+  t: ReturnType<typeof useTranslations>;
+  tCommon: ReturnType<typeof useTranslations>;
 }) {
   return (
     <div className={isDesktop ? "flex flex-col h-full" : "space-y-4"}>
@@ -1418,18 +1411,18 @@ function CommentsSection({
           <div className="flex items-center space-x-3 border-l-4 border-[#005A9C] pl-3">
             <MessageCircle className="w-5 h-5 text-[#005A9C]" />
             <h2 className="font-medium text-foreground">
-              Esperienze d&apos;Esame
+              {t("experiences.title")}
             </h2>
           </div>
           <Select value={sortBy} onValueChange={(v) => setSortBy(v as "likes" | "recent")}>
             <SelectTrigger className="w-[140px] h-8 text-xs">
               <SelectValue>
-                {sortBy === "likes" ? "Più apprezzati" : "Più recenti"}
+                {sortBy === "likes" ? t("experiences.sortByLikes") : t("experiences.sortByRecent")}
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="likes">Più apprezzati</SelectItem>
-              <SelectItem value="recent">Più recenti</SelectItem>
+              <SelectItem value="likes">{t("experiences.sortByLikes")}</SelectItem>
+              <SelectItem value="recent">{t("experiences.sortByRecent")}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -1438,8 +1431,7 @@ function CommentsSection({
       {/* Tips */}
       {!isDesktop && (
         <div className="text-sm text-muted-foreground bg-muted/30 rounded-lg p-3 border border-border">
-          💡 Scopri come altri studenti hanno affrontato questa domanda
-          all&apos;esame!
+          {t("experiences.description")}
         </div>
       )}
 
@@ -1511,7 +1503,7 @@ function CommentsSection({
           <div className="text-center py-12">
             <MessageCircle className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-50" />
             <p className="text-muted-foreground">
-              Nessuna esperienza condivisa
+              {t("experiences.noExperiences")}
             </p>
           </div>
         )}
@@ -1525,13 +1517,11 @@ function CommentsSection({
           {!isDesktop && (
             <div className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
               <MessageCircle className="w-4 h-4 text-[#005A9C]" />
-              <span>Condividi la tua esperienza</span>
+              <span>{t("experiences.shareYours")}</span>
             </div>
           )}
           <Textarea
-            placeholder="Condividi la tua esperienza con questa domanda d'esame...
-Come l'ha chiesta il professore?
-Consigli per chi la deve affrontare?"
+            placeholder={t("experiences.placeholder")}
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
             className="min-h-[100px] text-sm resize-none border-2"
@@ -1544,7 +1534,7 @@ Consigli per chi la deve affrontare?"
               size="sm"
             >
               <Send className="w-4 h-4 mr-2" />
-              {isSubmitting ? "Invio..." : "Pubblica"}
+              {isSubmitting ? t("experiences.publishing") : t("experiences.publish")}
             </Button>
           </div>
         </div>

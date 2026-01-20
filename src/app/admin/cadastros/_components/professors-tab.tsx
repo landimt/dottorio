@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Plus, Pencil, Trash2, BookMarked } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -64,6 +65,9 @@ interface ProfessorsTabProps {
 }
 
 export function ProfessorsTab({ professors: initialProfessors, universities, subjects }: ProfessorsTabProps) {
+  const t = useTranslations("admin.professorsTab");
+  const tCommon = useTranslations("admin.common");
+
   const [professors, setProfessors] = useState(initialProfessors);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProfessor, setEditingProfessor] = useState<Professor | null>(null);
@@ -99,7 +103,7 @@ export function ProfessorsTab({ professors: initialProfessors, universities, sub
 
   const handleSubmit = async () => {
     if (!formData.name.trim()) {
-      toast.error("Nome é obrigatório");
+      toast.error(tCommon("nameRequired"));
       return;
     }
 
@@ -115,7 +119,7 @@ export function ProfessorsTab({ professors: initialProfessors, universities, sub
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) throw new Error("Erro ao salvar");
+      if (!response.ok) throw new Error("Errore nel salvataggio");
 
       const savedProfessor = await response.json();
 
@@ -136,33 +140,33 @@ export function ProfessorsTab({ professors: initialProfessors, universities, sub
         setProfessors(professors.map(p =>
           p.id === savedProfessor.id ? fullProfessor : p
         ));
-        toast.success("Professor atualizado!");
+        toast.success(t("professorUpdated"));
       } else {
         setProfessors([...professors, fullProfessor]);
-        toast.success("Professor criado!");
+        toast.success(t("professorCreated"));
       }
 
       setIsDialogOpen(false);
       resetForm();
     } catch {
-      toast.error("Erro ao salvar professor");
+      toast.error(t("saveError"));
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Tem certeza que deseja excluir este professor?")) return;
+    if (!confirm(t("confirmDelete"))) return;
 
     try {
       const response = await fetch(`/api/admin/professors/${id}`, {
         method: "DELETE",
       });
 
-      if (!response.ok) throw new Error("Erro ao excluir");
+      if (!response.ok) throw new Error("Errore nell'eliminazione");
 
       setProfessors(professors.filter(p => p.id !== id));
-      toast.success("Professor excluído!");
+      toast.success(t("professorDeleted"));
     } catch {
-      toast.error("Erro ao excluir professor");
+      toast.error(t("deleteError"));
     }
   };
 
@@ -171,8 +175,8 @@ export function ProfessorsTab({ professors: initialProfessors, universities, sub
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>Professores</CardTitle>
-            <CardDescription>{professors.length} professores cadastrados</CardDescription>
+            <CardTitle>{t("title")}</CardTitle>
+            <CardDescription>{t("count", { count: professors.length })}</CardDescription>
           </div>
           <Dialog open={isDialogOpen} onOpenChange={(open) => {
             setIsDialogOpen(open);
@@ -181,36 +185,36 @@ export function ProfessorsTab({ professors: initialProfessors, universities, sub
             <DialogTrigger asChild>
               <Button>
                 <Plus className="mr-2 h-4 w-4" />
-                Novo Professor
+                {t("newProfessor")}
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-lg">
               <DialogHeader>
                 <DialogTitle>
-                  {editingProfessor ? "Editar Professor" : "Novo Professor"}
+                  {editingProfessor ? t("editProfessor") : t("newProfessor")}
                 </DialogTitle>
                 <DialogDescription>
-                  Preencha os dados do professor
+                  {t("fillData")}
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="name">Nome *</Label>
+                  <Label htmlFor="name">{t("name")} *</Label>
                   <Input
                     id="name"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="Prof. Mario Rossi"
+                    placeholder={t("namePlaceholder")}
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label>Universidade</Label>
+                  <Label>{t("university")}</Label>
                   <Select
                     value={formData.universityId}
                     onValueChange={(value) => setFormData({ ...formData, universityId: value })}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Selecione uma universidade" />
+                      <SelectValue placeholder={t("selectUniversity")} />
                     </SelectTrigger>
                     <SelectContent>
                       {universities.map((uni) => (
@@ -222,7 +226,7 @@ export function ProfessorsTab({ professors: initialProfessors, universities, sub
                   </Select>
                 </div>
                 <div className="grid gap-2">
-                  <Label>Matérias</Label>
+                  <Label>{t("subjects")}</Label>
                   <div className="max-h-48 overflow-y-auto rounded-md border p-3">
                     <div className="grid gap-2">
                       {subjects.map((subject) => (
@@ -245,17 +249,17 @@ export function ProfessorsTab({ professors: initialProfessors, universities, sub
                   </div>
                   {formData.subjectIds.length > 0 && (
                     <p className="text-xs text-muted-foreground">
-                      {formData.subjectIds.length} matéria(s) selecionada(s)
+                      {t("subjectsSelected", { count: formData.subjectIds.length })}
                     </p>
                   )}
                 </div>
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                  Cancelar
+                  {tCommon("cancel")}
                 </Button>
                 <Button onClick={handleSubmit}>
-                  {editingProfessor ? "Salvar" : "Criar"}
+                  {editingProfessor ? tCommon("save") : tCommon("create")}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -266,16 +270,16 @@ export function ProfessorsTab({ professors: initialProfessors, universities, sub
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Nome</TableHead>
-              <TableHead>Universidade</TableHead>
-              <TableHead>Matérias</TableHead>
+              <TableHead>{t("name")}</TableHead>
+              <TableHead>{t("university")}</TableHead>
+              <TableHead>{t("subjects")}</TableHead>
               <TableHead className="text-center">
                 <div className="flex items-center justify-center gap-1">
                   <BookMarked className="h-4 w-4" />
-                  Exames
+                  {t("exams")}
                 </div>
               </TableHead>
-              <TableHead className="w-[100px]">Ações</TableHead>
+              <TableHead className="w-[100px]">{tCommon("actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
