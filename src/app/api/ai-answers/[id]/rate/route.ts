@@ -1,40 +1,54 @@
-import { NextRequest } from "next/server";
-import { auth } from "@/lib/auth";
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { z, ZodError } from "zod";
-import { apiSuccess, apiUnknownError, apiValidationError, ApiErrors } from "@/lib/api/api-response";
+import { auth } from "@/lib/auth";
 
-const ratingSchema = z.object({
-  rating: z.number().min(1).max(5),
+const rateAiAnswerSchema = z.object({
+  rating: z.number().int().min(1).max(5),
   feedback: z.string().optional(),
 });
 
-// POST - Rate an AI answer
 export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
+
     if (!session?.user?.id) {
-      return ApiErrors.unauthorized();
+      return NextResponse.json(
+        {
+          error: {
+            code: "UNAUTHORIZED",
+            message: "Devi effettuare il login per valutare una risposta",
+          },
+        },
+        { status: 401 }
+      );
     }
 
-    const { id: aiAnswerId } = await params;
-    const body = await request.json();
-    const data = ratingSchema.parse(body);
+    const { id: aiAnswerId } = await context.params;
+    const body = await req.json();
 
-    // Verify AI answer exists
+    const validatedData = rateAiAnswerSchema.parse(body);
+
     const aiAnswer = await prisma.aiAnswer.findUnique({
       where: { id: aiAnswerId },
     });
 
     if (!aiAnswer) {
-      return ApiErrors.notFound("Risposta IA");
+      return NextResponse.json(
+        {
+          error: {
+            code: "NOT_FOUND",
+            message: "Risposta IA non trovata",
+          },
+        },
+        { status: 404 }
+      );
     }
 
-    // Upsert rating
-    const rating = await prisma.aiRating.upsert({
+    const aiRating = await prisma.aiRating.upsert({
       where: {
         aiAnswerId_userId: {
           aiAnswerId,
@@ -42,22 +56,99 @@ export async function POST(
         },
       },
       update: {
-        rating: data.rating,
-        feedback: data.feedback,
+        rating: validatedData.rating,
+        feedback: validatedData.feedback,
       },
       create: {
         aiAnswerId,
         userId: session.user.id,
-        rating: data.rating,
-        feedback: data.feedback,
+        rating: validatedData.rating,
+        feedback: validatedData.feedback,
       },
     });
 
-    return apiSuccess(rating);
+    return NextResponse.json({
+      success: true,
+      data: aiRating,
+    });
   } catch (error) {
-    if (error instanceof ZodError) {
-      return apiValidationError(error);
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        {
+          error: {
+            code: "VALIDATION_ERROR",
+            message: "Dati non validi",
+            details: error.errors,
+          },
+        },
+        { status: 400 }
+      );
     }
-    return apiUnknownError(error, "Errore nella valutazione della risposta IA");
+
+    console.error("Error rating AI answer:", error);
+    return NextResponse.json(
+      {
+        error: {
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Errore nella valutazione della risposta",
+        },
+      },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await auth();
+
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        {
+          error: {
+            code: "UNAUTHORIZED",
+            message: "Devi effettuare il login",
+          },
+        },
+        { status: 401 }
+      );
+    }
+
+    const { id: aiAnswerId } = await context.params;
+
+    const rating = await prisma.aiRating.findUnique({
+      where: {
+        aiAnswerId_userId: {
+          aiAnswerId,
+          userId: session.user.id,
+        },
+      },
+    });
+
+    if (!rating) {
+      return NextResponse.json({
+        success: true,
+        data: null,
+      });
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: rating,
+    });
+  } catch (error) {
+    console.error("Error fetching AI answer rating:", error);
+    return NextResponse.json(
+      {
+        error: {
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Errore nel recupero della valutazione",
+        },
+      },
+      { status: 500 }
+    );
   }
 }
