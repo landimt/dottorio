@@ -101,7 +101,6 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [showShareDialog, setShowShareDialog] = useState(false);
   const [shareableLink, setShareableLink] = useState("");
 
   // Dynamic data loading
@@ -452,7 +451,7 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
       const shareResult = await shareResponse.json();
       const link = `${window.location.origin}/share/${shareResult.data.slug}`;
       setShareableLink(link);
-      setShowShareDialog(true);
+      toast.success(t("shareDialog.title"));
     } catch (error) {
       console.error("Erro ao gerar link:", error);
       toast.error(error instanceof Error ? error.message : "Errore nella generazione del link");
@@ -593,41 +592,12 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
         {/* Form Card */}
         <Card className="bg-card border-border animate-slide-in-up">
           <CardHeader className="border-b border-border">
-            <div className="flex items-start justify-between">
-              <div className="space-y-1.5">
-                <CardTitle className="text-foreground">
-                  {t("formTitle")}
-                </CardTitle>
-                <CardDescription className="text-muted-foreground">
-                  {t("formDescription")}
-                </CardDescription>
-              </div>
-
-              {/* Generate link button - available for all users */}
-              <div className="relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-primary to-primary/60 rounded-lg blur opacity-30 group-hover:opacity-60 transition-all" />
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={handleGenerateShareableLink}
-                  className="relative flex-shrink-0 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground border-0 shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:-translate-y-0.5"
-                  disabled={!formData.subjectId || !formData.professorId || isGeneratingLink}
-                >
-                  {isGeneratingLink ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                      {tCommon("loading")}
-                    </>
-                  ) : (
-                    <>
-                      <Link2 className="w-4 h-4 mr-2" />
-                      {t("generateLink")}
-                      <span className="ml-2 text-xs opacity-75">✨</span>
-                    </>
-                  )}
-                </Button>
-              </div>
-            </div>
+            <CardTitle className="text-foreground">
+              {t("formTitle")}
+            </CardTitle>
+            <CardDescription className="text-muted-foreground">
+              {t("formDescription")}
+            </CardDescription>
           </CardHeader>
 
           <CardContent className="p-6">
@@ -786,6 +756,62 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
                 </Select>
               </div>
 
+              {/* Generate Share Link Section */}
+              <div className="space-y-3 p-4 bg-muted/30 rounded-lg border border-border">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label className="text-foreground font-medium">{t("generateLink")}</Label>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {t("shareDialog.description")}
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={handleGenerateShareableLink}
+                    className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:-translate-y-0.5"
+                    disabled={!formData.subjectId || !formData.professorId || isGeneratingLink}
+                  >
+                    {isGeneratingLink ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                        {tCommon("loading")}
+                      </>
+                    ) : (
+                      <>
+                        <Link2 className="w-4 h-4 mr-2" />
+                        {t("generateLink")}
+                      </>
+                    )}
+                  </Button>
+                </div>
+
+                {/* Show generated link */}
+                {shareableLink && (
+                  <div className="space-y-2 animate-slide-in-up">
+                    <div className="bg-white/80 dark:bg-black/40 backdrop-blur-sm rounded-lg border border-primary/30 p-3">
+                      <p className="text-xs text-muted-foreground mb-2 flex items-center gap-2">
+                        <Link2 className="w-3 h-3" />
+                        {t("shareDialog.shareableLink")}
+                      </p>
+                      <p className="text-sm text-foreground break-all font-mono bg-muted/50 p-2 rounded mb-2">
+                        {shareableLink}
+                      </p>
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={handleCopyLink}
+                        variant="outline"
+                        className="w-full"
+                      >
+                        <Copy className="w-4 h-4 mr-2" />
+                        {t("shareDialog.copyLink")}
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {/* Multiple Questions Section */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -900,117 +926,6 @@ export function ExamForm({ universities, courses }: ExamFormProps) {
           </Alert>
         )}
       </div>
-
-      {/* Share Link Dialog */}
-      <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
-        <DialogContent className="sm:max-w-lg bg-card border-border overflow-hidden">
-          {/* Header with gradient */}
-          <div className="relative -mx-6 -mt-6 mb-4 p-6 bg-gradient-to-br from-[bg-primary/10] via-[bg-primary/20] to-[bg-primary/30] dark:from-[primary]/20 dark:via-[primary]/10 dark:to-[primary]/5 border-b border-primary/20">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl" />
-            <div className="absolute bottom-0 left-0 w-24 h-24 bg-accent/10 rounded-full blur-2xl" />
-
-            <div className="relative">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-12 h-12 rounded-full bg-primary/20 dark:bg-primary/30 flex items-center justify-center">
-                  <Link2 className="w-6 h-6 text-primary animate-pulse" />
-                </div>
-                <div>
-                  <DialogTitle className="text-foreground text-xl">
-                    {t("shareDialog.title")}
-                  </DialogTitle>
-                  <DialogDescription className="text-primary/80">
-                    {t("shareDialog.description")}
-                  </DialogDescription>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-4 px-1">
-            {/* Info cards */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-gradient-to-br from-[bg-primary/10] to-[bg-primary/20] dark:from-[primary]/10 dark:to-[primary]/5 rounded-lg p-3 border border-primary/20">
-                <p className="text-xs text-muted-foreground mb-1">{t("shareDialog.subjectLabel")}</p>
-                <p className="font-semibold text-primary">
-                  {getSubjectName(formData.subjectId)}
-                </p>
-              </div>
-              <div className="bg-gradient-to-br from-[bg-primary/10] to-[bg-primary/20] dark:from-[primary]/10 dark:to-[primary]/5 rounded-lg p-3 border border-primary/20">
-                <p className="text-xs text-muted-foreground mb-1">{t("shareDialog.professorLabel")}</p>
-                <p className="font-semibold text-primary">
-                  {getProfessorName(formData.professorId)}
-                </p>
-              </div>
-              {formData.courseId && (
-                <div className="col-span-2 bg-gradient-to-br from-[bg-primary/10] to-[bg-primary/20] dark:from-[primary]/10 dark:to-[primary]/5 rounded-lg p-3 border border-primary/20">
-                  <p className="text-xs text-muted-foreground mb-1">{t("shareDialog.courseLabel")}</p>
-                  <p className="font-semibold text-primary">{getCourseName(formData.courseId)}</p>
-                </div>
-              )}
-            </div>
-
-            {/* Link with glassmorphism effect */}
-            <div className="relative group">
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/20 to-accent/20 rounded-lg blur opacity-30 group-hover:opacity-50 transition-all" />
-              <div className="relative bg-white/80 dark:bg-black/40 backdrop-blur-sm rounded-lg border border-primary/30 p-4">
-                <p className="text-xs text-muted-foreground mb-2 flex items-center gap-2">
-                  <Link2 className="w-3 h-3" />
-                  {t("shareDialog.shareableLink")}
-                </p>
-                <p className="text-sm text-foreground break-all font-mono bg-muted/50 p-2 rounded">
-                  {shareableLink}
-                </p>
-              </div>
-            </div>
-
-            {/* Modern buttons */}
-            <div className="flex gap-3">
-              <Button
-                onClick={handleCopyLink}
-                className="flex-1 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5"
-              >
-                <Copy className="w-4 h-4 mr-2" />
-                {t("shareDialog.copyLink")}
-              </Button>
-              <Button
-                onClick={() => setShowShareDialog(false)}
-                variant="outline"
-                className="flex-1 border-primary/30 hover:bg-primary/5 transition-all"
-              >
-                {tCommon("close")}
-              </Button>
-            </div>
-
-            {/* Instructions */}
-            <div className="bg-gradient-to-br from-[#FFF7ED] to-[#FED7AA] dark:from-[accent]/10 dark:to-[accent]/5 rounded-lg p-4 border border-[accent]/30">
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-full bg-[accent]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-lg">💡</span>
-                </div>
-                <div className="flex-1 space-y-2">
-                  <p className="text-sm font-medium text-[orange-900] dark:text-[accent]">
-                    {t("shareDialog.howToShare")}
-                  </p>
-                  <ul className="text-xs text-[orange-900]/80 dark:text-[accent]/80 space-y-1">
-                    <li className="flex items-center gap-2">
-                      <span className="w-1 h-1 rounded-full bg-[accent]" />
-                      {t("shareDialog.step1")}
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <span className="w-1 h-1 rounded-full bg-[accent]" />
-                      {t("shareDialog.step2")}
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <span className="w-1 h-1 rounded-full bg-[accent]" />
-                      {t("shareDialog.step3")}
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
 
       {/* Question Linking Modal */}
       <Dialog open={showLinkModal} onOpenChange={(open) => !open && handleSkipLinking()}>
