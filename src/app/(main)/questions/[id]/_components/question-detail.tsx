@@ -294,7 +294,7 @@ export function QuestionDetail({
       });
 
       if (response.ok) {
-        const data = await response.json();
+        const { data } = await response.json();
         setStudentAnswers((prev) =>
           prev.map((a) =>
             a.id === answerId
@@ -324,7 +324,7 @@ export function QuestionDetail({
       });
 
       if (response.ok) {
-        const data = await response.json();
+        const { data } = await response.json();
         setComments((prev) =>
           prev.map((c) =>
             c.id === commentId
@@ -360,7 +360,7 @@ export function QuestionDetail({
       });
 
       if (response.ok) {
-        const comment = await response.json();
+        const { data: comment } = await response.json();
         setComments((prev) => [
           {
             ...comment,
