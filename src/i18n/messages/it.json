@@ -90,7 +90,8 @@
     "settings": "Impostazioni",
     "lightMode": "Modo Chiaro",
     "darkMode": "Modo Scuro",
-    "year": "{year}º Anno"
+    "year": "{year}º Anno",
+    "adminPanel": "Pannello Admin"
   },
   "dashboard": {
     "greeting": "Ciao, {name}!",
@@ -776,7 +777,12 @@
       "subject": "Materia",
       "professor": "Professore",
       "stats": "Stats",
+      "aiAnswer": "IA",
+      "hasAiAnswer": "Ha risposta IA",
+      "noAiAnswer": "Nessuna risposta IA",
       "links": "Link",
+      "edit": "Modifica",
+      "delete": "Elimina",
       "actions": "Azioni",
       "canonical": "Canonica",
       "variation": "Variazione",
@@ -788,6 +794,58 @@
       "questionDeleted": "Domanda eliminata!",
       "deleteError": "Errore nell'eliminazione della domanda",
       "confirmDelete": "Sei sicuro di voler eliminare questa domanda?"
+    },
+    "questionDetail": {
+      "title": "Dettagli Domanda",
+      "description": "Gestisci la risposta IA e visualizza le risposte degli studenti",
+      "filters": {
+        "title": "Filtri Ricerca",
+        "searchText": "Cerca testo",
+        "searchPlaceholder": "Cerca nella domanda...",
+        "university": "Università",
+        "allUniversities": "Tutte le università",
+        "course": "Corso",
+        "allCourses": "Tutti i corsi",
+        "subject": "Materia",
+        "allSubjects": "Tutte le materie",
+        "professor": "Professore",
+        "allProfessors": "Tutti i professori",
+        "year": "Anno",
+        "allYears": "Tutti gli anni",
+        "aiAnswer": "Risposta IA",
+        "allQuestions": "Tutte",
+        "withAiAnswer": "Solo con risposta",
+        "withoutAiAnswer": "Solo senza risposta",
+        "status": "Stato",
+        "active": "Attive",
+        "all": "Tutte",
+        "sortBy": "Ordina per",
+        "mostRecent": "Più recenti",
+        "mostViewed": "Più viste",
+        "mostSaved": "Più salvate",
+        "mostAsked": "Più chieste",
+        "alphabetical": "Alfabetico",
+        "reset": "Resetta"
+      },
+      "views": "Visualizzazioni",
+      "answers": "Risposte",
+      "comments": "Commenti",
+      "saved": "Salvato",
+      "createdBy": "Creato da",
+      "studentAnswers": {
+        "title": "Risposte degli Studenti",
+        "description": "{count} risposte totali",
+        "empty": "Nessuna risposta degli studenti ancora",
+        "public": "Pubblica",
+        "private": "Privata"
+      },
+      "ratings": {
+        "title": "Valutazioni della Risposta IA",
+        "average": "Media",
+        "count": "valutazioni",
+        "noAiAnswer": "Nessuna risposta IA da valutare",
+        "empty": "Nessuna valutazione ancora"
+      }
     },
     "moderationPage": {
       "title": "Moderazione",
@@ -831,6 +889,124 @@
       "reason": "Motivo",
       "showDetails": "Mostra dettagli"
     },
+    "questionDetail": {
+      "title": "Dettaglio Domanda",
+      "description": "Visualizza e modifica i dettagli della domanda",
+      "resultsCount": "{count} risultati",
+      "noQuestionsFound": "Nessuna domanda trovata",
+      "views": "Visualizzazioni",
+      "answers": "Risposte",
+      "comments": "Commenti",
+      "saved": "Salvati",
+      "createdBy": "Creato da",
+      "tabs": {
+        "aiAnswer": "Risposta IA",
+        "studentAnswers": "Risposte Studenti",
+        "comments": "Commenti",
+        "variations": "Variazioni",
+        "ratings": "Valutazioni"
+      },
+      "filters": {
+        "title": "Filtri Ricerca",
+        "searchText": "Cerca testo",
+        "searchPlaceholder": "Cerca nella domanda...",
+        "university": "Università",
+        "allUniversities": "Tutte le università",
+        "course": "Corso",
+        "allCourses": "Tutti i corsi",
+        "subject": "Materia",
+        "allSubjects": "Tutte le materie",
+        "professor": "Professore",
+        "allProfessors": "Tutti i professori",
+        "year": "Anno",
+        "allYears": "Tutti gli anni",
+        "aiAnswer": "Risposta IA",
+        "allQuestions": "Tutte",
+        "withAiAnswer": "Solo con risposta",
+        "withoutAiAnswer": "Solo senza risposta",
+        "status": "Stato",
+        "active": "Attive",
+        "all": "Tutte",
+        "sortBy": "Ordina per",
+        "mostRecent": "Più recenti",
+        "mostViewed": "Più viste",
+        "mostSaved": "Più salvate",
+        "mostAsked": "Più richieste",
+        "alphabetical": "Alfabetico",
+        "reset": "Resetta"
+      },
+      "studentAnswers": {
+        "title": "Risposte degli Studenti",
+        "description": "{count} risposte pubblicate",
+        "empty": "Nessuna risposta ancora pubblicata",
+        "public": "Pubblica",
+        "private": "Privata",
+        "visibility": "Visibilità",
+        "makePublic": "Rendi Pubblica",
+        "makePrivate": "Rendi Privata",
+        "edit": "Modifica",
+        "delete": "Elimina"
+      },
+      "commentsTab": {
+        "description": "{count} commenti pubblicati",
+        "empty": "Nessun commento ancora",
+        "edit": "Modifica",
+        "delete": "Elimina"
+      },
+      "variationsTab": {
+        "description": "{count} variazioni di questa domanda",
+        "empty": "Nessuna variazione ancora"
+      },
+      "ratingsTab": {
+        "title": "Valutazioni Risposta IA",
+        "average": "Media",
+        "count": "valutazioni",
+        "noAiAnswer": "Non c'è ancora una risposta IA per questa domanda",
+        "empty": "Nessuna valutazione ancora"
+      },
+      "aiEditor": {
+        "title": "Risposta IA",
+        "description": "Crea o modifica la risposta generata dall'IA per questa domanda",
+        "content": "Contenuto",
+        "contentPlaceholder": "Scrivi qui la risposta dell'IA in formato Markdown...",
+        "contentHelp": "Usa Markdown per formattare la risposta (grassetto, elenchi, titoli, ecc.)",
+        "contentRequired": "Il contenuto è richiesto",
+        "source": "Fonte",
+        "sourcePlaceholder": "Es: Capitolo 12 - Anatomia Umana di Martini",
+        "sourceHelp": "Opzionale: indica la fonte della risposta",
+        "model": "Modello IA",
+        "modelPlaceholder": "Es: GPT-4, Claude 3.5, ecc.",
+        "modelHelp": "Opzionale: indica il modello IA utilizzato",
+        "create": "Crea Risposta",
+        "update": "Aggiorna Risposta",
+        "saved": "Risposta IA salvata con successo!"
+      },
+      "actions": {
+        "more": "Azioni",
+        "edit": "Modifica Domanda",
+        "delete": "Elimina",
+        "hide": "Nascondi",
+        "show": "Mostra",
+        "export": "Esporta",
+        "confirmDelete": "Sei sicuro di voler eliminare questa domanda?",
+        "confirmHide": "Sei sicuro di voler nascondere questa domanda?",
+        "confirmShow": "Sei sicuro di voler mostrare questa domanda?",
+        "questionDeleted": "Domanda eliminata con successo",
+        "questionHidden": "Domanda nascosta con successo",
+        "questionShown": "Domanda mostrata con successo",
+        "deleteError": "Errore nell'eliminazione della domanda",
+        "hideError": "Errore nel nascondere la domanda",
+        "showError": "Errore nel mostrare la domanda"
+      },
+      "editDialog": {
+        "title": "Modifica Domanda",
+        "description": "Modifica il testo della domanda",
+        "questionText": "Testo della Domanda",
+        "questionPlaceholder": "Scrivi qui il testo della domanda...",
+        "textRequired": "Il testo della domanda è richiesto",
+        "saved": "Domanda aggiornata con successo"
+      }
+    },
     "common": {
       "nameRequired": "Il nome è obbligatorio",
       "save": "Salva",
@@ -856,6 +1032,21 @@
       "description": "Questo link di condivisione è scaduto e non è più valido.",
       "createNew": "Crea un nuovo esame"
     }
+  },
+  "aiAnswer": {
+    "title": "Risposta IA",
+    "noAnswer": "Nessuna risposta IA disponibile",
+    "noAnswerDescription": "La risposta generata dall'IA non è ancora disponibile per questa domanda",
+    "source": "Fonte",
+    "rate": "Valuta la Risposta",
+    "yourRating": "La tua valutazione",
+    "avgRating": "Media valutazioni",
+    "feedbackLabel": "Cosa non ti è piaciuto?",
+    "feedbackPlaceholder": "Descrivi cosa non ha funzionato nella risposta...",
+    "submitFeedback": "Invia Feedback",
+    "thankYou": "Grazie per la tua valutazione!",
+    "copy": "Copia Risposta",
+    "copied": "Copiato!"
   },
   "errors": {
     "generic": "Si è verificato un errore. Riprova.",
