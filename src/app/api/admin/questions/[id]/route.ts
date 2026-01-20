@@ -1,33 +1,45 @@
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { withAdminAuth } from "@/lib/admin/admin-api";
-import { apiSuccess, ApiErrors } from "@/lib/api/api-response";
 
-export const DELETE = withAdminAuth<{ id: string }>(async (request, { params }) => {
-  const { id } = await params;
+const unauthorized = NextResponse.json(
+  { error: "Unauthorized" },
+  { status: 401 }
+);
 
-  const question = await prisma.question.findUnique({
-    where: { id },
-  });
+// PATCH /api/admin/questions/[id] - Update question text
+export async function PATCH(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await auth();
 
-  if (!question) {
-    return ApiErrors.notFound("Domanda");
-  }
+    if (!session?.user?.id || session.user.role !== "admin") {
+      return unauthorized;
+    }
 
-  // If this is a canonical question, update variations to remove the link
-  if (question.isCanonical) {
-    await prisma.question.updateMany({
-      where: { canonicalId: id },
-      data: {
-        canonicalId: null,
-        isCanonical: true,
-      },
+    const { id } = await context.params;
+    const { text } = await req.json();
+
+    if (!text || typeof text !== "string" || !text.trim()) {
+      return NextResponse.json(
+        { error: { message: "Il testo della domanda è richiesto" } },
+        { status: 400 }
+      );
+    }
+
+    const question = await prisma.question.update({
+      where: { id },
+      data: { text: text.trim() },
     });
+
+    return NextResponse.json({ success: true, data: question });
+  } catch (error) {
+    console.error("Error updating question:", error);
+    return NextResponse.json(
+      { error: { message: "Errore durante l'aggiornamento della domanda" } },
+      { status: 500 }
+    );
   }
-
-  // Delete the question (cascade will delete related answers, comments, etc)
-  await prisma.question.delete({
-    where: { id },
-  });
-
-  return apiSuccess({ deleted: true });
-});
+}
