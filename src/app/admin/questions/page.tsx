@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { QuestionsTable } from "./_components/questions-table";
 
 async function getQuestions() {

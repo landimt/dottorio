@@ -1,7 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
-import prisma from "@/lib/prisma";
-import { z } from "zod";
+import { prisma } from "@/lib/prisma";
+import { z, ZodError } from "zod";
+import { apiSuccess, apiUnknownError, apiValidationError, ApiErrors } from "@/lib/api/api-response";
 
 const ratingSchema = z.object({
   rating: z.number().min(1).max(5),
@@ -16,7 +17,7 @@ export async function POST(
   try {
     const session = await auth();
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
+      return ApiErrors.unauthorized();
     }
 
     const { id: aiAnswerId } = await params;
@@ -29,10 +30,7 @@ export async function POST(
     });
 
     if (!aiAnswer) {
-      return NextResponse.json(
-        { error: "Risposta IA non trovata" },
-        { status: 404 }
-      );
+      return ApiErrors.notFound("Risposta IA");
     }
 
     // Upsert rating
@@ -55,18 +53,11 @@ export async function POST(
       },
     });
 
-    return NextResponse.json(rating);
+    return apiSuccess(rating);
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: error.issues[0].message },
-        { status: 400 }
-      );
+    if (error instanceof ZodError) {
+      return apiValidationError(error);
     }
-    console.error("Error rating AI answer:", error);
-    return NextResponse.json(
-      { error: "Errore interno del server" },
-      { status: 500 }
-    );
+    return apiUnknownError(error, "Errore nella valutazione della risposta IA");
   }
 }

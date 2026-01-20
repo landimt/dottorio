@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import { questionService } from "@/lib/services/question.service";
+import { apiSuccess, apiUnknownError } from "@/lib/api/api-response";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -11,12 +11,8 @@ export async function POST(request: Request, { params }: RouteParams) {
     const { id } = await params;
     await questionService.incrementViews(id);
 
-    return NextResponse.json({ success: true });
+    return apiSuccess({ viewed: true });
   } catch (error) {
-    console.error("Error incrementing views:", error);
-    return NextResponse.json(
-      { error: "Errore nell'aggiornamento delle visualizzazioni" },
-      { status: 500 }
-    );
+    return apiUnknownError(error, "Errore nell'aggiornamento delle visualizzazioni");
   }
 }

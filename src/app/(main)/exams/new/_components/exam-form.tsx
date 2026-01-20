@@ -241,8 +241,7 @@ export function ExamForm({ subjects, professors, universities, channels }: ExamF
           router.push("/dashboard");
         }, 2000);
       }
-    } catch (error) {
-      console.error("Error submitting questions:", error);
+    } catch {
       toast.error("Errore durante l'invio delle domande");
     } finally {
       setIsSubmitting(false);
@@ -266,8 +265,7 @@ export function ExamForm({ subjects, professors, universities, channels }: ExamF
       );
       const data = await response.json();
       setSearchResults(data.questions || []);
-    } catch (error) {
-      console.error("Error searching canonical questions:", error);
+    } catch {
       setSearchResults([]);
     } finally {
       setIsSearching(false);
@@ -297,8 +295,7 @@ export function ExamForm({ subjects, professors, universities, channels }: ExamF
 
       // Move to next question or finish
       moveToNextQuestion();
-    } catch (error) {
-      console.error("Error linking question:", error);
+    } catch {
       toast.error("Errore nel collegamento della domanda");
     } finally {
       setIsLinking(false);

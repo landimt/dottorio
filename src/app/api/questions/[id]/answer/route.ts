@@ -1,7 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
-import prisma from "@/lib/prisma";
-import { z } from "zod";
+import { prisma } from "@/lib/prisma";
+import { z, ZodError } from "zod";
+import { apiSuccess, apiUnknownError, apiValidationError, ApiErrors } from "@/lib/api/api-response";
 
 const answerSchema = z.object({
   content: z.string().min(10, "La risposta deve avere almeno 10 caratteri"),
@@ -16,7 +17,7 @@ export async function POST(
   try {
     const session = await auth();
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
+      return ApiErrors.unauthorized();
     }
 
     const { id: questionId } = await params;
@@ -29,10 +30,7 @@ export async function POST(
     });
 
     if (!question) {
-      return NextResponse.json(
-        { error: "Domanda non trovata" },
-        { status: 404 }
-      );
+      return ApiErrors.notFound("Domanda");
     }
 
     // Upsert answer
@@ -65,18 +63,11 @@ export async function POST(
       },
     });
 
-    return NextResponse.json(answer);
+    return apiSuccess(answer);
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: error.issues[0].message },
-        { status: 400 }
-      );
+    if (error instanceof ZodError) {
+      return apiValidationError(error);
     }
-    console.error("Error creating answer:", error);
-    return NextResponse.json(
-      { error: "Errore interno del server" },
-      { status: 500 }
-    );
+    return apiUnknownError(error, "Errore nella creazione della risposta");
   }
 }

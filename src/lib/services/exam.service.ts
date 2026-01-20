@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import type { CreateExamInput, UpdateExamInput } from "@/lib/validations/exam.schema";
 
 export const examService = {

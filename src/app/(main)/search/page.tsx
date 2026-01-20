@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { SearchClient } from "./_components/search-client";
 
 async function getFiltersData() {

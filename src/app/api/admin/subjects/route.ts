@@ -1,53 +1,44 @@
-import { NextRequest } from "next/server";
-import prisma from "@/lib/prisma";
-import { requireAdminApi, isErrorResponse } from "@/lib/admin/admin-api";
-import { apiSuccess, ApiErrors, apiUnknownError } from "@/lib/api/api-response";
+import { prisma } from "@/lib/prisma";
+import { withAdminAuth } from "@/lib/admin/admin-api";
+import { apiSuccess, apiValidationError } from "@/lib/api/api-response";
+import { createSubjectSchema } from "@/lib/validations/admin.schema";
+import { ZodError } from "zod";
 
-export async function GET() {
-  try {
-    const authResult = await requireAdminApi();
-    if (isErrorResponse(authResult)) return authResult;
-
-    const subjects = await prisma.subject.findMany({
-      orderBy: { name: "asc" },
-      include: {
-        _count: {
-          select: {
-            professors: true,
-            exams: true,
-          },
+export const GET = withAdminAuth(async () => {
+  const subjects = await prisma.subject.findMany({
+    orderBy: { name: "asc" },
+    include: {
+      _count: {
+        select: {
+          professors: true,
+          exams: true,
         },
       },
-    });
+    },
+  });
 
-    return apiSuccess(subjects);
-  } catch (error) {
-    return apiUnknownError(error);
-  }
-}
+  return apiSuccess(subjects);
+});
 
-export async function POST(request: NextRequest) {
+export const POST = withAdminAuth(async (request) => {
+  const body = await request.json();
+
   try {
-    const authResult = await requireAdminApi();
-    if (isErrorResponse(authResult)) return authResult;
-
-    const body = await request.json();
-    const { name, emoji, color } = body;
-
-    if (!name?.trim()) {
-      return ApiErrors.badRequest("Nome è obbligatorio");
-    }
+    const data = createSubjectSchema.parse(body);
 
     const subject = await prisma.subject.create({
       data: {
-        name: name.trim(),
-        emoji: emoji?.trim() || null,
-        color: color?.trim() || null,
+        name: data.name.trim(),
+        emoji: data.emoji?.trim() || null,
+        color: data.color?.trim() || null,
       },
     });
 
     return apiSuccess(subject, 201);
   } catch (error) {
-    return apiUnknownError(error);
+    if (error instanceof ZodError) {
+      return apiValidationError(error);
+    }
+    throw error;
   }
-}
+});

@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
+import { apiSuccess, apiUnknownError } from "@/lib/api/api-response";
 
 // GET /api/subjects - List all subjects
 export async function GET() {
@@ -13,12 +13,8 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json(subjects);
+    return apiSuccess(subjects);
   } catch (error) {
-    console.error("Error fetching subjects:", error);
-    return NextResponse.json(
-      { error: "Errore nel recupero delle materie" },
-      { status: 500 }
-    );
+    return apiUnknownError(error, "Errore nel recupero delle materie");
   }
 }

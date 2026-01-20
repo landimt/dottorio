@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { ExamForm } from "./_components/exam-form";
 
 async function getFormData() {

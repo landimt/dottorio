@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { apiSuccess, apiUnknownError } from "@/lib/api/api-response";
 
 // GET /api/questions/canonical - Search canonical questions for linking
 export async function GET(request: NextRequest) {
@@ -60,12 +61,8 @@ export async function GET(request: NextRequest) {
       professor: q.exam.professor?.name || null,
     }));
 
-    return NextResponse.json({ questions: formattedQuestions });
+    return apiSuccess({ questions: formattedQuestions });
   } catch (error) {
-    console.error("Error searching canonical questions:", error);
-    return NextResponse.json(
-      { error: "Errore nella ricerca" },
-      { status: 500 }
-    );
+    return apiUnknownError(error, "Errore nella ricerca");
   }
 }

@@ -121,13 +121,16 @@ export interface ProfessorWithRelations extends Professor {
 
 export interface Exam {
   id: string;
-  title: string | null;
-  description: string | null;
-  year: number | null;
   subjectId: string;
   professorId: string | null;
   universityId: string;
-  createdBy: string;
+  channelId: string | null;
+  year: number | null;
+  examDate: Date | null;
+  examType: string;
+  academicYear: string | null;
+  description: string | null;
+  createdBy: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -239,7 +242,6 @@ export interface Comment {
   questionId: string;
   userId: string;
   createdAt: Date;
-  updatedAt: Date;
 }
 
 export interface CommentWithUser extends Comment {

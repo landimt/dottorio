@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { School, BookOpen, GraduationCap } from "lucide-react";
 import { UniversitiesTab } from "./_components/universities-tab";

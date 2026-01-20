@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { apiSuccess, apiUnknownError } from "@/lib/api/api-response";
 
 export async function GET() {
   try {
@@ -14,12 +14,8 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json(universities);
+    return apiSuccess(universities);
   } catch (error) {
-    console.error("Error fetching universities:", error);
-    return NextResponse.json(
-      { error: "Errore nel caricamento delle università" },
-      { status: 500 }
-    );
+    return apiUnknownError(error, "Errore nel caricamento delle università");
   }
 }

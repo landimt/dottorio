@@ -1,6 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { apiSuccess, apiUnknownError, ApiErrors } from "@/lib/api/api-response";
 
 export async function POST(
   request: NextRequest,
@@ -9,10 +10,7 @@ export async function POST(
   try {
     const session = await auth();
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Non autorizzato" },
-        { status: 401 }
-      );
+      return ApiErrors.unauthorized();
     }
 
     const { id: questionId } = await params;
@@ -20,10 +18,7 @@ export async function POST(
     const { canonicalId } = body;
 
     if (!canonicalId) {
-      return NextResponse.json(
-        { error: "ID della domanda canonica richiesto" },
-        { status: 400 }
-      );
+      return ApiErrors.badRequest("ID della domanda canonica richiesto");
     }
 
     // Get the question to link
@@ -32,10 +27,7 @@ export async function POST(
     });
 
     if (!question) {
-      return NextResponse.json(
-        { error: "Domanda non trovata" },
-        { status: 404 }
-      );
+      return ApiErrors.notFound("Domanda");
     }
 
     // Get the canonical question
@@ -53,10 +45,7 @@ export async function POST(
     });
 
     if (!canonical) {
-      return NextResponse.json(
-        { error: "Domanda canonica non trovata" },
-        { status: 404 }
-      );
+      return ApiErrors.notFound("Domanda canonica");
     }
 
     // Update the question to link it to the canonical
@@ -74,8 +63,7 @@ export async function POST(
       where: { groupId: canonical.groupId },
     });
 
-    return NextResponse.json({
-      success: true,
+    return apiSuccess({
       message: "Domanda collegata con successo",
       group: {
         totalQuestions: groupCount,
@@ -85,10 +73,6 @@ export async function POST(
       },
     });
   } catch (error) {
-    console.error("Error linking question:", error);
-    return NextResponse.json(
-      { error: "Errore nel collegamento della domanda" },
-      { status: 500 }
-    );
+    return apiUnknownError(error, "Errore nel collegamento della domanda");
   }
 }

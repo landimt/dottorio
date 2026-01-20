@@ -1,55 +1,43 @@
-import { NextRequest } from "next/server";
-import prisma from "@/lib/prisma";
-import { requireAdminApi, isErrorResponse } from "@/lib/admin/admin-api";
-import { apiSuccess, ApiErrors, apiUnknownError } from "@/lib/api/api-response";
+import { prisma } from "@/lib/prisma";
+import { withAdminAuth } from "@/lib/admin/admin-api";
+import { apiSuccess, apiValidationError } from "@/lib/api/api-response";
+import { createProfessorSchema } from "@/lib/validations/admin.schema";
+import { ZodError } from "zod";
 
-export async function GET() {
-  try {
-    const authResult = await requireAdminApi();
-    if (isErrorResponse(authResult)) return authResult;
-
-    const professors = await prisma.professor.findMany({
-      orderBy: { name: "asc" },
-      include: {
-        university: true,
-        subjects: {
-          include: {
-            subject: true,
-          },
-        },
-        _count: {
-          select: {
-            exams: true,
-          },
+export const GET = withAdminAuth(async () => {
+  const professors = await prisma.professor.findMany({
+    orderBy: { name: "asc" },
+    include: {
+      university: true,
+      subjects: {
+        include: {
+          subject: true,
         },
       },
-    });
+      _count: {
+        select: {
+          exams: true,
+        },
+      },
+    },
+  });
 
-    return apiSuccess(professors);
-  } catch (error) {
-    return apiUnknownError(error);
-  }
-}
+  return apiSuccess(professors);
+});
 
-export async function POST(request: NextRequest) {
+export const POST = withAdminAuth(async (request) => {
+  const body = await request.json();
+
   try {
-    const authResult = await requireAdminApi();
-    if (isErrorResponse(authResult)) return authResult;
-
-    const body = await request.json();
-    const { name, universityId, subjectIds } = body;
-
-    if (!name?.trim()) {
-      return ApiErrors.badRequest("Nome è obbligatorio");
-    }
+    const data = createProfessorSchema.parse(body);
 
     // Create professor with subjects relation
     const professor = await prisma.professor.create({
       data: {
-        name: name.trim(),
-        universityId: universityId || null,
+        name: data.name.trim(),
+        universityId: data.universityId || null,
         subjects: {
-          create: (subjectIds || []).map((subjectId: string) => ({
+          create: (data.subjectIds || []).map((subjectId: string) => ({
             subjectId,
           })),
         },
@@ -66,6 +54,9 @@ export async function POST(request: NextRequest) {
 
     return apiSuccess(professor, 201);
   } catch (error) {
-    return apiUnknownError(error);
+    if (error instanceof ZodError) {
+      return apiValidationError(error);
+    }
+    throw error;
   }
-}
+});

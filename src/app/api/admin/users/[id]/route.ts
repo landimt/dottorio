@@ -1,69 +1,43 @@
-import { NextRequest } from "next/server";
-import prisma from "@/lib/prisma";
-import { requireAdminApi, isErrorResponse } from "@/lib/admin/admin-api";
-import { apiSuccess, ApiErrors, apiError, apiUnknownError } from "@/lib/api/api-response";
+import { prisma } from "@/lib/prisma";
+import { withAdminAuth } from "@/lib/admin/admin-api";
+import { apiSuccess, ApiErrors, apiError, apiValidationError } from "@/lib/api/api-response";
+import { updateUserSchema } from "@/lib/validations/admin.schema";
+import { ZodError } from "zod";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const authResult = await requireAdminApi();
-    if (isErrorResponse(authResult)) return authResult;
+export const GET = withAdminAuth<{ id: string }>(async (request, { params }) => {
+  const { id } = await params;
 
-    const { id } = await params;
-
-    const user = await prisma.user.findUnique({
-      where: { id },
-      include: {
-        university: true,
-        channel: true,
-        _count: {
-          select: {
-            exams: true,
-            studentAnswers: true,
-            comments: true,
-          },
+  const user = await prisma.user.findUnique({
+    where: { id },
+    include: {
+      university: true,
+      channel: true,
+      _count: {
+        select: {
+          exams: true,
+          studentAnswers: true,
+          comments: true,
         },
       },
-    });
+    },
+  });
 
-    if (!user) {
-      return ApiErrors.notFound("Utente");
-    }
-
-    return apiSuccess(user);
-  } catch (error) {
-    return apiUnknownError(error);
+  if (!user) {
+    return ApiErrors.notFound("Utente");
   }
-}
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+  return apiSuccess(user);
+});
+
+export const PUT = withAdminAuth<{ id: string }>(async (request, { params }, authResult) => {
+  const { id } = await params;
+  const body = await request.json();
+
   try {
-    const authResult = await requireAdminApi();
-    if (isErrorResponse(authResult)) return authResult;
-
-    const { id } = await params;
-    const body = await request.json();
-    const { name, role, status } = body;
-
-    // Validate role
-    const validRoles = ["student", "representative", "admin", "super_admin"];
-    if (role && !validRoles.includes(role)) {
-      return apiError("Ruolo non valido", 400, "INVALID_ROLE");
-    }
-
-    // Validate status
-    const validStatuses = ["active", "suspended", "banned"];
-    if (status && !validStatuses.includes(status)) {
-      return apiError("Stato non valido", 400, "INVALID_STATUS");
-    }
+    const data = updateUserSchema.parse(body);
 
     // Prevent changing own role (security measure)
-    if (role === "super_admin" && authResult.adminRole !== "super_admin") {
+    if (data.role === "super_admin" && authResult.adminRole !== "super_admin") {
       return apiError(
         "Solo i super admin possono promuovere altri a super admin",
         403,
@@ -74,16 +48,19 @@ export async function PUT(
     const user = await prisma.user.update({
       where: { id },
       data: {
-        ...(name && { name: name.trim() }),
-        ...(role && { role }),
-        ...(status && { status }),
+        ...(data.name && { name: data.name.trim() }),
+        ...(data.role && { role: data.role }),
+        ...(data.status && { status: data.status }),
         // Sync isRepresentative with role
-        ...(role && { isRepresentative: role === "representative" }),
+        ...(data.role && { isRepresentative: data.role === "representative" }),
       },
     });
 
     return apiSuccess(user);
   } catch (error) {
-    return apiUnknownError(error);
+    if (error instanceof ZodError) {
+      return apiValidationError(error);
+    }
+    throw error;
   }
-}
+});

@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { questionService } from "@/lib/services/question.service";
+import { apiSuccess, apiUnknownError, ApiErrors } from "@/lib/api/api-response";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -12,21 +12,14 @@ export async function POST(request: Request, { params }: RouteParams) {
     const session = await auth();
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Non autorizzato" },
-        { status: 401 }
-      );
+      return ApiErrors.unauthorized();
     }
 
     const { id } = await params;
     const result = await questionService.toggleSave(id, session.user.id);
 
-    return NextResponse.json(result);
+    return apiSuccess(result);
   } catch (error) {
-    console.error("Error toggling save:", error);
-    return NextResponse.json(
-      { error: "Errore nel salvataggio della domanda" },
-      { status: 500 }
-    );
+    return apiUnknownError(error, "Errore nel salvataggio della domanda");
   }
 }

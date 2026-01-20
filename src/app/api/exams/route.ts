@@ -1,7 +1,8 @@
-import { NextResponse } from "next/server";
+import { ZodError } from "zod";
 import { auth } from "@/lib/auth";
 import { examService } from "@/lib/services/exam.service";
 import { createExamSchema } from "@/lib/validations/exam.schema";
+import { apiSuccess, apiUnknownError, apiValidationError, ApiErrors } from "@/lib/api/api-response";
 
 // GET /api/exams - List all exams (optionally filtered by user)
 export async function GET(request: Request) {
@@ -14,13 +15,9 @@ export async function GET(request: Request) {
       myExams && session?.user?.id ? session.user.id : undefined
     );
 
-    return NextResponse.json(exams);
+    return apiSuccess(exams);
   } catch (error) {
-    console.error("Error fetching exams:", error);
-    return NextResponse.json(
-      { error: "Errore nel recupero degli esami" },
-      { status: 500 }
-    );
+    return apiUnknownError(error, "Errore nel recupero degli esami");
   }
 }
 
@@ -30,10 +27,7 @@ export async function POST(request: Request) {
     const session = await auth();
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Non autorizzato" },
-        { status: 401 }
-      );
+      return ApiErrors.unauthorized();
     }
 
     const body = await request.json();
@@ -41,20 +35,11 @@ export async function POST(request: Request) {
 
     const exam = await examService.create(validatedData, session.user.id);
 
-    return NextResponse.json(exam, { status: 201 });
+    return apiSuccess(exam, 201);
   } catch (error) {
-    console.error("Error creating exam:", error);
-
-    if (error instanceof Error && error.name === "ZodError") {
-      return NextResponse.json(
-        { error: "Dati non validi", details: error },
-        { status: 400 }
-      );
+    if (error instanceof ZodError) {
+      return apiValidationError(error);
     }
-
-    return NextResponse.json(
-      { error: "Errore nella creazione dell'esame" },
-      { status: 500 }
-    );
+    return apiUnknownError(error, "Errore nella creazione dell'esame");
   }
 }

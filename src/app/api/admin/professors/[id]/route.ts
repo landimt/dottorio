@@ -1,79 +1,65 @@
-import { NextRequest } from "next/server";
-import prisma from "@/lib/prisma";
-import { requireAdminApi, isErrorResponse } from "@/lib/admin/admin-api";
-import { apiSuccess, ApiErrors, apiError, apiUnknownError } from "@/lib/api/api-response";
+import { prisma } from "@/lib/prisma";
+import { withAdminAuth } from "@/lib/admin/admin-api";
+import { apiSuccess, ApiErrors, apiError, apiValidationError } from "@/lib/api/api-response";
+import { updateProfessorSchema } from "@/lib/validations/admin.schema";
+import { ZodError } from "zod";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const authResult = await requireAdminApi();
-    if (isErrorResponse(authResult)) return authResult;
+export const GET = withAdminAuth<{ id: string }>(async (request, { params }) => {
+  const { id } = await params;
 
-    const { id } = await params;
-
-    const professor = await prisma.professor.findUnique({
-      where: { id },
-      include: {
-        university: true,
-        subjects: {
-          include: {
-            subject: true,
-          },
-        },
-        _count: {
-          select: {
-            exams: true,
-          },
+  const professor = await prisma.professor.findUnique({
+    where: { id },
+    include: {
+      university: true,
+      subjects: {
+        include: {
+          subject: true,
         },
       },
-    });
+      _count: {
+        select: {
+          exams: true,
+        },
+      },
+    },
+  });
 
-    if (!professor) {
-      return ApiErrors.notFound("Professore");
-    }
-
-    return apiSuccess(professor);
-  } catch (error) {
-    return apiUnknownError(error);
+  if (!professor) {
+    return ApiErrors.notFound("Professore");
   }
-}
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+  return apiSuccess(professor);
+});
+
+export const PUT = withAdminAuth<{ id: string }>(async (request, { params }) => {
+  const { id } = await params;
+  const body = await request.json();
+
   try {
-    const authResult = await requireAdminApi();
-    if (isErrorResponse(authResult)) return authResult;
-
-    const { id } = await params;
-    const body = await request.json();
-    const { name, universityId, subjectIds } = body;
-
-    if (!name?.trim()) {
-      return ApiErrors.badRequest("Nome è obbligatorio");
-    }
+    const data = updateProfessorSchema.parse(body);
 
     // Update professor and rebuild subjects relation
     const professor = await prisma.$transaction(async (tx) => {
-      // Delete existing subject relations
-      await tx.professorSubject.deleteMany({
-        where: { professorId: id },
-      });
+      // Delete existing subject relations if subjectIds provided
+      if (data.subjectIds !== undefined) {
+        await tx.professorSubject.deleteMany({
+          where: { professorId: id },
+        });
+      }
 
-      // Update professor with new subjects
+      // Update professor with new data
       return tx.professor.update({
         where: { id },
         data: {
-          name: name.trim(),
-          universityId: universityId || null,
-          subjects: {
-            create: (subjectIds || []).map((subjectId: string) => ({
-              subjectId,
-            })),
-          },
+          ...(data.name && { name: data.name.trim() }),
+          ...(data.universityId !== undefined && { universityId: data.universityId || null }),
+          ...(data.subjectIds !== undefined && {
+            subjects: {
+              create: data.subjectIds.map((subjectId: string) => ({
+                subjectId,
+              })),
+            },
+          }),
         },
         include: {
           university: true,
@@ -88,55 +74,48 @@ export async function PUT(
 
     return apiSuccess(professor);
   } catch (error) {
-    return apiUnknownError(error);
+    if (error instanceof ZodError) {
+      return apiValidationError(error);
+    }
+    throw error;
   }
-}
+});
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const authResult = await requireAdminApi();
-    if (isErrorResponse(authResult)) return authResult;
+export const DELETE = withAdminAuth<{ id: string }>(async (request, { params }) => {
+  const { id } = await params;
 
-    const { id } = await params;
-
-    // Check if professor has dependencies
-    const professor = await prisma.professor.findUnique({
-      where: { id },
-      include: {
-        _count: {
-          select: {
-            exams: true,
-          },
+  // Check if professor has dependencies
+  const professor = await prisma.professor.findUnique({
+    where: { id },
+    include: {
+      _count: {
+        select: {
+          exams: true,
         },
       },
-    });
+    },
+  });
 
-    if (!professor) {
-      return ApiErrors.notFound("Professore");
-    }
-
-    if (professor._count.exams > 0) {
-      return apiError(
-        "Impossibile eliminare professore con esami collegati",
-        400,
-        "DEPENDENCY_ERROR"
-      );
-    }
-
-    // Delete professor-subject relations first
-    await prisma.professorSubject.deleteMany({
-      where: { professorId: id },
-    });
-
-    await prisma.professor.delete({
-      where: { id },
-    });
-
-    return apiSuccess({ deleted: true });
-  } catch (error) {
-    return apiUnknownError(error);
+  if (!professor) {
+    return ApiErrors.notFound("Professore");
   }
-}
+
+  if (professor._count.exams > 0) {
+    return apiError(
+      "Impossibile eliminare professore con esami collegati",
+      400,
+      "DEPENDENCY_ERROR"
+    );
+  }
+
+  // Delete professor-subject relations first
+  await prisma.professorSubject.deleteMany({
+    where: { professorId: id },
+  });
+
+  await prisma.professor.delete({
+    where: { id },
+  });
+
+  return apiSuccess({ deleted: true });
+});

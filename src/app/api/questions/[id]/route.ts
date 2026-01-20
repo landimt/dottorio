@@ -1,7 +1,8 @@
-import { NextResponse } from "next/server";
+import { ZodError } from "zod";
 import { auth } from "@/lib/auth";
 import { questionService } from "@/lib/services/question.service";
 import { updateQuestionSchema } from "@/lib/validations/question.schema";
+import { apiSuccess, apiError, apiUnknownError, apiValidationError, ApiErrors } from "@/lib/api/api-response";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -16,19 +17,12 @@ export async function GET(request: Request, { params }: RouteParams) {
     const question = await questionService.findById(id, session?.user?.id);
 
     if (!question) {
-      return NextResponse.json(
-        { error: "Domanda non trovata" },
-        { status: 404 }
-      );
+      return ApiErrors.notFound("Domanda");
     }
 
-    return NextResponse.json(question);
+    return apiSuccess(question);
   } catch (error) {
-    console.error("Error fetching question:", error);
-    return NextResponse.json(
-      { error: "Errore nel recupero della domanda" },
-      { status: 500 }
-    );
+    return apiUnknownError(error, "Errore nel recupero della domanda");
   }
 }
 
@@ -38,10 +32,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
     const session = await auth();
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Non autorizzato" },
-        { status: 401 }
-      );
+      return ApiErrors.unauthorized();
     }
 
     const { id } = await params;
@@ -50,29 +41,15 @@ export async function PUT(request: Request, { params }: RouteParams) {
 
     const question = await questionService.update(id, validatedData, session.user.id);
 
-    return NextResponse.json(question);
+    return apiSuccess(question);
   } catch (error) {
-    console.error("Error updating question:", error);
-
-    if (error instanceof Error) {
-      if (error.message === "Domanda non trovata o non autorizzata") {
-        return NextResponse.json(
-          { error: error.message },
-          { status: 404 }
-        );
-      }
-      if (error.name === "ZodError") {
-        return NextResponse.json(
-          { error: "Dati non validi", details: error },
-          { status: 400 }
-        );
-      }
+    if (error instanceof ZodError) {
+      return apiValidationError(error);
     }
-
-    return NextResponse.json(
-      { error: "Errore nell'aggiornamento della domanda" },
-      { status: 500 }
-    );
+    if (error instanceof Error && error.message === "Domanda non trovata o non autorizzata") {
+      return apiError(error.message, 404);
+    }
+    return apiUnknownError(error, "Errore nell'aggiornamento della domanda");
   }
 }
 
@@ -82,29 +59,17 @@ export async function DELETE(request: Request, { params }: RouteParams) {
     const session = await auth();
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Non autorizzato" },
-        { status: 401 }
-      );
+      return ApiErrors.unauthorized();
     }
 
     const { id } = await params;
     await questionService.delete(id, session.user.id);
 
-    return NextResponse.json({ success: true });
+    return apiSuccess({ deleted: true });
   } catch (error) {
-    console.error("Error deleting question:", error);
-
     if (error instanceof Error && error.message === "Domanda non trovata o non autorizzata") {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 404 }
-      );
+      return apiError(error.message, 404);
     }
-
-    return NextResponse.json(
-      { error: "Errore nell'eliminazione della domanda" },
-      { status: 500 }
-    );
+    return apiUnknownError(error, "Errore nell'eliminazione della domanda");
   }
 }

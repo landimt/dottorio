@@ -9,3 +9,6 @@ export * from "./hooks/use-professors";
 
 // Mutation hooks
 export * from "./hooks/use-mutations";
+
+// Admin mutation hooks
+export * from "./hooks/use-admin";

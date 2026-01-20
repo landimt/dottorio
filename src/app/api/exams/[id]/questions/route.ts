@@ -1,7 +1,8 @@
-import { NextResponse } from "next/server";
+import { ZodError } from "zod";
 import { auth } from "@/lib/auth";
 import { questionService } from "@/lib/services/question.service";
 import { createQuestionSchema } from "@/lib/validations/question.schema";
+import { apiSuccess, apiError, apiUnknownError, apiValidationError, ApiErrors } from "@/lib/api/api-response";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -13,10 +14,7 @@ export async function POST(request: Request, { params }: RouteParams) {
     const session = await auth();
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Non autorizzato" },
-        { status: 401 }
-      );
+      return ApiErrors.unauthorized();
     }
 
     const { id: examId } = await params;
@@ -29,28 +27,14 @@ export async function POST(request: Request, { params }: RouteParams) {
 
     const question = await questionService.create(validatedData, session.user.id);
 
-    return NextResponse.json(question, { status: 201 });
+    return apiSuccess(question, 201);
   } catch (error) {
-    console.error("Error creating question:", error);
-
-    if (error instanceof Error) {
-      if (error.message === "Esame non trovato o non autorizzato") {
-        return NextResponse.json(
-          { error: error.message },
-          { status: 404 }
-        );
-      }
-      if (error.name === "ZodError") {
-        return NextResponse.json(
-          { error: "Dati non validi", details: error },
-          { status: 400 }
-        );
-      }
+    if (error instanceof ZodError) {
+      return apiValidationError(error);
     }
-
-    return NextResponse.json(
-      { error: "Errore nella creazione della domanda" },
-      { status: 500 }
-    );
+    if (error instanceof Error && error.message === "Esame non trovato o non autorizzato") {
+      return apiError(error.message, 404);
+    }
+    return apiUnknownError(error, "Errore nella creazione della domanda");
   }
 }

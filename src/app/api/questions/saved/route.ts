@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { questionService } from "@/lib/services/question.service";
+import { apiSuccess, apiUnknownError, ApiErrors } from "@/lib/api/api-response";
 
 // GET /api/questions/saved - Get saved questions
 export async function GET(request: Request) {
@@ -8,10 +8,7 @@ export async function GET(request: Request) {
     const session = await auth();
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Non autorizzato" },
-        { status: 401 }
-      );
+      return ApiErrors.unauthorized();
     }
 
     const { searchParams } = new URL(request.url);
@@ -20,12 +17,8 @@ export async function GET(request: Request) {
 
     const result = await questionService.getSaved(session.user.id, page, limit);
 
-    return NextResponse.json(result);
+    return apiSuccess(result);
   } catch (error) {
-    console.error("Error fetching saved questions:", error);
-    return NextResponse.json(
-      { error: "Errore nel recupero delle domande salvate" },
-      { status: 500 }
-    );
+    return apiUnknownError(error, "Errore nel recupero delle domande salvate");
   }
 }

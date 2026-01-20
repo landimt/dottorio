@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowLeft, LayoutDashboard, Users, Database, MessageSquare, Flag } from "lucide-react";
+import { ArrowLeft, LayoutDashboard, Users, Database, MessageSquare, Flag, ScrollText } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -13,23 +13,28 @@ const navItems = [
   },
   {
     href: "/admin/users",
-    label: "Usuários",
+    label: "Utenti",
     icon: Users,
   },
   {
     href: "/admin/cadastros",
-    label: "Cadastros",
+    label: "Anagrafiche",
     icon: Database,
   },
   {
     href: "/admin/questions",
-    label: "Questões",
+    label: "Domande",
     icon: MessageSquare,
   },
   {
     href: "/admin/moderation",
-    label: "Moderação",
+    label: "Moderazione",
     icon: Flag,
+  },
+  {
+    href: "/admin/audit-logs",
+    label: "Audit Log",
+    icon: ScrollText,
   },
 ];
 

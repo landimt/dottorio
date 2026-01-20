@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
+import { apiSuccess, apiUnknownError } from "@/lib/api/api-response";
 
 // GET /api/professors - List all professors (optionally filtered by subject)
 export async function GET(request: Request) {
@@ -28,12 +28,8 @@ export async function GET(request: Request) {
       },
     });
 
-    return NextResponse.json(professors);
+    return apiSuccess(professors);
   } catch (error) {
-    console.error("Error fetching professors:", error);
-    return NextResponse.json(
-      { error: "Errore nel recupero dei professori" },
-      { status: 500 }
-    );
+    return apiUnknownError(error, "Errore nel recupero dei professori");
   }
 }

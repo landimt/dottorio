@@ -1,6 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
+import { apiSuccess, apiUnknownError, ApiErrors } from "@/lib/api/api-response";
 
 // POST - Toggle like on an answer
 export async function POST(
@@ -10,7 +11,7 @@ export async function POST(
   try {
     const session = await auth();
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
+      return ApiErrors.unauthorized();
     }
 
     const { id: answerId } = await params;
@@ -22,10 +23,7 @@ export async function POST(
     });
 
     if (!answer) {
-      return NextResponse.json(
-        { error: "Risposta non trovata" },
-        { status: 404 }
-      );
+      return ApiErrors.notFound("Risposta");
     }
 
     // Check if already liked
@@ -43,7 +41,7 @@ export async function POST(
       await prisma.answerLike.delete({
         where: { id: existingLike.id },
       });
-      return NextResponse.json({ liked: false });
+      return apiSuccess({ liked: false });
     } else {
       // Like
       await prisma.answerLike.create({
@@ -52,13 +50,9 @@ export async function POST(
           userId,
         },
       });
-      return NextResponse.json({ liked: true });
+      return apiSuccess({ liked: true });
     }
   } catch (error) {
-    console.error("Error toggling like:", error);
-    return NextResponse.json(
-      { error: "Errore interno del server" },
-      { status: 500 }
-    );
+    return apiUnknownError(error, "Errore nel toggle del like");
   }
 }

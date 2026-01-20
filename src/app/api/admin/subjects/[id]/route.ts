@@ -1,120 +1,95 @@
-import { NextRequest } from "next/server";
-import prisma from "@/lib/prisma";
-import { requireAdminApi, isErrorResponse } from "@/lib/admin/admin-api";
-import { apiSuccess, ApiErrors, apiError, apiUnknownError } from "@/lib/api/api-response";
+import { prisma } from "@/lib/prisma";
+import { withAdminAuth } from "@/lib/admin/admin-api";
+import { apiSuccess, ApiErrors, apiError, apiValidationError } from "@/lib/api/api-response";
+import { updateSubjectSchema } from "@/lib/validations/admin.schema";
+import { ZodError } from "zod";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const authResult = await requireAdminApi();
-    if (isErrorResponse(authResult)) return authResult;
+export const GET = withAdminAuth<{ id: string }>(async (request, { params }) => {
+  const { id } = await params;
 
-    const { id } = await params;
-
-    const subject = await prisma.subject.findUnique({
-      where: { id },
-      include: {
-        professors: {
-          include: {
-            professor: true,
-          },
-        },
-        _count: {
-          select: {
-            exams: true,
-          },
+  const subject = await prisma.subject.findUnique({
+    where: { id },
+    include: {
+      professors: {
+        include: {
+          professor: true,
         },
       },
-    });
+      _count: {
+        select: {
+          exams: true,
+        },
+      },
+    },
+  });
 
-    if (!subject) {
-      return ApiErrors.notFound("Materia");
-    }
-
-    return apiSuccess(subject);
-  } catch (error) {
-    return apiUnknownError(error);
+  if (!subject) {
+    return ApiErrors.notFound("Materia");
   }
-}
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+  return apiSuccess(subject);
+});
+
+export const PUT = withAdminAuth<{ id: string }>(async (request, { params }) => {
+  const { id } = await params;
+  const body = await request.json();
+
   try {
-    const authResult = await requireAdminApi();
-    if (isErrorResponse(authResult)) return authResult;
-
-    const { id } = await params;
-    const body = await request.json();
-    const { name, emoji, color } = body;
-
-    if (!name?.trim()) {
-      return ApiErrors.badRequest("Nome è obbligatorio");
-    }
+    const data = updateSubjectSchema.parse(body);
 
     const subject = await prisma.subject.update({
       where: { id },
       data: {
-        name: name.trim(),
-        emoji: emoji?.trim() || null,
-        color: color?.trim() || null,
+        ...(data.name && { name: data.name.trim() }),
+        ...(data.emoji !== undefined && { emoji: data.emoji?.trim() || null }),
+        ...(data.color !== undefined && { color: data.color?.trim() || null }),
       },
     });
 
     return apiSuccess(subject);
   } catch (error) {
-    return apiUnknownError(error);
+    if (error instanceof ZodError) {
+      return apiValidationError(error);
+    }
+    throw error;
   }
-}
+});
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const authResult = await requireAdminApi();
-    if (isErrorResponse(authResult)) return authResult;
+export const DELETE = withAdminAuth<{ id: string }>(async (request, { params }) => {
+  const { id } = await params;
 
-    const { id } = await params;
-
-    // Check if subject has dependencies
-    const subject = await prisma.subject.findUnique({
-      where: { id },
-      include: {
-        _count: {
-          select: {
-            exams: true,
-          },
+  // Check if subject has dependencies
+  const subject = await prisma.subject.findUnique({
+    where: { id },
+    include: {
+      _count: {
+        select: {
+          exams: true,
         },
       },
-    });
+    },
+  });
 
-    if (!subject) {
-      return ApiErrors.notFound("Materia");
-    }
-
-    if (subject._count.exams > 0) {
-      return apiError(
-        "Impossibile eliminare materia con esami collegati",
-        400,
-        "DEPENDENCY_ERROR"
-      );
-    }
-
-    // Delete professor-subject relations first
-    await prisma.professorSubject.deleteMany({
-      where: { subjectId: id },
-    });
-
-    await prisma.subject.delete({
-      where: { id },
-    });
-
-    return apiSuccess({ deleted: true });
-  } catch (error) {
-    return apiUnknownError(error);
+  if (!subject) {
+    return ApiErrors.notFound("Materia");
   }
-}
+
+  if (subject._count.exams > 0) {
+    return apiError(
+      "Impossibile eliminare materia con esami collegati",
+      400,
+      "DEPENDENCY_ERROR"
+    );
+  }
+
+  // Delete professor-subject relations first
+  await prisma.professorSubject.deleteMany({
+    where: { subjectId: id },
+  });
+
+  await prisma.subject.delete({
+    where: { id },
+  });
+
+  return apiSuccess({ deleted: true });
+});

@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { StatCard } from "./_components/stat-card";
 import { QuickActions } from "./_components/quick-actions";
 import { MessageSquare, Users, BookOpen, GraduationCap, School, BookMarked } from "lucide-react";
