@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
+import type { Session } from "next-auth";
+import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -105,15 +106,17 @@ interface CreatedQuestion {
 interface ShareExamFormProps {
   shareLink: ShareLink;
   professors: Professor[];
+  session: Session | null;
 }
 
-export function ShareExamForm({ shareLink, professors }: ShareExamFormProps) {
+export function ShareExamForm({ shareLink, professors, session }: ShareExamFormProps) {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const status = session ? "authenticated" : "unauthenticated";
   const t = useTranslations("exam");
   const tShare = useTranslations("share");
   const tCommon = useTranslations("common");
   const tQuestion = useTranslations("question");
+  const tAuth = useTranslations("auth");
 
   const [formData, setFormData] = useState({
     professorId: shareLink.exam.professor?.id || "",
@@ -133,7 +136,40 @@ export function ShareExamForm({ shareLink, professors }: ShareExamFormProps) {
   const [isSearching, setIsSearching] = useState(false);
   const [selectedCanonical, setSelectedCanonical] = useState<CanonicalQuestion | null>(null);
 
+  // Login Modal States
+  const [showLoginModal, setShowLoginModal] = useState(!session);
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
   const { exam } = shareLink;
+
+  // Handle login
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoggingIn(true);
+
+    try {
+      const result = await signIn("credentials", {
+        email: loginEmail,
+        password: loginPassword,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        toast.error(result.error);
+      } else if (result?.ok) {
+        toast.success(tShare("loginSuccess"));
+        setShowLoginModal(false);
+        // Refresh page to get session
+        router.refresh();
+      }
+    } catch {
+      toast.error(tCommon("error"));
+    } finally {
+      setIsLoggingIn(false);
+    }
+  };
 
   // Add new question
   const handleAddQuestion = () => {
@@ -360,50 +396,6 @@ export function ShareExamForm({ shareLink, professors }: ShareExamFormProps) {
     );
   }
 
-  // Show login prompt if not authenticated
-  if (status === "unauthenticated") {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-6">
-        <Card className="w-full max-w-md bg-card border-border text-center">
-          <CardContent className="p-8">
-            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-              <User className="w-8 h-8 text-primary" />
-            </div>
-            <h2 className="text-xl font-medium text-foreground mb-2">
-              {tShare("loginRequired")}
-            </h2>
-            <p className="text-muted-foreground mb-6">
-              {tShare("loginDescription")}
-            </p>
-            <div className="space-y-3">
-              <Button
-                onClick={() => router.push(`/login?callbackUrl=/share/${shareLink.slug}`)}
-                className="w-full"
-              >
-                {tShare("login")}
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => router.push(`/register?callbackUrl=/share/${shareLink.slug}`)}
-                className="w-full"
-              >
-                {tShare("register")}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  // Loading state
-  if (status === "loading") {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -756,6 +748,88 @@ export function ShareExamForm({ shareLink, professors }: ShareExamFormProps) {
               )}
             </Button>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Login Modal */}
+      <Dialog open={showLoginModal} onOpenChange={setShowLoginModal}>
+        <DialogContent className="sm:max-w-md bg-card border-border">
+          <div className="text-center space-y-4">
+            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+              <User className="w-8 h-8 text-primary" />
+            </div>
+            <div>
+              <DialogTitle className="text-xl font-medium text-foreground">
+                {tShare("loginRequired")}
+              </DialogTitle>
+              <DialogDescription className="text-muted-foreground mt-2">
+                {tShare("loginDescription")}
+              </DialogDescription>
+            </div>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-4 mt-4">
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-foreground">
+                Email
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="seu@email.com"
+                value={loginEmail}
+                onChange={(e) => setLoginEmail(e.target.value)}
+                className="bg-input border-border text-foreground"
+                required
+                disabled={isLoggingIn}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-foreground">
+                {tAuth("password")}
+              </Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                value={loginPassword}
+                onChange={(e) => setLoginPassword(e.target.value)}
+                className="bg-input border-border text-foreground"
+                required
+                disabled={isLoggingIn}
+              />
+            </div>
+
+            <div className="space-y-3 pt-2">
+              <Button
+                type="submit"
+                className="w-full bg-primary hover:bg-primary/90"
+                disabled={isLoggingIn}
+              >
+                {isLoggingIn ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                    {tCommon("loading")}
+                  </>
+                ) : (
+                  tShare("login")
+                )}
+              </Button>
+
+              <div className="text-center text-sm text-muted-foreground">
+                {tShare("noAccount")}{" "}
+                <Button
+                  type="button"
+                  variant="link"
+                  className="p-0 h-auto text-primary"
+                  onClick={() => router.push(`/register?callbackUrl=/share/${shareLink.slug}`)}
+                >
+                  {tShare("register")}
+                </Button>
+              </div>
+            </div>
+          </form>
         </DialogContent>
       </Dialog>
     </div>
