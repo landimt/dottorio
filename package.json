@@ -26,11 +26,16 @@
     "db:reset": "prisma migrate reset --force",
     "db:fresh": "yarn db:reset && yarn db:seed",
     "db:setup": "prisma generate && prisma migrate deploy && prisma db seed",
+    "db:test": "NODE_ENV=development tsx scripts/test-db-connection.ts",
+    "db:test:prod": "NODE_ENV=production tsx scripts/test-db-connection.ts",
+    "db:diagnose": "tsx scripts/diagnose-supabase.ts",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
     "docker:logs": "docker compose logs -f",
     "docker:restart": "docker compose restart",
     "scrape": "tsx scripts/scrape-sapienza.ts",
+    "cleanup:ips": "tsx scripts/cleanup-old-ips.ts",
+    "check:env": "tsx scripts/check-env.ts",
     "validate": "yarn type-check && yarn lint && yarn format:check"
   },
   "prisma": {
