@@ -72,7 +72,7 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <LocaleProvider locale={locale} messages={messages}>
+          <LocaleProvider locale={locale} messages={messages} timeZone="Europe/Rome">
             <QueryProvider>
               {children}
             </QueryProvider>

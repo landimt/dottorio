@@ -7,11 +7,12 @@ interface LocaleProviderProps {
   children: ReactNode;
   locale: string;
   messages: AbstractIntlMessages;
+  timeZone?: string;
 }
 
-export function LocaleProvider({ children, locale, messages }: LocaleProviderProps) {
+export function LocaleProvider({ children, locale, messages, timeZone = "Europe/Rome" }: LocaleProviderProps) {
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
+    <NextIntlClientProvider locale={locale} messages={messages} timeZone={timeZone}>
       {children}
     </NextIntlClientProvider>
   );

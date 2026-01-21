@@ -33,9 +33,11 @@ async function getLocaleFromRequest(): Promise<Locale> {
 
 export default getRequestConfig(async () => {
   const locale = await getLocaleFromRequest();
-  
+
   return {
     locale,
     messages: (await import(`./messages/${locale}.json`)).default,
+    timeZone: "Europe/Rome",
+    now: new Date(),
   };
 });
