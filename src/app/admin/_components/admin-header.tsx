@@ -2,44 +2,59 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useTranslations } from "next-intl";
-import { ArrowLeft, LayoutDashboard, Users, Database, MessageSquare, Flag, ScrollText } from "lucide-react";
+import { ArrowLeft, LayoutDashboard, Users, Database, MessageSquare, Flag, ScrollText, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export function AdminHeader() {
+interface AdminHeaderProps {
+  translations: {
+    dashboard: string;
+    users: string;
+    registries: string;
+    questions: string;
+    moderation: string;
+    auditLog: string;
+    legal: string;
+  };
+}
+
+export function AdminHeader({ translations }: AdminHeaderProps) {
   const pathname = usePathname();
-  const t = useTranslations("admin.nav");
 
   const navItems = [
     {
       href: "/admin",
-      label: t("dashboard"),
+      label: translations.dashboard,
       icon: LayoutDashboard,
     },
     {
       href: "/admin/users",
-      label: t("users"),
+      label: translations.users,
       icon: Users,
     },
     {
       href: "/admin/cadastros",
-      label: t("registries"),
+      label: translations.registries,
       icon: Database,
     },
     {
       href: "/admin/questions",
-      label: t("questions"),
+      label: translations.questions,
       icon: MessageSquare,
     },
     {
       href: "/admin/moderation",
-      label: t("moderation"),
+      label: translations.moderation,
       icon: Flag,
     },
     {
       href: "/admin/audit-logs",
-      label: t("auditLog"),
+      label: translations.auditLog,
       icon: ScrollText,
+    },
+    {
+      href: "/admin/legal",
+      label: translations.legal,
+      icon: Shield,
     },
   ];
 
