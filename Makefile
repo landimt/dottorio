@@ -31,7 +31,13 @@ setup: install docker-up db-setup ## Complete project setup (install + docker + 
 	@echo "$(YELLOW)🎯 Next steps:$(NC)"
 	@echo "  1. $(GREEN)make dev$(NC) - Start development server"
 	@echo "  2. $(GREEN)make studio$(NC) - Open Prisma Studio"
-	@echo "  3. Access $(BLUE)http://localhost:3000$(NC)"
+	@if [ -f .env ]; then \
+		DEV_PORT=$$(grep -E '^PORT=' .env | cut -d'=' -f2 | tr -d '"' | tr -d "'"); \
+		DEV_PORT=$${DEV_PORT:-3000}; \
+		echo "  3. Access $(BLUE)http://localhost:$$DEV_PORT$(NC)"; \
+	else \
+		echo "  3. Access $(BLUE)http://localhost:3000$(NC)"; \
+	fi
 	@echo ""
 
 clean: ## Clean cache and build
@@ -112,7 +118,30 @@ dev: ## Start development server (with Docker verification)
 	@yarn db:push --skip-generate >/dev/null 2>&1 || true
 	@echo "$(GREEN)✅ Schema synchronized!$(NC)"
 	@echo ""
-	@echo "$(YELLOW)5/5 Starting Next.js server...$(NC)"
+	@echo "$(YELLOW)5/6 Checking if port is in use...$(NC)"
+	@if [ -f .env ]; then \
+		DEV_PORT=$$(grep -E '^PORT=' .env | cut -d'=' -f2 | tr -d '"' | tr -d "'"); \
+		DEV_PORT=$${DEV_PORT:-3000}; \
+		if lsof -ti:$$DEV_PORT >/dev/null 2>&1; then \
+			echo "$(YELLOW)⚠️  Port $$DEV_PORT is in use. Killing process...$(NC)"; \
+			lsof -ti:$$DEV_PORT | xargs kill -9 2>/dev/null || true; \
+			sleep 1; \
+			echo "$(GREEN)✅ Port cleared!$(NC)"; \
+		else \
+			echo "$(GREEN)✅ Port $$DEV_PORT is available$(NC)"; \
+		fi; \
+	else \
+		if lsof -ti:3000 >/dev/null 2>&1; then \
+			echo "$(YELLOW)⚠️  Port 3000 is in use. Killing process...$(NC)"; \
+			lsof -ti:3000 | xargs kill -9 2>/dev/null || true; \
+			sleep 1; \
+			echo "$(GREEN)✅ Port cleared!$(NC)"; \
+		else \
+			echo "$(GREEN)✅ Port 3000 is available$(NC)"; \
+		fi; \
+	fi
+	@echo ""
+	@echo "$(YELLOW)6/6 Starting Next.js server...$(NC)"
 	@echo "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
 	@echo "$(GREEN)✨ All set! Starting application...$(NC)"
 	@echo "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
@@ -121,6 +150,17 @@ dev: ## Start development server (with Docker verification)
 
 dev-simple: ## Start server without checks (faster)
 	@echo "$(BLUE)🚀 Starting server...$(NC)"
+	@if [ -f .env ]; then \
+		DEV_PORT=$$(grep -E '^PORT=' .env | cut -d'=' -f2 | tr -d '"' | tr -d "'"); \
+		DEV_PORT=$${DEV_PORT:-3000}; \
+		if lsof -ti:$$DEV_PORT >/dev/null 2>&1; then \
+			echo "$(YELLOW)⚠️  Killing process on port $$DEV_PORT...$(NC)"; \
+			lsof -ti:$$DEV_PORT | xargs kill -9 2>/dev/null || true; \
+			sleep 1; \
+		fi; \
+	else \
+		lsof -ti:3000 | xargs kill -9 2>/dev/null || true; \
+	fi
 	@yarn dev
 
 dev-turbo: ## Dev server with Turbopack (with Docker verification)
@@ -165,7 +205,30 @@ dev-turbo: ## Dev server with Turbopack (with Docker verification)
 		sleep 1; \
 	done
 	@echo ""
-	@echo "$(YELLOW)4/4 Starting Next.js server (Turbopack)...$(NC)"
+	@echo "$(YELLOW)4/5 Checking if port is in use...$(NC)"
+	@if [ -f .env ]; then \
+		DEV_PORT=$$(grep -E '^PORT=' .env | cut -d'=' -f2 | tr -d '"' | tr -d "'"); \
+		DEV_PORT=$${DEV_PORT:-3000}; \
+		if lsof -ti:$$DEV_PORT >/dev/null 2>&1; then \
+			echo "$(YELLOW)⚠️  Port $$DEV_PORT is in use. Killing process...$(NC)"; \
+			lsof -ti:$$DEV_PORT | xargs kill -9 2>/dev/null || true; \
+			sleep 1; \
+			echo "$(GREEN)✅ Port cleared!$(NC)"; \
+		else \
+			echo "$(GREEN)✅ Port $$DEV_PORT is available$(NC)"; \
+		fi; \
+	else \
+		if lsof -ti:3000 >/dev/null 2>&1; then \
+			echo "$(YELLOW)⚠️  Port 3000 is in use. Killing process...$(NC)"; \
+			lsof -ti:3000 | xargs kill -9 2>/dev/null || true; \
+			sleep 1; \
+			echo "$(GREEN)✅ Port cleared!$(NC)"; \
+		else \
+			echo "$(GREEN)✅ Port 3000 is available$(NC)"; \
+		fi; \
+	fi
+	@echo ""
+	@echo "$(YELLOW)5/5 Starting Next.js server (Turbopack)...$(NC)"
 	@echo "$(GREEN)✨ All set!$(NC)"
 	@echo ""
 	@yarn dev:turbo
@@ -181,6 +244,27 @@ dev-reset: ## Quick reset and start dev (when something goes wrong)
 	@echo "$(GREEN)✅ Environment reset!$(NC)"
 	@echo ""
 	@$(MAKE) dev-simple
+
+port-kill: ## Kill process on dev port
+	@if [ -f .env ]; then \
+		DEV_PORT=$$(grep -E '^PORT=' .env | cut -d'=' -f2 | tr -d '"' | tr -d "'"); \
+		DEV_PORT=$${DEV_PORT:-3000}; \
+		if lsof -ti:$$DEV_PORT >/dev/null 2>&1; then \
+			echo "$(YELLOW)⚠️  Killing process on port $$DEV_PORT...$(NC)"; \
+			lsof -ti:$$DEV_PORT | xargs kill -9 2>/dev/null || true; \
+			echo "$(GREEN)✅ Port $$DEV_PORT cleared!$(NC)"; \
+		else \
+			echo "$(GREEN)✅ Port $$DEV_PORT is already free$(NC)"; \
+		fi; \
+	else \
+		if lsof -ti:3000 >/dev/null 2>&1; then \
+			echo "$(YELLOW)⚠️  Killing process on port 3000...$(NC)"; \
+			lsof -ti:3000 | xargs kill -9 2>/dev/null || true; \
+			echo "$(GREEN)✅ Port 3000 cleared!$(NC)"; \
+		else \
+			echo "$(GREEN)✅ Port 3000 is already free$(NC)"; \
+		fi; \
+	fi
 
 check: ## Check if environment is OK (without starting anything)
 	@echo "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
@@ -270,6 +354,14 @@ studio: ## Open Prisma Studio
 	@echo "$(BLUE)🎨 Opening Prisma Studio...$(NC)"
 	@echo "$(YELLOW)→ http://localhost:5555$(NC)"
 	@yarn db:studio
+
+db-test: ## Test database connection (dev)
+	@echo "$(BLUE)🔌 Testing database connection (development)...$(NC)"
+	@yarn db:test
+
+db-test-prod: ## Test database connection (prod)
+	@echo "$(BLUE)🔌 Testing database connection (production)...$(NC)"
+	@yarn db:test:prod
 
 # ============================================
 # 🐳 Docker
@@ -370,7 +462,13 @@ info: ## Show environment info
 	@echo "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
 	@echo ""
 	@echo "$(YELLOW)🔗 URLs:$(NC)"
-	@echo "  App:        $(BLUE)http://localhost:3000$(NC)"
+	@if [ -f .env ]; then \
+		DEV_PORT=$$(grep -E '^PORT=' .env | cut -d'=' -f2 | tr -d '"' | tr -d "'"); \
+		DEV_PORT=$${DEV_PORT:-3000}; \
+		echo "  App:        $(BLUE)http://localhost:$$DEV_PORT$(NC)"; \
+	else \
+		echo "  App:        $(BLUE)http://localhost:3000$(NC)"; \
+	fi
 	@echo "  Studio:     $(BLUE)http://localhost:5555$(NC)"
 	@echo "  pgAdmin:    $(BLUE)http://localhost:5050$(NC)"
 	@echo ""
