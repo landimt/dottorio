@@ -120,9 +120,16 @@ model User {
   createdAt        DateTime  @default(now()) @map("created_at")
   updatedAt        DateTime  @updatedAt @map("updated_at")
 
+  // Legal Compliance Fields
+  acceptedTermsAt        DateTime? @map("accepted_terms_at")
+  acceptedPrivacyAt      DateTime? @map("accepted_privacy_at")
+  acceptedTermsVersion   String?   @map("accepted_terms_version") @db.VarChar(20)
+  acceptedPrivacyVersion String?   @map("accepted_privacy_version") @db.VarChar(20)
+  registrationIp         String?   @map("registration_ip") @db.VarChar(45)
+
   // Relations
-  university     University    @relation(fields: [universityId], references: [id])
-  course         Course?       @relation(fields: [courseId], references: [id])
+  university     University      @relation(fields: [universityId], references: [id])
+  course         Course?         @relation(fields: [courseId], references: [id])
   exams          Exam[]
   studentAnswers StudentAnswer[]
   answerLikes    AnswerLike[]
@@ -131,9 +138,10 @@ model User {
   savedQuestions SavedQuestion[]
   aiRatings      AiRating[]
   auditLogs      AuditLog[]
-  reportedFlags  ContentFlag[] @relation("FlagReportedBy")
-  reviewedFlags  ContentFlag[] @relation("FlagReviewedBy")
+  reportedFlags  ContentFlag[]   @relation("FlagReportedBy")
+  reviewedFlags  ContentFlag[]   @relation("FlagReviewedBy")
   shareLinks     ShareLink[]
+  cookieConsents CookieConsent[]
 
   @@index([universityId])
   @@index([courseId])
@@ -162,10 +170,10 @@ model Exam {
   updatedAt    DateTime  @updatedAt @map("updated_at")
 
   // Relations
-  subject   Subject    @relation(fields: [subjectId], references: [id])
-  professor Professor? @relation(fields: [professorId], references: [id])
-  university University @relation(fields: [universityId], references: [id])
-  course    Course?    @relation(fields: [courseId], references: [id])
+  subject    Subject     @relation(fields: [subjectId], references: [id])
+  professor  Professor?  @relation(fields: [professorId], references: [id])
+  university University  @relation(fields: [universityId], references: [id])
+  course     Course?     @relation(fields: [courseId], references: [id])
   creator    User?       @relation(fields: [createdBy], references: [id])
   questions  Question[]
   shareLinks ShareLink[]
@@ -188,9 +196,9 @@ model Question {
   createdAt  DateTime @default(now()) @map("created_at")
 
   // Question Variations System
-  groupId     String?  @map("group_id")
-  isCanonical Boolean  @default(true) @map("is_canonical")
-  canonicalId String?  @map("canonical_id")
+  groupId     String? @map("group_id")
+  isCanonical Boolean @default(true) @map("is_canonical")
+  canonicalId String? @map("canonical_id")
 
   // Relations
   exam           Exam            @relation(fields: [examId], references: [id], onDelete: Cascade)
@@ -220,7 +228,7 @@ model AiAnswer {
   id         String   @id @default(uuid())
   questionId String   @unique @map("question_id")
   content    String
-  source     String?  // Fonte da resposta (ex: "Capitolo 12 - Anatomia Umana di Martini")
+  source     String? // Fonte da resposta (ex: "Capitolo 12 - Anatomia Umana di Martini")
   model      String?  @db.VarChar(50) // gpt-4, gpt-4o, claude-3
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
@@ -339,13 +347,13 @@ model AiRating {
 // ============================================
 
 model ShareLink {
-  id          String    @id @default(uuid())
-  slug        String    @unique @db.VarChar(10)
-  examId      String    @map("exam_id")
-  createdById String    @map("created_by")
-  clickCount  Int       @default(0) @map("click_count")
-  expiresAt   DateTime  @map("expires_at")
-  createdAt   DateTime  @default(now()) @map("created_at")
+  id          String   @id @default(uuid())
+  slug        String   @unique @db.VarChar(10)
+  examId      String   @map("exam_id")
+  createdById String   @map("created_by")
+  clickCount  Int      @default(0) @map("click_count")
+  expiresAt   DateTime @map("expires_at")
+  createdAt   DateTime @default(now()) @map("created_at")
 
   // Relations
   exam      Exam @relation(fields: [examId], references: [id], onDelete: Cascade)
@@ -366,8 +374,8 @@ model AuditLog {
   id         String   @id @default(uuid())
   adminId    String   @map("admin_id")
   action     String   @db.VarChar(50) // create, update, delete, suspend, etc
-  entityType String   @db.VarChar(50) @map("entity_type") // user, exam, question, etc
-  entityId   String?  @db.VarChar(50) @map("entity_id")
+  entityType String   @map("entity_type") @db.VarChar(50) // user, exam, question, etc
+  entityId   String?  @map("entity_id") @db.VarChar(50)
   changes    String?  @db.Text // JSON das mudanças (old -> new)
   reason     String?  @db.Text
   createdAt  DateTime @default(now()) @map("created_at")
@@ -384,7 +392,7 @@ model AuditLog {
 model ContentFlag {
   id         String    @id @default(uuid())
   type       String    @db.VarChar(30) // question, answer, comment
-  entityId   String    @db.VarChar(50) @map("entity_id")
+  entityId   String    @map("entity_id") @db.VarChar(50)
   reason     String    @db.VarChar(255) // spam, offensive, inaccurate, etc
   reportedBy String?   @map("reported_by")
   status     String    @default("pending") @db.VarChar(30) // pending, reviewed, dismissed, deleted
@@ -401,4 +409,25 @@ model ContentFlag {
   @@index([status])
   @@index([type])
   @@map("content_flags")
+}
+
+// ============================================
+// LEGAL COMPLIANCE - GDPR
+// ============================================
+
+model CookieConsent {
+  id            String   @id @default(uuid())
+  userId        String?  @map("user_id")
+  consentDate   DateTime @default(now()) @map("consent_date")
+  ipAddress     String?  @map("ip_address") @db.VarChar(45)
+  preferences   Json // { necessary: true, analytics: false, marketing: false }
+  policyVersion String   @default("1.0.0") @map("policy_version") @db.VarChar(20)
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([consentDate])
+  @@map("cookie_consents")
 }

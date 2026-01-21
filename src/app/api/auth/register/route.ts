@@ -11,7 +11,28 @@ const registerSchema = z.object({
   year: z.number().int().min(1).max(6, "L'anno deve essere tra 1 e 6"),
   courseId: z.string().uuid("Corso non valido"),
   isRepresentative: z.boolean().default(false),
+  acceptedTerms: z.boolean().refine(val => val === true, {
+    message: "Devi accettare i Termini di Servizio"
+  }),
+  acceptedPrivacy: z.boolean().refine(val => val === true, {
+    message: "Devi accettare la Privacy Policy"
+  }),
+  termsVersion: z.string().default("1.0.0"),
+  privacyVersion: z.string().default("1.0.0"),
 });
+
+function getClientIp(request: Request): string | null {
+  const forwarded = request.headers.get("x-forwarded-for");
+  const realIp = request.headers.get("x-real-ip");
+
+  if (forwarded) {
+    return forwarded.split(",")[0].trim();
+  }
+  if (realIp) {
+    return realIp;
+  }
+  return null;
+}
 
 export async function POST(request: Request) {
   try {
@@ -58,6 +79,11 @@ export async function POST(request: Request) {
         year: data.year,
         courseId: data.courseId,
         isRepresentative: data.isRepresentative,
+        acceptedTermsAt: new Date(),
+        acceptedPrivacyAt: new Date(),
+        acceptedTermsVersion: data.termsVersion,
+        acceptedPrivacyVersion: data.privacyVersion,
+        registrationIp: getClientIp(request),
       },
       select: {
         id: true,

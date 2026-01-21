@@ -58,6 +58,8 @@ export function RegisterForm() {
   const [year, setYear] = useState<number | null>(null);
   const [password, setPassword] = useState("");
   const [isRepresentative, setIsRepresentative] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [acceptedPrivacy, setAcceptedPrivacy] = useState(false);
 
   // Filtered courses by selected university
   const universityCourses = useMemo(
@@ -145,6 +147,18 @@ export function RegisterForm() {
       return;
     }
 
+    if (!acceptedTerms) {
+      setError(t("mustAcceptTerms"));
+      setIsLoading(false);
+      return;
+    }
+
+    if (!acceptedPrivacy) {
+      setError(t("mustAcceptPrivacy"));
+      setIsLoading(false);
+      return;
+    }
+
     const data = {
       name: name.trim(),
       email: email.trim().toLowerCase(),
@@ -153,6 +167,10 @@ export function RegisterForm() {
       year: year || 1,
       courseId,
       isRepresentative,
+      acceptedTerms,
+      acceptedPrivacy,
+      termsVersion: "1.0.0",
+      privacyVersion: "1.0.0",
     };
 
     try {
@@ -369,6 +387,50 @@ export function RegisterForm() {
                 {t("representativeDescription")}
               </p>
             </div>
+          </div>
+
+          {/* Aceite de Termos */}
+          <div className="flex items-start space-x-3 rounded-lg border bg-muted/10 p-4">
+            <Checkbox
+              id="acceptedTerms"
+              checked={acceptedTerms}
+              onCheckedChange={(checked) => setAcceptedTerms(checked === true)}
+              required
+              className="mt-0.5"
+            />
+            <Label htmlFor="acceptedTerms" className="text-sm cursor-pointer">
+              {t("acceptTerms")}{" "}
+              <Link
+                href="/legal/terms"
+                target="_blank"
+                className="text-primary hover:underline font-medium"
+              >
+                {t("termsOfService")}
+              </Link>
+              {" *"}
+            </Label>
+          </div>
+
+          {/* Aceite de Privacy */}
+          <div className="flex items-start space-x-3 rounded-lg border bg-muted/10 p-4">
+            <Checkbox
+              id="acceptedPrivacy"
+              checked={acceptedPrivacy}
+              onCheckedChange={(checked) => setAcceptedPrivacy(checked === true)}
+              required
+              className="mt-0.5"
+            />
+            <Label htmlFor="acceptedPrivacy" className="text-sm cursor-pointer">
+              {t("acceptPrivacy")}{" "}
+              <Link
+                href="/legal/privacy"
+                target="_blank"
+                className="text-primary hover:underline font-medium"
+              >
+                {t("privacyPolicy")}
+              </Link>
+              {" *"}
+            </Label>
           </div>
 
           {/* Info box about email verification */}
