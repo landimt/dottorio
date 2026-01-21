@@ -628,6 +628,11 @@ async function main() {
       isRepresentative: false,
       role: "admin",
       status: "active",
+      acceptedTermsAt: new Date(),
+      acceptedPrivacyAt: new Date(),
+      acceptedTermsVersion: "1.0.0",
+      acceptedPrivacyVersion: "1.0.0",
+      registrationIp: "192.168.1.100",
     },
   });
   console.log(`   ✅ ${admin.name} (${admin.email}) - Admin`);
@@ -647,6 +652,11 @@ async function main() {
       isRepresentative: false,
       role: "super_admin",
       status: "active",
+      acceptedTermsAt: new Date(),
+      acceptedPrivacyAt: new Date(),
+      acceptedTermsVersion: "1.0.0",
+      acceptedPrivacyVersion: "1.0.0",
+      registrationIp: "192.168.1.101",
     },
   });
   console.log(`   ✅ ${superAdmin.name} (${superAdmin.email}) - Super Admin`);
@@ -666,6 +676,11 @@ async function main() {
       isRepresentative: true,
       role: "representative",
       status: "active",
+      acceptedTermsAt: new Date(),
+      acceptedPrivacyAt: new Date(),
+      acceptedTermsVersion: "1.0.0",
+      acceptedPrivacyVersion: "1.0.0",
+      registrationIp: "192.168.1.102",
     },
   });
   console.log(`   ✅ ${representative.name} (${representative.email}) - Representante`);
@@ -683,7 +698,8 @@ async function main() {
   ];
 
   const createdStudents = [];
-  for (const student of students) {
+  for (let i = 0; i < students.length; i++) {
+    const student = students[i];
     // upsert by email (unique)
     const user = await prisma.user.upsert({
       where: { email: student.email },
@@ -698,6 +714,11 @@ async function main() {
         year: student.year,
         isRepresentative: false,
         role: "student",
+        acceptedTermsAt: new Date(),
+        acceptedPrivacyAt: new Date(),
+        acceptedTermsVersion: "1.0.0",
+        acceptedPrivacyVersion: "1.0.0",
+        registrationIp: `192.168.1.${103 + i}`,
         status: "active",
       },
     });
@@ -706,7 +727,44 @@ async function main() {
   }
 
   // ============================================
-  // 7. CARREGAR QUESTÕES DOS ARQUIVOS EXTERNOS
+  // 7. COOKIE CONSENT (GDPR Compliance)
+  // ============================================
+  console.log("\n🍪 Creating sample cookie consent records...");
+
+  // Anonymous user consent (rejected analytics)
+  await prisma.cookieConsent.create({
+    data: {
+      id: uuidv7(),
+      userId: null,
+      ipAddress: "192.168.1.200",
+      preferences: {
+        necessary: true,
+        analytics: false,
+        marketing: false,
+      },
+      policyVersion: "1.0.0",
+    },
+  });
+  console.log("   ✅ Anonymous user consent (declined analytics)");
+
+  // Student accepted analytics
+  await prisma.cookieConsent.create({
+    data: {
+      id: uuidv7(),
+      userId: createdStudents[0].id,
+      ipAddress: "192.168.1.201",
+      preferences: {
+        necessary: true,
+        analytics: true,
+        marketing: false,
+      },
+      policyVersion: "1.0.0",
+    },
+  });
+  console.log(`   ✅ ${createdStudents[0].name} consent (accepted analytics)`);
+
+  // ============================================
+  // 8. CARREGAR QUESTÕES DOS ARQUIVOS EXTERNOS
   // ============================================
   console.log("\n📂 Loading questions from seed files...");
 
@@ -723,7 +781,7 @@ async function main() {
   console.log(`   📊 Questões Anatomia Umana I: ${anatomiaQuestionsData.totalQuestions}`);
 
   // ============================================
-  // 8. EXAMES DE EXEMPLO
+  // 9. EXAMES DE EXEMPLO
   // ============================================
   console.log("\n📝 Creating sample exams...");
 
@@ -794,7 +852,7 @@ async function main() {
   console.log(`   📊 Total de exames criados: ${createdExams.length}`);
 
   // ============================================
-  // 8.1. EXAMES ESPECIAIS DE ANATOMIA UMANA I (300 questões)
+  // 9.1. EXAMES ESPECIAIS DE ANATOMIA UMANA I (300 questões)
   // ============================================
   console.log("\n📝 Creating Anatomia Umana I exams (300 questions)...");
 
@@ -840,7 +898,7 @@ async function main() {
   }
 
   // ============================================
-  // 9. PERGUNTAS DE EXEMPLO
+  // 10. PERGUNTAS DE EXEMPLO
   // ============================================
   console.log("\n❓ Creating sample questions...");
 
@@ -889,7 +947,7 @@ async function main() {
   console.log(`   ✅ ${questionIdx} domande create (questões gerais)`);
 
   // ============================================
-  // 9.1. QUESTÕES DE ANATOMIA UMANA I (300 questões)
+  // 10.1. QUESTÕES DE ANATOMIA UMANA I (300 questões)
   // ============================================
   console.log("\n❓ Creating Anatomia Umana I questions (300)...");
 
@@ -926,7 +984,7 @@ async function main() {
   console.log(`   📊 Total geral: ${questionIdx + anatomiaQuestionIdx} questões`);
 
   // ============================================
-  // 10. RESPOSTAS DE ESTUDANTES
+  // 11. RESPOSTAS DE ESTUDANTES
   // ============================================
   console.log("\n💬 Creating sample answers...");
 
@@ -970,7 +1028,7 @@ async function main() {
   console.log("   ✅ Respostas de exemplo criadas");
 
   // ============================================
-  // 11. COMENTÁRIOS
+  // 12. COMENTÁRIOS
   // ============================================
   console.log("\n📝 Creating sample comments...");
 
