@@ -74,7 +74,13 @@
     "selectYourUniversity": "Seleziona la tua università",
     "enterInstitutionalEmail": "Inserisci la tua email istituzionale",
     "selectYourCourse": "Seleziona il tuo corso",
-    "registrationError": "Errore durante la registrazione"
+    "registrationError": "Errore durante la registrazione",
+    "mustAcceptTerms": "Devi accettare i Termini di Servizio",
+    "mustAcceptPrivacy": "Devi accettare la Privacy Policy",
+    "acceptTerms": "Accetto i",
+    "acceptPrivacy": "Accetto la",
+    "termsOfService": "Termini di Servizio",
+    "privacyPolicy": "Privacy Policy"
   },
   "navigation": {
     "home": "Home",
@@ -580,7 +586,8 @@
       "registries": "Anagrafiche",
       "questions": "Domande",
       "moderation": "Moderazione",
-      "auditLog": "Audit Log"
+      "auditLog": "Audit Log",
+      "legal": "Conformità"
     },
     "usersPage": {
       "title": "Lista Utenti",
@@ -1070,5 +1077,136 @@
     "questionSubmitFailed": "Errore durante l'invio delle domande",
     "selectSubjectAndProfessor": "Seleziona materia e professore prima di generare il link",
     "linkCopyFailed": "Errore durante la copia del link"
+  },
+  "legal": {
+    "cookieBanner": {
+      "title": "Cookie",
+      "message": "Questo sito utilizza cookie tecnici necessari e cookie di analisi. Continuando la navigazione accetti il loro utilizzo.",
+      "acceptAll": "Accetta Tutti",
+      "reject": "Rifiuta",
+      "settings": "Impostazioni",
+      "privacyPolicy": "Privacy Policy",
+      "cookiePolicy": "Cookie Policy"
+    },
+    "aiAnswer": {
+      "badge": "Risposta generata da IA",
+      "tooltipTitle": "Risposta Intelligenza Artificiale",
+      "tooltipDescription": "Questa risposta è stata generata automaticamente utilizzando modelli di linguaggio AI (GPT, Claude, Gemini).",
+      "warning": "Verifica sempre le informazioni con fonti ufficiali e i tuoi professori.",
+      "disclaimerTitle": "⚠️ Risposta generata da Intelligenza Artificiale",
+      "disclaimerText": "Questa risposta è stata generata automaticamente. Verifica sempre con fonti ufficiali e i tuoi professori."
+    },
+    "footer": {
+      "about": {
+        "title": "Dottorio",
+        "description": "Piattaforma collaborativa per studenti universitari italiani. Studia in modo più intelligente con l'aiuto dell'IA."
+      },
+      "legal": {
+        "title": "Informazioni Legali",
+        "privacy": "Privacy Policy",
+        "terms": "Termini di Servizio",
+        "cookies": "Cookie Policy"
+      },
+      "contact": {
+        "title": "Contatti",
+        "rights": "Esercita i tuoi diritti GDPR →"
+      },
+      "copyright": "Tutti i diritti riservati."
+    },
+    "cookieSettings": {
+      "title": "Impostazioni Cookie",
+      "description": "Scegli quali cookie vuoi accettare. I cookie necessari sono sempre attivi.",
+      "necessary": {
+        "title": "Cookie Necessari",
+        "subtitle": "Sempre attivi",
+        "description": "Essenziali per il funzionamento del sito. Permettono la navigazione e l'utilizzo delle funzionalità di base come l'autenticazione.",
+        "examples": "dottorio_session, dottorio_auth"
+      },
+      "analytics": {
+        "title": "Cookie Analytics",
+        "subtitle": "Opzionale",
+        "description": "Ci aiutano a capire come gli utenti interagiscono con il sito, raccogliendo dati anonimi su pagine visitate e funzionalità utilizzate.",
+        "examples": "Google Analytics, statistiche di utilizzo"
+      },
+      "marketing": {
+        "title": "Cookie Marketing",
+        "subtitle": "Opzionale",
+        "description": "Utilizzati per mostrare annunci pubblicitari pertinenti e misurare l'efficacia delle campagne marketing.",
+        "examples": "Facebook Pixel, Google Ads (attualmente non utilizzati)"
+      },
+      "rejectAll": "Rifiuta Tutti",
+      "savePreferences": "Salva Preferenze",
+      "acceptAll": "Accetta Tutti",
+      "customize": "Personalizza"
+    }
+  },
+  "legalChecklist": {
+    "title": "Checklist Conformità Legale",
+    "description": "Stato dell'implementazione delle normative GDPR, Garante Privacy e AI Act",
+    "backToHome": "Torna alla Home",
+    "totalProgress": "Progresso Totale",
+    "progressInfo": "{done} di {total} requisiti completati",
+    "viewPage": "Visualizza pagina",
+    "status": {
+      "done": "Completato",
+      "inProgress": "In corso",
+      "pending": "In attesa"
+    },
+    "testBanner": {
+      "title": "Testa Cookie Banner",
+      "description": "Clicca sul pulsante qui sotto per reimpostare il consenso ai cookie e visualizzare nuovamente il banner.",
+      "button": "Mostra Cookie Banner"
+    },
+    "items": {
+      "cookieBanner": {
+        "title": "Cookie Banner",
+        "description": "Banner con opzioni Accetta/Rifiuta/Impostazioni",
+        "regulation": "GDPR + Garante Privacy"
+      },
+      "privacyPolicy": {
+        "title": "Privacy Policy",
+        "description": "Informativa completa con menzione dell'IA e diritti GDPR",
+        "regulation": "GDPR Art. 13-14"
+      },
+      "termsService": {
+        "title": "Termini di Servizio",
+        "description": "Termini con limitazione di responsabilità sull'IA",
+        "regulation": "Legge Italiana"
+      },
+      "cookiePolicy": {
+        "title": "Cookie Policy",
+        "description": "Elenco dettagliato dei cookie tecnici e di analisi",
+        "regulation": "Direttiva ePrivacy"
+      },
+      "aiTransparency": {
+        "title": "Badge Trasparenza IA",
+        "description": "Badge visibile su tutte le risposte generate dall'IA",
+        "regulation": "AI Act (Trasparenza)"
+      },
+      "termsAcceptance": {
+        "title": "Accettazione Termini alla Registrazione",
+        "description": "Checkbox obbligatorie per termini e privacy",
+        "regulation": "Consenso GDPR"
+      },
+      "cookieDb": {
+        "title": "Database Consenso Cookie",
+        "description": "Persistenza del consenso nel database",
+        "regulation": "Accountability GDPR"
+      },
+      "ipRetention": {
+        "title": "Politica di Conservazione IP (21 giorni)",
+        "description": "Script automatico per eliminare gli IP dopo 21 giorni",
+        "regulation": "Minimizzazione Dati GDPR"
+      },
+      "dsarApis": {
+        "title": "API DSAR (Esporta/Elimina Dati)",
+        "description": "API per esportare dati e eliminare account",
+        "regulation": "GDPR Art. 15, 17"
+      }
+    },
+    "footer": {
+      "note": "Nota",
+      "description": "Questa pagina serve come riferimento interno per monitorare il progresso dell'implementazione legale. Aggiorna gli stati man mano che le funzionalità vengono implementate."
+    }
   }
 }

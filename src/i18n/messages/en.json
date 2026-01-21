@@ -74,7 +74,13 @@
     "selectYourUniversity": "Select your university",
     "enterInstitutionalEmail": "Enter your institutional email",
     "selectYourCourse": "Select your course",
-    "registrationError": "Error during registration"
+    "registrationError": "Error during registration",
+    "mustAcceptTerms": "You must accept the Terms of Service",
+    "mustAcceptPrivacy": "You must accept the Privacy Policy",
+    "acceptTerms": "I accept the",
+    "acceptPrivacy": "I accept the",
+    "termsOfService": "Terms of Service",
+    "privacyPolicy": "Privacy Policy"
   },
   "navigation": {
     "home": "Home",
@@ -569,7 +575,8 @@
       "registries": "Registries",
       "questions": "Questions",
       "moderation": "Moderation",
-      "auditLog": "Audit Log"
+      "auditLog": "Audit Log",
+      "legal": "Compliance"
     },
     "usersPage": {
       "title": "User List",
@@ -1076,5 +1083,136 @@
     "questionSubmitFailed": "Error submitting questions",
     "selectSubjectAndProfessor": "Select subject and professor before generating the link",
     "linkCopyFailed": "Error copying link"
+  },
+  "legal": {
+    "cookieBanner": {
+      "title": "Cookies",
+      "message": "This site uses necessary technical cookies and analytics cookies. By continuing to browse, you accept their use.",
+      "acceptAll": "Accept All",
+      "reject": "Reject",
+      "settings": "Settings",
+      "privacyPolicy": "Privacy Policy",
+      "cookiePolicy": "Cookie Policy"
+    },
+    "aiAnswer": {
+      "badge": "AI-generated answer",
+      "tooltipTitle": "Artificial Intelligence Answer",
+      "tooltipDescription": "This answer was automatically generated using AI language models (GPT, Claude, Gemini).",
+      "warning": "Always verify information with official sources and your professors.",
+      "disclaimerTitle": "⚠️ AI-generated Answer",
+      "disclaimerText": "This answer was automatically generated. Always verify with official sources and your professors."
+    },
+    "footer": {
+      "about": {
+        "title": "Dottorio",
+        "description": "Collaborative platform for Italian university students. Study smarter with AI assistance."
+      },
+      "legal": {
+        "title": "Legal Information",
+        "privacy": "Privacy Policy",
+        "terms": "Terms of Service",
+        "cookies": "Cookie Policy"
+      },
+      "contact": {
+        "title": "Contact",
+        "rights": "Exercise your GDPR rights →"
+      },
+      "copyright": "All rights reserved."
+    },
+    "cookieSettings": {
+      "title": "Cookie Settings",
+      "description": "Choose which cookies you want to accept. Necessary cookies are always active.",
+      "necessary": {
+        "title": "Necessary Cookies",
+        "subtitle": "Always active",
+        "description": "Essential for the website to function. They allow navigation and use of basic features like authentication.",
+        "examples": "dottorio_session, dottorio_auth"
+      },
+      "analytics": {
+        "title": "Analytics Cookies",
+        "subtitle": "Optional",
+        "description": "Help us understand how users interact with the site by collecting anonymous data on pages visited and features used.",
+        "examples": "Google Analytics, usage statistics"
+      },
+      "marketing": {
+        "title": "Marketing Cookies",
+        "subtitle": "Optional",
+        "description": "Used to display relevant advertisements and measure the effectiveness of marketing campaigns.",
+        "examples": "Facebook Pixel, Google Ads (currently not used)"
+      },
+      "rejectAll": "Reject All",
+      "savePreferences": "Save Preferences",
+      "acceptAll": "Accept All",
+      "customize": "Customize"
+    }
+  },
+  "legalChecklist": {
+    "title": "Legal Compliance Checklist",
+    "description": "Implementation status of GDPR, Garante Privacy and AI Act regulations",
+    "backToHome": "Back to Home",
+    "totalProgress": "Total Progress",
+    "progressInfo": "{done} of {total} requirements completed",
+    "viewPage": "View page",
+    "status": {
+      "done": "Completed",
+      "inProgress": "In Progress",
+      "pending": "Pending"
+    },
+    "testBanner": {
+      "title": "Test Cookie Banner",
+      "description": "Click the button below to reset cookie consent and display the banner again.",
+      "button": "Show Cookie Banner"
+    },
+    "items": {
+      "cookieBanner": {
+        "title": "Cookie Banner",
+        "description": "Banner with Accept/Reject/Settings options",
+        "regulation": "GDPR + Garante Privacy"
+      },
+      "privacyPolicy": {
+        "title": "Privacy Policy",
+        "description": "Complete policy with AI mention and GDPR rights",
+        "regulation": "GDPR Art. 13-14"
+      },
+      "termsService": {
+        "title": "Terms of Service",
+        "description": "Terms with AI liability limitation",
+        "regulation": "Italian Law"
+      },
+      "cookiePolicy": {
+        "title": "Cookie Policy",
+        "description": "Detailed list of technical and analytics cookies",
+        "regulation": "ePrivacy Directive"
+      },
+      "aiTransparency": {
+        "title": "AI Transparency Badge",
+        "description": "Badge visible on all AI-generated answers",
+        "regulation": "AI Act (Transparency)"
+      },
+      "termsAcceptance": {
+        "title": "Terms Acceptance at Registration",
+        "description": "Mandatory checkboxes for terms and privacy",
+        "regulation": "GDPR Consent"
+      },
+      "cookieDb": {
+        "title": "Cookie Consent Database",
+        "description": "Consent persistence in database",
+        "regulation": "GDPR Accountability"
+      },
+      "ipRetention": {
+        "title": "IP Retention Policy (21 days)",
+        "description": "Automatic script to delete IPs after 21 days",
+        "regulation": "GDPR Data Minimization"
+      },
+      "dsarApis": {
+        "title": "DSAR APIs (Export/Delete Data)",
+        "description": "APIs to export data and delete account",
+        "regulation": "GDPR Art. 15, 17"
+      }
+    },
+    "footer": {
+      "note": "Note",
+      "description": "This page serves as an internal reference to monitor legal implementation progress. Update statuses as features are implemented."
+    }
   }
 }
