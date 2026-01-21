@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { AiRating } from "./ai-rating";
+import { AiAnswerBadge } from "@/components/legal";
 
 interface AiAnswerData {
   id: string;
@@ -118,6 +119,11 @@ export function AiAnswerTab({ questionId }: AiAnswerTabProps) {
 
   return (
     <div className="space-y-4">
+      {/* AI Badge */}
+      <div className="flex justify-center">
+        <AiAnswerBadge />
+      </div>
+
       {/* Header with actions */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3 border-l-4 border-primary pl-3">
