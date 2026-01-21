@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import { API } from "@/lib/api/fetcher";
 import type {
@@ -31,9 +32,10 @@ export function useQuestions(params: Record<string, string | undefined>) {
 }
 
 export function useQuestion(id: string) {
+  const safeId = id || "placeholder";
   return useQuery({
-    queryKey: questionKeys.detail(id),
-    queryFn: () => API.questions.get(id) as Promise<QuestionDetail>,
+    queryKey: questionKeys.detail(safeId),
+    queryFn: () => API.questions.get(safeId) as Promise<QuestionDetail>,
     enabled: !!id,
   });
 }
@@ -55,44 +57,83 @@ export function useSavedQuestions(page = 1, limit = 20) {
 }
 
 export function useRelatedQuestions(id: string, enabled = true) {
+  const safeId = id || "placeholder";
   return useQuery({
-    queryKey: questionKeys.related(id),
-    queryFn: () => API.questions.related(id),
+    queryKey: questionKeys.related(safeId),
+    queryFn: () => API.questions.related(safeId),
     enabled: enabled && !!id,
     staleTime: 1000 * 60 * 10, // 10 minutes - changes less frequently
   });
 }
 
-export function useRelatedQuestionsInfinite(id: string, enabled = true, limit = 15) {
-  return useInfiniteQuery({
-    queryKey: [...questionKeys.related(id), "infinite", limit],
-    queryFn: ({ pageParam = 1 }) =>
-      API.questions.related(id, { page: String(pageParam), limit: String(limit) }),
-    enabled: enabled && !!id,
-    staleTime: 1000 * 60 * 10, // 10 minutes
-    getNextPageParam: (lastPage) => {
-      if (lastPage.pagination.hasMore) {
-        return lastPage.pagination.page + 1;
+export function useRelatedQuestionsInfinite(id: string, enabled = true, limit = 50, subjectId?: string) {
+  // Safety check: use a fallback id to prevent errors during transitions
+  const safeId = id || "placeholder";
+  // CRITICAL: Only enable if we have both id AND subjectId
+  // Without subjectId, we can't create a proper cache key
+  const isEnabled = enabled && !!id && !!subjectId;
+
+  // Use subjectId as part of cache key so all questions from same subject
+  // share the same cached related questions list
+  // This prevents refetching every time user navigates between questions
+  // If no subjectId, use a disabled placeholder key
+  const cacheKey = subjectId
+    ? ['questions', 'related-by-subject', subjectId, limit]
+    : ['questions', 'related-disabled'];
+
+  console.log('[useRelatedQuestionsInfinite] questionId:', safeId);
+  console.log('[useRelatedQuestionsInfinite] subjectId:', subjectId);
+  console.log('[useRelatedQuestionsInfinite] cacheKey:', JSON.stringify(cacheKey));
+  console.log('[useRelatedQuestionsInfinite] enabled:', isEnabled);
+
+  // Simplified: Use regular useQuery instead of useInfiniteQuery
+  // This avoids the "Cannot read properties of undefined (reading 'length')" error
+  // that occurs during SPA navigation transitions
+  return useQuery({
+    queryKey: cacheKey,
+    queryFn: async () => {
+      console.log('[useRelatedQuestionsInfinite] FETCHING from API for questionId:', safeId);
+      try {
+        const result = await API.questions.related(safeId, {
+          page: "1",
+          limit: String(limit)
+        });
+
+        // Ensure result has expected structure
+        if (!result || typeof result !== 'object') {
+          return { questions: [], pagination: { page: 1, hasMore: false } };
+        }
+
+        return result;
+      } catch (error) {
+        console.error('Error fetching related questions:', error);
+        // Return empty result on error
+        return { questions: [], pagination: { page: 1, hasMore: false } };
       }
-      return undefined;
     },
-    initialPageParam: 1,
+    enabled: isEnabled,
+    staleTime: 1000 * 60 * 10, // 10 minutes - cache for a long time
+    gcTime: 1000 * 60 * 15, // Keep in cache for 15 minutes after component unmounts
+    // Disabled placeholderData to prevent render loops
+    // placeholderData: (previousData) => previousData,
   });
 }
 
 export function useQuestionVariations(id: string, enabled = true) {
+  const safeId = id || "placeholder";
   return useQuery({
-    queryKey: questionKeys.variations(id),
-    queryFn: () => API.questions.variations(id),
+    queryKey: questionKeys.variations(safeId),
+    queryFn: () => API.questions.variations(safeId),
     enabled: enabled && !!id,
     staleTime: 1000 * 60 * 10, // 10 minutes - changes less frequently
   });
 }
 
 export function usePersonalAnswer(id: string, enabled = true) {
+  const safeId = id || "placeholder";
   return useQuery({
-    queryKey: questionKeys.personalAnswer(id),
-    queryFn: () => API.questions.personalAnswer(id),
+    queryKey: questionKeys.personalAnswer(safeId),
+    queryFn: () => API.questions.personalAnswer(safeId),
     enabled: enabled && !!id,
     staleTime: 1000 * 60 * 2, // 2 minutes
     retry: false, // Don't retry if user doesn't have an answer yet
