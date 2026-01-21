@@ -72,25 +72,18 @@ export function QuestionDetailContainer({ questionId }: QuestionDetailContainerP
   // This ensures all questions from same subject share the same related questions list
   const subjectId = question?.exam?.subject?.id;
 
-  console.log('[CACHE DEBUG] Question:', safeQuestionId);
-  console.log('[CACHE DEBUG] SubjectId:', subjectId);
-  console.log('[CACHE DEBUG] shouldFetch:', isValidQuestionId && !!subjectId);
-
   // Only fetch related questions once per subject (not per question)
   // This prevents refetching the list every time user navigates between questions
   const shouldFetchRelated = isValidQuestionId && !!subjectId;
 
   // Fetch related questions using first questionId but cache by subjectId
   // All questions in same subject will share this cached list
-  const { data: relatedQuestionsData, isFetching, isLoading } = useRelatedQuestionsInfinite(
+  const { data: relatedQuestionsData } = useRelatedQuestionsInfinite(
     safeQuestionId,
     shouldFetchRelated,
     50,
     subjectId // Pass subjectId to use as part of cache key
   );
-
-  console.log('[CACHE DEBUG] isFetching:', isFetching, 'isLoading:', isLoading);
-  console.log('[CACHE DEBUG] has data:', !!relatedQuestionsData);
 
   // Extract questions from response and filter out current question
   const relatedQuestions = useMemo(() => {
@@ -109,6 +102,10 @@ export function QuestionDetailContainer({ questionId }: QuestionDetailContainerP
    * Prefetch question data on hover for instant navigation
    * This makes question switching feel instantaneous (<100ms)
    * Use queryClientRef to avoid recreating callback
+   *
+   * Note: We only prefetch the question detail, not related questions.
+   * Related questions are cached by subjectId, so all questions in the same
+   * subject share the same list. No need to prefetch it for each question.
    */
   const handlePrefetch = useCallback((id: string) => {
     const client = queryClientRef.current;
@@ -120,12 +117,7 @@ export function QuestionDetailContainer({ questionId }: QuestionDetailContainerP
       staleTime: 1000 * 60 * 5, // Cache for 5 minutes
     });
 
-    // Prefetch related questions (limit 50 to match main query)
-    client.prefetchQuery({
-      queryKey: [...questionKeys.related(id), 50],
-      queryFn: () => API.questions.related(id, { page: "1", limit: "50" }),
-      staleTime: 1000 * 60 * 5,
-    });
+    // Related questions prefetch removed - they're cached by subject, not by question
   }, []); // Empty dependency array - stable callback
 
   /**

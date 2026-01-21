@@ -81,18 +81,12 @@ export function useRelatedQuestionsInfinite(id: string, enabled = true, limit = 
     ? ['questions', 'related-by-subject', subjectId, limit]
     : ['questions', 'related-disabled'];
 
-  console.log('[useRelatedQuestionsInfinite] questionId:', safeId);
-  console.log('[useRelatedQuestionsInfinite] subjectId:', subjectId);
-  console.log('[useRelatedQuestionsInfinite] cacheKey:', JSON.stringify(cacheKey));
-  console.log('[useRelatedQuestionsInfinite] enabled:', isEnabled);
-
   // Simplified: Use regular useQuery instead of useInfiniteQuery
   // This avoids the "Cannot read properties of undefined (reading 'length')" error
   // that occurs during SPA navigation transitions
   return useQuery({
     queryKey: cacheKey,
     queryFn: async () => {
-      console.log('[useRelatedQuestionsInfinite] FETCHING from API for questionId:', safeId);
       try {
         const result = await API.questions.related(safeId, {
           page: "1",

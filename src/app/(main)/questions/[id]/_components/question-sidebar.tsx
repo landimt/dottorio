@@ -60,18 +60,12 @@ export const QuestionSidebar = memo(function QuestionSidebar({
 
   // Restore scroll position after question changes
   useEffect(() => {
-    console.log('[DEBUG Sidebar] Question changed to:', question.id);
-    console.log('[DEBUG Sidebar] Saved scroll position:', scrollPositionRef.current);
-    console.log('[DEBUG Sidebar] Related questions count:', relatedQuestions.length);
-
     const container = scrollContainerRef.current;
     if (container && scrollPositionRef.current > 0) {
       // Use setTimeout to ensure DOM has updated
       setTimeout(() => {
-        console.log('[DEBUG Sidebar] Restoring scroll to:', scrollPositionRef.current);
         container.scrollTop = scrollPositionRef.current;
-        console.log('[DEBUG Sidebar] Actual scroll after restore:', container.scrollTop);
-      }, 100); // Increased timeout
+      }, 100);
     }
   }, [question.id, relatedQuestions.length]);
 
