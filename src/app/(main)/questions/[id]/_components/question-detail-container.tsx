@@ -70,7 +70,15 @@ export function QuestionDetailContainer({ questionId }: QuestionDetailContainerP
 
   // Get subjectId from question to use as cache key
   // This ensures all questions from same subject share the same related questions list
-  const subjectId = question?.exam?.subject?.id;
+  const currentSubjectId = question?.exam?.subject?.id;
+
+  // Keep track of the last valid subjectId to avoid cache key changing during navigation
+  // This prevents the cache from "resetting" when question is temporarily undefined
+  const lastSubjectIdRef = useRef<string | undefined>(undefined);
+  if (currentSubjectId) {
+    lastSubjectIdRef.current = currentSubjectId;
+  }
+  const subjectId = currentSubjectId || lastSubjectIdRef.current;
 
   // Only fetch related questions once per subject (not per question)
   // This prevents refetching the list every time user navigates between questions
