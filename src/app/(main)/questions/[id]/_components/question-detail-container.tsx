@@ -93,12 +93,15 @@ export function QuestionDetailContainer({ questionId }: QuestionDetailContainerP
     subjectId // Pass subjectId to use as part of cache key
   );
 
-  // Extract questions from response and filter out current question
+  // Extract questions from response
+  // IMPORTANT: Do NOT filter by current questionId here!
+  // Filtering would change the array reference every time questionId changes,
+  // causing the sidebar to re-render and lose scroll position.
+  // The sidebar handles highlighting the current question with isCurrent flag.
   const relatedQuestions = useMemo(() => {
     if (!relatedQuestionsData || !relatedQuestionsData.questions) return [];
-    // Filter out the current question to avoid duplicates (API sometimes returns it)
-    return relatedQuestionsData.questions.filter((q: any) => q.id !== safeQuestionId);
-  }, [relatedQuestionsData, safeQuestionId]);
+    return relatedQuestionsData.questions;
+  }, [relatedQuestionsData]);
 
   // Fetch variations
   const { data: variations = [] } = useQuestionVariations(safeQuestionId, shouldFetchRelated);

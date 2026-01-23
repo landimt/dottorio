@@ -66,8 +66,10 @@ export const QuestionDetail = memo(function QuestionDetail({
           {/* 3 Column Layout - Fixed height with internal scroll */}
           <div className="grid grid-cols-12 gap-4 md:gap-6 flex-1 overflow-hidden px-4 md:px-6 pb-4 md:pb-6">
             {/* Left Column - Related Questions Sidebar (Desktop only) */}
+            {/* NOTE: Scroll position stored in module-level variable, survives remounts */}
             <QuestionSidebar
-              question={question}
+              subjectId={question.exam.subject.id}
+              subjectName={question.exam.subject.name}
               relatedQuestions={relatedQuestions}
               currentIsSaved={question.isSaved}
               hasVariations={hasVariations}
