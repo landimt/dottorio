@@ -1,115 +1,26 @@
 "use client";
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect, use, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { BookOpen, ArrowLeft, Plus, Search, Save, Clock, ChevronDown, ChevronRight, FileText, Trash2, Edit2, Menu } from 'lucide-react';
+import { BookOpen, ArrowLeft, Plus, Search, Save, Clock, ChevronDown, ChevronRight, FileText, Trash2, Edit2, Menu, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { TipTapEditor } from '@/components/TipTapEditor';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import Link from 'next/link';
-
-interface NotebookPage {
-  id: string;
-  title: string;
-  content: string;
-  createdAt: string;
-  updatedAt: string;
-  order: number;
-}
-
-interface Notebook {
-  id: string;
-  title: string;
-  subject: string;
-  pages: NotebookPage[];
-  createdAt: string;
-  updatedAt: string;
-  color?: string;
-  icon: string;
-}
-
-// Cadernos de exemplo para a sidebar
-const ALL_NOTEBOOKS: Notebook[] = [
-  {
-    id: '1',
-    title: 'Anatomia Umana I',
-    subject: 'Anatomia',
-    pages: [
-      { id: '1-1', title: 'Appunti Generali', content: '', createdAt: '2024-01-15', updatedAt: '2024-01-15', order: 0 },
-      { id: '1-2', title: 'Sistema Cardiovascolare', content: '', createdAt: '2024-01-16', updatedAt: '2024-01-16', order: 1 },
-      { id: '1-3', title: 'Sistema Nervoso', content: '', createdAt: '2024-01-17', updatedAt: '2024-01-17', order: 2 }
-    ],
-    createdAt: '2024-01-15',
-    updatedAt: '2024-01-15',
-    icon: '🫀',
-    color: 'primary/10'
-  },
-  {
-    id: '2',
-    title: 'Biochimica Generale',
-    subject: 'Biochimica',
-    pages: [
-      { id: '2-1', title: 'Appunti Generali', content: '', createdAt: '2024-01-20', updatedAt: '2024-01-20', order: 0 },
-      { id: '2-2', title: 'Metabolismo', content: '', createdAt: '2024-01-21', updatedAt: '2024-01-21', order: 1 }
-    ],
-    createdAt: '2024-01-20',
-    updatedAt: '2024-01-20',
-    icon: '🧬',
-    color: 'accent/10'
-  },
-  {
-    id: '3',
-    title: 'Fisiologia I',
-    subject: 'Fisiologia',
-    pages: [
-      { id: '3-1', title: 'Appunti Generali', content: '', createdAt: '2024-02-01', updatedAt: '2024-02-01', order: 0 }
-    ],
-    createdAt: '2024-02-01',
-    updatedAt: '2024-02-01',
-    icon: '💚',
-    color: 'green-50'
-  },
-  {
-    id: '4',
-    title: 'Istologia ed Embriologia',
-    subject: 'Istologia',
-    pages: [
-      { id: '4-1', title: 'Appunti Generali', content: '', createdAt: '2024-02-10', updatedAt: '2024-02-10', order: 0 }
-    ],
-    createdAt: '2024-02-10',
-    updatedAt: '2024-02-10',
-    icon: '🔬',
-    color: 'red-50'
-  },
-  {
-    id: '5',
-    title: 'Fisica Medica',
-    subject: 'Fisica',
-    pages: [
-      { id: '5-1', title: 'Appunti Generali', content: '', createdAt: '2024-02-15', updatedAt: '2024-02-15', order: 0 }
-    ],
-    createdAt: '2024-02-15',
-    updatedAt: '2024-02-15',
-    icon: '⚛️',
-    color: 'purple-50'
-  },
-  {
-    id: '6',
-    title: 'Chimica e Propedeutica Biochimica',
-    subject: 'Chimica',
-    pages: [
-      { id: '6-1', title: 'Appunti Generali', content: '', createdAt: '2024-03-01', updatedAt: '2024-03-01', order: 0 }
-    ],
-    createdAt: '2024-03-01',
-    updatedAt: '2024-03-01',
-    icon: '🧪',
-    color: 'yellow-50'
-  }
-];
+import {
+  useNotebooks,
+  useNotebook,
+  useUpdatePage,
+  useCreatePage,
+  useDeletePage,
+  Notebook,
+  NotebookPage,
+} from '@/lib/query/hooks/use-notebooks';
+import type { ProseMirrorDoc } from '@/lib/validations/notebook.schema';
 
 interface NotebookEditorPageProps {
   params: Promise<{ id: string }>;
@@ -119,65 +30,102 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
   const { id } = use(params);
   const t = useTranslations('notebooks.editor');
   const tCommon = useTranslations('common');
-  
-  const initialNotebook = ALL_NOTEBOOKS.find(nb => nb.id === id) || ALL_NOTEBOOKS[0];
 
-  const [allNotebooks, setAllNotebooks] = useState<Notebook[]>(ALL_NOTEBOOKS);
-  const [currentNotebook, setCurrentNotebook] = useState<Notebook>(initialNotebook);
-  const [currentPage, setCurrentPage] = useState<NotebookPage>(initialNotebook.pages[0]);
-  const [content, setContent] = useState(initialNotebook.pages[0].content || '');
+  // API hooks
+  const { data: allNotebooks = [], isLoading: isLoadingNotebooks } = useNotebooks();
+  const { data: currentNotebook, isLoading: isLoadingNotebook } = useNotebook(id);
+  const updatePage = useUpdatePage();
+  const createPage = useCreatePage();
+  const deletePage = useDeletePage();
+
+  // Local state
+  const [currentPageId, setCurrentPageId] = useState<string | null>(null);
+  const [content, setContent] = useState<ProseMirrorDoc | null>(null);
+  const [contentHtml, setContentHtml] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
-  const [expandedNotebooks, setExpandedNotebooks] = useState<Set<string>>(new Set([initialNotebook.id]));
+  const [expandedNotebooks, setExpandedNotebooks] = useState<Set<string>>(new Set([id]));
   const [showNewPageDialog, setShowNewPageDialog] = useState(false);
   const [newPageTitle, setNewPageTitle] = useState('');
   const [targetNotebookId, setTargetNotebookId] = useState<string | null>(null);
   const [editingPageId, setEditingPageId] = useState<string | null>(null);
   const [editingPageTitle, setEditingPageTitle] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [originalContent, setOriginalContent] = useState<ProseMirrorDoc | null>(null);
 
-  const filteredNotebooks = allNotebooks.filter(nb =>
+  // Get current page from notebook
+  const currentPage = currentNotebook?.pages.find(p => p.id === currentPageId) || currentNotebook?.pages[0];
+
+  // Initialize current page when notebook loads
+  useEffect(() => {
+    if (currentNotebook && !currentPageId) {
+      const firstPage = currentNotebook.pages[0];
+      if (firstPage) {
+        setCurrentPageId(firstPage.id);
+        setContent(firstPage.content);
+        setContentHtml(firstPage.contentHtml || '');
+        setOriginalContent(firstPage.content);
+      }
+    }
+  }, [currentNotebook, currentPageId]);
+
+  // Update content when page changes
+  useEffect(() => {
+    if (currentPage) {
+      setContent(currentPage.content);
+      setContentHtml(currentPage.contentHtml || '');
+      setOriginalContent(currentPage.content);
+    }
+  }, [currentPage?.id]);
+
+  const filteredNotebooks = allNotebooks.filter((nb: Notebook) =>
     nb.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    nb.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    nb.pages.some(page => page.title.toLowerCase().includes(searchQuery.toLowerCase()))
+    (nb.subject && nb.subject.toLowerCase().includes(searchQuery.toLowerCase())) ||
+    nb.pages.some((page: NotebookPage) => page.title.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
-  const handleSave = () => {
+  // Helper to compare JSON content
+  const isContentChanged = useCallback(() => {
+    if (!content && !originalContent) return false;
+    if (!content || !originalContent) return true;
+    return JSON.stringify(content) !== JSON.stringify(originalContent);
+  }, [content, originalContent]);
+
+  const handleSave = useCallback(async () => {
+    if (!currentPage || !currentNotebook || !isContentChanged()) return;
+
     setIsSaving(true);
 
-    // Simular salvamento
-    setTimeout(() => {
-      // Atualizar a página atual
-      const updatedPage = { ...currentPage, content, updatedAt: new Date().toISOString() };
+    try {
+      await updatePage.mutateAsync({
+        pageId: currentPage.id,
+        notebookId: currentNotebook.id,
+        data: { content, contentHtml },
+      });
 
-      // Atualizar o caderno
-      const updatedNotebook = {
-        ...currentNotebook,
-        pages: currentNotebook.pages.map(p => p.id === currentPage.id ? updatedPage : p),
-        updatedAt: new Date().toISOString()
-      };
-
-      setCurrentNotebook(updatedNotebook);
-      setCurrentPage(updatedPage);
+      setOriginalContent(content);
       setLastSaved(new Date());
-      setIsSaving(false);
-
       toast.success(t('pageSaved'), {
         description: t('pageSavedDescription')
       });
-    }, 500);
-  };
-
-  const handleSwitchPage = (notebook: Notebook, page: NotebookPage) => {
-    // Salvar automaticamente antes de trocar
-    if (content !== currentPage.content) {
-      handleSave();
+    } catch {
+      toast.error(t('errorSaving'));
+    } finally {
+      setIsSaving(false);
     }
-    setCurrentNotebook(notebook);
-    setCurrentPage(page);
-    setContent(page.content || '');
-    // Fechar sidebar em mobile ao trocar de página
+  }, [currentPage, currentNotebook, content, contentHtml, isContentChanged, updatePage, t]);
+
+  const handleSwitchPage = async (notebook: Notebook, page: NotebookPage) => {
+    // Save current page before switching if content has changed
+    if (isContentChanged() && currentPage && currentNotebook) {
+      await handleSave();
+    }
+
+    setCurrentPageId(page.id);
+    setContent(page.content);
+    setContentHtml(page.contentHtml || '');
+    setOriginalContent(page.content);
     setIsSidebarOpen(false);
   };
 
@@ -191,112 +139,96 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
     setExpandedNotebooks(newExpanded);
   };
 
-  const handleCreatePage = () => {
+  const handleCreatePage = async () => {
     if (!newPageTitle.trim() || !targetNotebookId) return;
 
-    const targetNotebook = allNotebooks.find(nb => nb.id === targetNotebookId);
-    if (!targetNotebook) return;
+    try {
+      const newPage = await createPage.mutateAsync({
+        notebookId: targetNotebookId,
+        data: { title: newPageTitle },
+      });
 
-    const newPage: NotebookPage = {
-      id: `${targetNotebookId}-${Date.now()}`,
-      title: newPageTitle,
-      content: '',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      order: targetNotebook.pages.length
-    };
+      // If creating in current notebook, switch to new page
+      if (targetNotebookId === currentNotebook?.id) {
+        setCurrentPageId(newPage.id);
+        setContent(newPage.content);
+        setContentHtml(newPage.contentHtml || '');
+        setOriginalContent(newPage.content);
+      }
 
-    const updatedNotebook = {
-      ...targetNotebook,
-      pages: [...targetNotebook.pages, newPage]
-    };
+      setShowNewPageDialog(false);
+      setNewPageTitle('');
+      setTargetNotebookId(null);
 
-    // Atualizar a lista de todos os cadernos
-    setAllNotebooks(allNotebooks.map(nb => nb.id === targetNotebookId ? updatedNotebook : nb));
-
-    // Se for o caderno atual, atualizar também o estado atual
-    if (currentNotebook.id === targetNotebookId) {
-      setCurrentNotebook(updatedNotebook);
-      // Mudar para a nova página
-      setCurrentPage(newPage);
-      setContent('');
+      toast.success(t('newPageCreated'), {
+        description: t('pageAddedTo', { page: newPageTitle, notebook: allNotebooks.find((nb: Notebook) => nb.id === targetNotebookId)?.title || '' })
+      });
+    } catch {
+      toast.error(t('errorCreatingPage'));
     }
-
-    setShowNewPageDialog(false);
-    setNewPageTitle('');
-    setTargetNotebookId(null);
-
-    toast.success(t('newPageCreated'), {
-      description: t('pageAddedTo', { page: newPage.title, notebook: updatedNotebook.title })
-    });
   };
 
-  const handleDeletePage = (pageId: string) => {
-    if (currentNotebook.pages.length === 1) {
+  const handleDeletePage = async (pageId: string, notebookId: string, pageCount: number) => {
+    if (pageCount <= 1) {
       toast.error(t('cannotDelete'), {
         description: t('minOnePage')
       });
       return;
     }
 
-    const updatedPages = currentNotebook.pages.filter(p => p.id !== pageId);
-    const updatedNotebook = {
-      ...currentNotebook,
-      pages: updatedPages
-    };
+    try {
+      await deletePage.mutateAsync({ pageId, notebookId });
 
-    setCurrentNotebook(updatedNotebook);
-    setAllNotebooks(allNotebooks.map(nb => nb.id === updatedNotebook.id ? updatedNotebook : nb));
+      // If deleted current page, switch to first available page
+      if (currentPageId === pageId && currentNotebook) {
+        const remainingPages = currentNotebook.pages.filter(p => p.id !== pageId);
+        if (remainingPages.length > 0) {
+          setCurrentPageId(remainingPages[0].id);
+          setContent(remainingPages[0].content);
+          setContentHtml(remainingPages[0].contentHtml || '');
+          setOriginalContent(remainingPages[0].content);
+        }
+      }
 
-    // Se deletou a página atual, mudar para a primeira
-    if (currentPage.id === pageId) {
-      setCurrentPage(updatedPages[0]);
-      setContent(updatedPages[0].content || '');
+      toast.success(t('pageDeleted'), {
+        description: t('pageDeletedDescription')
+      });
+    } catch {
+      toast.error(t('errorDeletingPage'));
     }
-
-    toast.success(t('pageDeleted'), {
-      description: t('pageDeletedDescription')
-    });
   };
 
-  const handleRenamePage = (pageId: string, newTitle: string) => {
-    if (!newTitle.trim()) return;
+  const handleRenamePage = async (pageId: string, newTitle: string) => {
+    if (!newTitle.trim() || !currentNotebook) return;
 
-    const updatedPages = currentNotebook.pages.map(p =>
-      p.id === pageId ? { ...p, title: newTitle, updatedAt: new Date().toISOString() } : p
-    );
+    try {
+      await updatePage.mutateAsync({
+        pageId,
+        notebookId: currentNotebook.id,
+        data: { title: newTitle },
+      });
 
-    const updatedNotebook = {
-      ...currentNotebook,
-      pages: updatedPages
-    };
+      setEditingPageId(null);
+      setEditingPageTitle('');
 
-    setCurrentNotebook(updatedNotebook);
-    setAllNotebooks(allNotebooks.map(nb => nb.id === updatedNotebook.id ? updatedNotebook : nb));
-
-    if (currentPage.id === pageId) {
-      setCurrentPage({ ...currentPage, title: newTitle });
+      toast.success(t('pageRenamed'), {
+        description: t('titleUpdated')
+      });
+    } catch {
+      toast.error(t('errorRenamingPage'));
     }
-
-    setEditingPageId(null);
-    setEditingPageTitle('');
-
-    toast.success(t('pageRenamed'), {
-      description: t('titleUpdated')
-    });
   };
 
-  // Auto-save a cada 30 segundos
+  // Auto-save every 30 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      if (content !== currentPage.content && content.trim()) {
+      if (isContentChanged() && content) {
         handleSave();
       }
     }, 30000);
 
     return () => clearInterval(interval);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [content, currentPage]);
+  }, [content, isContentChanged, handleSave]);
 
   const formatLastSaved = () => {
     if (!lastSaved) return '';
@@ -307,6 +239,35 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
     if (diff < 3600) return t('savedMinAgo', { minutes: Math.floor(diff / 60) });
     return lastSaved.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
   };
+
+  // Loading state
+  if (isLoadingNotebook || isLoadingNotebooks) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <Loader2 className="w-5 h-5 animate-spin" />
+          <span>{tCommon('loading')}</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Not found state
+  if (!currentNotebook) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-destructive">{t('notebookNotFound')}</p>
+          <Link href="/notebooks">
+            <Button variant="outline" className="mt-4">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              {t('allNotebooks')}
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background flex relative">
@@ -347,7 +308,7 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
 
           {/* Search */}
           <div className="relative">
-            <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground" />
+            <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               type="text"
               placeholder={tCommon('search') + '...'}
@@ -361,7 +322,7 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
         {/* Lista de Cadernos com Páginas */}
         <ScrollArea className="flex-1">
           <div className="p-2 space-y-1">
-            {filteredNotebooks.map((nb) => (
+            {filteredNotebooks.map((nb: Notebook) => (
               <div key={nb.id} className="space-y-0.5">
                 {/* Caderno Header */}
                 <div
@@ -372,9 +333,9 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
                     className="flex items-center gap-2 flex-1 text-left"
                   >
                     {expandedNotebooks.has(nb.id) ? (
-                      <ChevronDown className="w-3 h-3 text-muted-foreground shrink-0" />
+                      <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />
                     ) : (
-                      <ChevronRight className="w-3 h-3 text-muted-foreground shrink-0" />
+                      <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
                     )}
                     <span className="text-lg shrink-0">{nb.icon}</span>
                     <div className="flex-1 min-w-0">
@@ -394,7 +355,7 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
                       className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all"
                       title={t('newPage')}
                     >
-                      <Plus className="w-5 h-5" />
+                      <Plus className="w-4 h-4" />
                     </Button>
                   )}
                 </div>
@@ -402,10 +363,10 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
                 {/* Lista de Páginas (quando expandido) */}
                 {expandedNotebooks.has(nb.id) && (
                   <div className="ml-4 pl-3 border-l border-border/50 space-y-0.5">
-                    {nb.pages.map((page) => (
+                    {nb.pages.map((page: NotebookPage) => (
                       <div
                         key={page.id}
-                        className={`group/page flex items-center gap-2 p-2 rounded-lg transition-all ${currentPage.id === page.id && currentNotebook.id === nb.id
+                        className={`group/page flex items-center gap-2 p-2 rounded-lg transition-all ${currentPage?.id === page.id && currentNotebook?.id === nb.id
                           ? 'bg-gradient-to-r from-primary/10 to-primary/5 text-primary border border-primary/20'
                           : 'hover:bg-muted/30 text-foreground'
                           }`}
@@ -428,8 +389,8 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
                               onClick={() => handleSwitchPage(nb, page)}
                               className="flex items-center gap-2 flex-1 min-w-0"
                             >
-                              <FileText className="w-3 h-3 shrink-0" />
-                              <span className={`text-sm truncate ${currentPage.id === page.id && currentNotebook.id === nb.id ? 'font-medium' : ''}`}>
+                              <FileText className="w-4 h-4 shrink-0" />
+                              <span className={`text-sm truncate ${currentPage?.id === page.id && currentNotebook?.id === nb.id ? 'font-medium' : ''}`}>
                                 {page.title}
                               </span>
                             </button>
@@ -445,16 +406,16 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
                                 className="h-6 w-6 p-0 text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all"
                                 title={t('rename')}
                               >
-                                <Edit2 className="w-5 h-5" />
+                                <Edit2 className="w-4 h-4" />
                               </Button>
                               <Button
                                 size="sm"
                                 variant="ghost"
-                                onClick={() => handleDeletePage(page.id)}
+                                onClick={() => handleDeletePage(page.id, nb.id, nb.pages.length)}
                                 className="h-6 w-6 p-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all"
                                 title={t('delete')}
                               >
-                                <Trash2 className="w-5 h-5" />
+                                <Trash2 className="w-4 h-4" />
                               </Button>
                             </div>
                           </>
@@ -508,11 +469,11 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
                   </h1>
                   <span className="text-muted-foreground hidden sm:inline">•</span>
                   <span className="text-xs sm:text-sm text-muted-foreground truncate hidden sm:inline">
-                    {currentPage.title}
+                    {currentPage?.title}
                   </span>
                 </div>
                 <p className="text-xs text-muted-foreground truncate">
-                  {currentNotebook.subject}
+                  {currentNotebook.subject || 'Generale'}
                 </p>
               </div>
             </div>
@@ -528,11 +489,15 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
 
               <Button
                 onClick={handleSave}
-                disabled={isSaving || content === currentPage.content}
+                disabled={isSaving || !isContentChanged()}
                 size="sm"
                 className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5"
               >
-                <Save className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
+                {isSaving ? (
+                  <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2 animate-spin" />
+                ) : (
+                  <Save className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
+                )}
                 <span className="hidden sm:inline">{isSaving ? t('saving') : t('save')}</span>
               </Button>
             </div>
@@ -543,10 +508,13 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
         <div className="flex-1 overflow-hidden p-3 sm:p-8">
           <div className="max-w-7xl mx-auto h-full">
             <TipTapEditor
-              key={`tiptap-${currentNotebook.id}-${currentPage.id}`}
+              key={`tiptap-${currentNotebook.id}-${currentPage?.id}`}
               content={content}
-              onChange={setContent}
-              placeholder={t('editorPlaceholder', { page: currentPage.title })}
+              onChange={(json, html) => {
+                setContent(json);
+                setContentHtml(html);
+              }}
+              placeholder={t('editorPlaceholder', { page: currentPage?.title || '' })}
             />
           </div>
         </div>
@@ -564,7 +532,7 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
           <DialogHeader>
             <DialogTitle className="text-foreground">{t('newPageDialog.title')}</DialogTitle>
             <DialogDescription className="text-muted-foreground">
-              {t('newPageDialog.description', { notebook: allNotebooks.find(nb => nb.id === targetNotebookId)?.title || currentNotebook.title })}
+              {t('newPageDialog.description', { notebook: allNotebooks.find((nb: Notebook) => nb.id === targetNotebookId)?.title || currentNotebook.title })}
             </DialogDescription>
           </DialogHeader>
 
@@ -586,9 +554,16 @@ export default function NotebookEditorPage({ params }: NotebookEditorPageProps) 
               <Button
                 onClick={handleCreatePage}
                 className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
-                disabled={!newPageTitle.trim()}
+                disabled={!newPageTitle.trim() || createPage.isPending}
               >
-                {t('newPageDialog.create')}
+                {createPage.isPending ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    {tCommon('loading')}
+                  </>
+                ) : (
+                  t('newPageDialog.create')
+                )}
               </Button>
               <Button
                 onClick={() => {

@@ -70,7 +70,15 @@ export function QuestionDetailContainer({ questionId }: QuestionDetailContainerP
 
   // Get subjectId from question to use as cache key
   // This ensures all questions from same subject share the same related questions list
-  const subjectId = question?.exam?.subject?.id;
+  const currentSubjectId = question?.exam?.subject?.id;
+
+  // Keep track of the last valid subjectId to avoid cache key changing during navigation
+  // This prevents the cache from "resetting" when question is temporarily undefined
+  const lastSubjectIdRef = useRef<string | undefined>(undefined);
+  if (currentSubjectId) {
+    lastSubjectIdRef.current = currentSubjectId;
+  }
+  const subjectId = currentSubjectId || lastSubjectIdRef.current;
 
   // Only fetch related questions once per subject (not per question)
   // This prevents refetching the list every time user navigates between questions
@@ -85,12 +93,15 @@ export function QuestionDetailContainer({ questionId }: QuestionDetailContainerP
     subjectId // Pass subjectId to use as part of cache key
   );
 
-  // Extract questions from response and filter out current question
+  // Extract questions from response
+  // IMPORTANT: Do NOT filter by current questionId here!
+  // Filtering would change the array reference every time questionId changes,
+  // causing the sidebar to re-render and lose scroll position.
+  // The sidebar handles highlighting the current question with isCurrent flag.
   const relatedQuestions = useMemo(() => {
     if (!relatedQuestionsData || !relatedQuestionsData.questions) return [];
-    // Filter out the current question to avoid duplicates (API sometimes returns it)
-    return relatedQuestionsData.questions.filter((q: any) => q.id !== safeQuestionId);
-  }, [relatedQuestionsData, safeQuestionId]);
+    return relatedQuestionsData.questions;
+  }, [relatedQuestionsData]);
 
   // Fetch variations
   const { data: variations = [] } = useQuestionVariations(safeQuestionId, shouldFetchRelated);

@@ -124,6 +124,19 @@ export async function apiPut<T, B = unknown>(
 }
 
 /**
+ * PATCH request
+ */
+export async function apiPatch<T, B = unknown>(
+  url: string,
+  body: B
+): Promise<T> {
+  return apiFetch<T>(url, {
+    method: "PATCH",
+    body: JSON.stringify(body),
+  });
+}
+
+/**
  * DELETE request
  */
 export async function apiDelete<T>(url: string): Promise<T> {
@@ -199,6 +212,24 @@ export const API = {
   professors: {
     list: (subjectId?: string) =>
       apiGet<unknown[]>("/api/professors", subjectId ? { subjectId } : undefined),
+  },
+
+  // Notebooks
+  notebooks: {
+    list: () => apiGet<unknown[]>("/api/notebooks"),
+    get: (id: string) => apiGet<unknown>(`/api/notebooks/${id}`),
+    create: (data: { title: string; subject?: string | null; icon?: string; color?: string | null }) =>
+      apiPost<unknown>("/api/notebooks", data),
+    update: (id: string, data: { title?: string; subject?: string | null; icon?: string; color?: string | null }) =>
+      apiPatch<unknown, typeof data>(`/api/notebooks/${id}`, data),
+    delete: (id: string) => apiDelete<{ deleted: boolean }>(`/api/notebooks/${id}`),
+    // Pages - content is ProseMirror JSON, contentHtml is HTML cache
+    createPage: (notebookId: string, data: { title: string; content?: unknown | null; contentHtml?: string | null; order?: number; wordCount?: number; characterCount?: number }) =>
+      apiPost<unknown>(`/api/notebooks/${notebookId}/pages`, data),
+    updatePage: (pageId: string, data: { title?: string; content?: unknown | null; contentHtml?: string | null; order?: number; wordCount?: number; characterCount?: number; version?: number }) =>
+      apiPatch<unknown, typeof data>(`/api/notebooks/pages/${pageId}`, data),
+    deletePage: (pageId: string) => apiDelete<{ deleted: boolean }>(`/api/notebooks/pages/${pageId}`),
+    getPage: (pageId: string) => apiGet<unknown>(`/api/notebooks/pages/${pageId}`),
   },
 
   // Admin

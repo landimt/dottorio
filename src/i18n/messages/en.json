@@ -393,6 +393,9 @@
     "noNotebooksDescription": "Create your first notebook to get started",
     "tryDifferentSearch": "Try a different search",
     "createNotebook": "Create Notebook",
+    "notebookCreated": "Notebook created!",
+    "errorCreatingNotebook": "Error creating notebook",
+    "errorLoadingNotebooks": "Error loading notebooks",
     "createDialog": {
       "title": "New Notebook",
       "description": "Create a new notebook to organize your notes",
@@ -431,7 +434,12 @@
         "create": "Create Page",
         "cancel": "Cancel"
       },
-      "editorPlaceholder": "Start writing notes for {page}..."
+      "editorPlaceholder": "Start writing notes for {page}...",
+      "notebookNotFound": "Notebook not found",
+      "errorSaving": "Error saving",
+      "errorCreatingPage": "Error creating page",
+      "errorDeletingPage": "Error deleting page",
+      "errorRenamingPage": "Error renaming page"
     }
   },
   "registerPage": {
@@ -540,6 +548,42 @@
       "purple": "Purple",
       "pink": "Pink",
       "none": "None"
+    },
+    "slashCommands": {
+      "searchPlaceholder": "Search for a command...",
+      "noResults": "No commands found",
+      "text": "Text",
+      "textDescription": "Normal text paragraph",
+      "heading1": "Heading 1",
+      "heading1Description": "Large heading for main sections",
+      "heading2": "Heading 2",
+      "heading2Description": "Medium heading for subsections",
+      "heading3": "Heading 3",
+      "heading3Description": "Small heading for details",
+      "bulletList": "Bullet List",
+      "bulletListDescription": "List with bullet points",
+      "numberedList": "Numbered List",
+      "numberedListDescription": "List with numbers",
+      "checklist": "Checklist",
+      "checklistDescription": "List with checkboxes",
+      "quote": "Quote",
+      "quoteDescription": "Block quote",
+      "codeBlock": "Code Block",
+      "codeBlockDescription": "Formatted code snippet",
+      "separator": "Separator",
+      "separatorDescription": "Horizontal divider line",
+      "table": "Table",
+      "tableDescription": "Insert a 3x3 table",
+      "image": "Image",
+      "imageDescription": "Insert an image from URL",
+      "imageUrlPrompt": "Enter the image URL:",
+      "ai": "AI Assistant",
+      "aiDescription": "Ask the AI for help",
+      "groupBase": "Basic",
+      "groupLists": "Lists",
+      "groupBlocks": "Blocks",
+      "groupMedia": "Media",
+      "groupAdvanced": "Advanced"
     }
   },
   "admin": {
