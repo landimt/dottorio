@@ -7,109 +7,18 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { BookOpen, Plus, Search, Calendar, ArrowLeft } from 'lucide-react';
+import { BookOpen, Plus, Search, Calendar, ArrowLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-
-interface NotebookPage {
-  id: string;
-  title: string;
-  content: string;
-  createdAt: string;
-  updatedAt: string;
-  order: number;
-}
-
-interface Notebook {
-  id: string;
-  title: string;
-  subject: string;
-  pages: NotebookPage[];
-  createdAt: string;
-  updatedAt: string;
-  color: string;
-  icon: string;
-}
-
-// Caderni di esempio con nomi reali delle matérie della Sapienza Canal A
-const INITIAL_NOTEBOOKS: Notebook[] = [
-  {
-    id: '1',
-    title: 'Anatomia Umana I',
-    subject: 'Anatomia',
-    pages: [
-      { id: '1-1', title: 'Appunti Generali', content: '', createdAt: '2024-01-15', updatedAt: '2024-01-15', order: 0 }
-    ],
-    createdAt: '2024-01-15',
-    updatedAt: '2024-01-15',
-    color: 'primary/10',
-    icon: '🫀'
-  },
-  {
-    id: '2',
-    title: 'Biochimica Generale',
-    subject: 'Biochimica',
-    pages: [
-      { id: '2-1', title: 'Appunti Generali', content: '', createdAt: '2024-01-20', updatedAt: '2024-01-20', order: 0 }
-    ],
-    createdAt: '2024-01-20',
-    updatedAt: '2024-01-20',
-    color: 'accent/10',
-    icon: '🧬'
-  },
-  {
-    id: '3',
-    title: 'Fisiologia I',
-    subject: 'Fisiologia',
-    pages: [
-      { id: '3-1', title: 'Appunti Generali', content: '', createdAt: '2024-02-01', updatedAt: '2024-02-01', order: 0 }
-    ],
-    createdAt: '2024-02-01',
-    updatedAt: '2024-02-01',
-    color: 'green-50',
-    icon: '💚'
-  },
-  {
-    id: '4',
-    title: 'Istologia ed Embriologia',
-    subject: 'Istologia',
-    pages: [
-      { id: '4-1', title: 'Appunti Generali', content: '', createdAt: '2024-02-10', updatedAt: '2024-02-10', order: 0 }
-    ],
-    createdAt: '2024-02-10',
-    updatedAt: '2024-02-10',
-    color: 'red-50',
-    icon: '🔬'
-  },
-  {
-    id: '5',
-    title: 'Fisica Medica',
-    subject: 'Fisica',
-    pages: [
-      { id: '5-1', title: 'Appunti Generali', content: '', createdAt: '2024-02-15', updatedAt: '2024-02-15', order: 0 }
-    ],
-    createdAt: '2024-02-15',
-    updatedAt: '2024-02-15',
-    color: 'purple-50',
-    icon: '⚛️'
-  },
-  {
-    id: '6',
-    title: 'Chimica e Propedeutica Biochimica',
-    subject: 'Chimica',
-    pages: [
-      { id: '6-1', title: 'Appunti Generali', content: '', createdAt: '2024-03-01', updatedAt: '2024-03-01', order: 0 }
-    ],
-    createdAt: '2024-03-01',
-    updatedAt: '2024-03-01',
-    color: 'yellow-50',
-    icon: '🧪'
-  }
-];
+import { useNotebooks, useCreateNotebook, Notebook } from '@/lib/query/hooks/use-notebooks';
+import { toast } from 'sonner';
 
 export default function NotebooksPage() {
   const t = useTranslations('notebooks');
   const tCommon = useTranslations('common');
-  const [notebooks, setNotebooks] = useState<Notebook[]>(INITIAL_NOTEBOOKS);
+
+  const { data: notebooks = [], isLoading, error } = useNotebooks();
+  const createNotebook = useCreateNotebook();
+
   const [searchQuery, setSearchQuery] = useState('');
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [newNotebook, setNewNotebook] = useState({
@@ -118,43 +27,55 @@ export default function NotebooksPage() {
     icon: '📓'
   });
 
-  const filteredNotebooks = notebooks.filter(notebook =>
+  const filteredNotebooks = notebooks.filter((notebook: Notebook) =>
     notebook.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    notebook.subject.toLowerCase().includes(searchQuery.toLowerCase())
+    (notebook.subject && notebook.subject.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
-  const handleCreateNotebook = () => {
+  const handleCreateNotebook = async () => {
     if (!newNotebook.title.trim()) return;
 
-    const notebook: Notebook = {
-      id: Date.now().toString(),
-      title: newNotebook.title,
-      subject: newNotebook.subject || 'Generale',
-      pages: [
-        {
-          id: `${Date.now()}-1`,
-          title: 'Appunti Generali',
-          content: '',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          order: 0
-        }
-      ],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      color: 'primary/10',
-      icon: newNotebook.icon
-    };
+    try {
+      await createNotebook.mutateAsync({
+        title: newNotebook.title,
+        subject: newNotebook.subject || undefined,
+        icon: newNotebook.icon,
+      });
 
-    setNotebooks([notebook, ...notebooks]);
-    setShowCreateDialog(false);
-    setNewNotebook({ title: '', subject: '', icon: '📓' });
+      setShowCreateDialog(false);
+      setNewNotebook({ title: '', subject: '', icon: '📓' });
+      toast.success(t('notebookCreated'));
+    } catch {
+      toast.error(t('errorCreatingNotebook'));
+    }
   };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' });
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <Loader2 className="w-5 h-5 animate-spin" />
+          <span>{tCommon('loading')}</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-destructive">{tCommon('error')}</p>
+          <p className="text-muted-foreground text-sm mt-2">{t('errorLoadingNotebooks')}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background pb-20 lg:pb-6">
@@ -207,7 +128,7 @@ export default function NotebooksPage() {
 
         {/* Notebooks Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-          {filteredNotebooks.map((notebook) => (
+          {filteredNotebooks.map((notebook: Notebook) => (
             <Link
               key={notebook.id}
               href={`/notebooks/${notebook.id}`}
@@ -218,14 +139,14 @@ export default function NotebooksPage() {
                 {/* Color bar no topo */}
                 <div
                   className="h-1.5 w-full"
-                  style={{ backgroundColor: notebook.color || 'primary/10' }}
+                  style={{ backgroundColor: notebook.color || 'hsl(var(--primary) / 0.1)' }}
                 />
 
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-start gap-3 flex-1">
                       <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl transition-transform group-hover:scale-110 shadow-sm border border-border"
-                        style={{ backgroundColor: notebook.color }}>
+                        style={{ backgroundColor: notebook.color || undefined }}>
                         {notebook.icon}
                       </div>
                       <div className="flex-1 min-w-0 pt-1">
@@ -233,7 +154,7 @@ export default function NotebooksPage() {
                           {notebook.title}
                         </CardTitle>
                         <p className="text-sm text-muted-foreground mt-1">
-                          {notebook.subject}
+                          {notebook.subject || 'Generale'}
                         </p>
                       </div>
                     </div>
@@ -249,10 +170,10 @@ export default function NotebooksPage() {
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-muted-foreground">
-                        {notebook.pages.length} {notebook.pages.length === 1 ? 'pagina' : 'pagine'}
+                        {notebook.pages?.length || notebook._count?.pages || 0} {(notebook.pages?.length || notebook._count?.pages || 0) === 1 ? 'pagina' : 'pagine'}
                       </span>
                       <span className="text-xs text-primary/60 group-hover:text-primary transition-colors font-medium">
-                        →
+                        &rarr;
                       </span>
                     </div>
                   </div>
@@ -334,9 +255,16 @@ export default function NotebooksPage() {
                 <Button
                   onClick={handleCreateNotebook}
                   className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
-                  disabled={!newNotebook.title.trim()}
+                  disabled={!newNotebook.title.trim() || createNotebook.isPending}
                 >
-                  {t('createNotebook')}
+                  {createNotebook.isPending ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      {tCommon('loading')}
+                    </>
+                  ) : (
+                    t('createNotebook')
+                  )}
                 </Button>
                 <Button
                   onClick={() => setShowCreateDialog(false)}

@@ -142,6 +142,7 @@ model User {
   reviewedFlags  ContentFlag[]   @relation("FlagReviewedBy")
   shareLinks     ShareLink[]
   cookieConsents CookieConsent[]
+  notebooks      Notebook[]
 
   @@index([universityId])
   @@index([courseId])
@@ -430,4 +431,52 @@ model CookieConsent {
   @@index([userId])
   @@index([consentDate])
   @@map("cookie_consents")
+}
+
+// ============================================
+// CADERNOS (NOTEBOOKS)
+// ============================================
+
+model Notebook {
+  id        String    @id @default(uuid())
+  title     String    @db.VarChar(150)
+  subject   String?   @db.VarChar(100)
+  icon      String    @default("📓") @db.VarChar(10)
+  color     String?   @db.VarChar(20)
+  userId    String    @map("user_id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at") // Soft delete
+
+  // Relations
+  user  User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pages NotebookPage[]
+
+  @@index([userId])
+  @@index([userId, deletedAt]) // Para queries de notebooks ativos
+  @@index([updatedAt]) // Para "últimas edições"
+  @@map("notebooks")
+}
+
+model NotebookPage {
+  id             String    @id @default(uuid())
+  notebookId     String    @map("notebook_id")
+  title          String    @db.VarChar(200)
+  content        Json?     // ProseMirror JSON (estruturado, seguro, buscável)
+  contentHtml    String?   @db.Text @map("content_html") // Cache HTML para renderização rápida
+  order          Int       @default(0)
+  version        Int       @default(1) // Versionamento para conflitos
+  wordCount      Int       @default(0) @map("word_count") // Analytics
+  characterCount Int       @default(0) @map("character_count")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at") // Soft delete
+
+  // Relations
+  notebook Notebook @relation(fields: [notebookId], references: [id], onDelete: Cascade)
+
+  @@index([notebookId])
+  @@index([notebookId, order])
+  @@index([notebookId, deletedAt]) // Para queries de páginas ativas
+  @@map("notebook_pages")
 }

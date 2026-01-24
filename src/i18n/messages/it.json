@@ -404,6 +404,9 @@
     "noNotebooksDescription": "Crea il tuo primo quaderno per iniziare",
     "tryDifferentSearch": "Prova con una ricerca diversa",
     "createNotebook": "Crea Quaderno",
+    "notebookCreated": "Quaderno creato!",
+    "errorCreatingNotebook": "Errore nella creazione del quaderno",
+    "errorLoadingNotebooks": "Errore nel caricamento dei quaderni",
     "createDialog": {
       "title": "Nuovo Quaderno",
       "description": "Crea un nuovo quaderno per organizzare i tuoi appunti",
@@ -442,7 +445,12 @@
         "create": "Crea Pagina",
         "cancel": "Annulla"
       },
-      "editorPlaceholder": "Inizia a scrivere gli appunti di {page}..."
+      "editorPlaceholder": "Inizia a scrivere gli appunti di {page}...",
+      "notebookNotFound": "Quaderno non trovato",
+      "errorSaving": "Errore nel salvataggio",
+      "errorCreatingPage": "Errore nella creazione della pagina",
+      "errorDeletingPage": "Errore nell'eliminazione della pagina",
+      "errorRenamingPage": "Errore nella rinomina della pagina"
     }
   },
   "registerPage": {
@@ -551,6 +559,42 @@
       "purple": "Viola",
       "pink": "Rosa",
       "none": "Nessuno"
+    },
+    "slashCommands": {
+      "searchPlaceholder": "Cerca un comando...",
+      "noResults": "Nessun comando trovato",
+      "text": "Testo",
+      "textDescription": "Paragrafo di testo normale",
+      "heading1": "Titolo 1",
+      "heading1Description": "Titolo grande per sezioni principali",
+      "heading2": "Titolo 2",
+      "heading2Description": "Titolo medio per sottosezioni",
+      "heading3": "Titolo 3",
+      "heading3Description": "Titolo piccolo per dettagli",
+      "bulletList": "Elenco puntato",
+      "bulletListDescription": "Lista con punti",
+      "numberedList": "Elenco numerato",
+      "numberedListDescription": "Lista con numeri",
+      "checklist": "Checklist",
+      "checklistDescription": "Lista con caselle di spunta",
+      "quote": "Citazione",
+      "quoteDescription": "Blocco di citazione",
+      "codeBlock": "Blocco codice",
+      "codeBlockDescription": "Snippet di codice formattato",
+      "separator": "Separatore",
+      "separatorDescription": "Linea orizzontale divisoria",
+      "table": "Tabella",
+      "tableDescription": "Inserisci una tabella 3x3",
+      "image": "Immagine",
+      "imageDescription": "Inserisci un'immagine da URL",
+      "imageUrlPrompt": "Inserisci l'URL dell'immagine:",
+      "ai": "Assistente IA",
+      "aiDescription": "Chiedi aiuto all'intelligenza artificiale",
+      "groupBase": "Base",
+      "groupLists": "Liste",
+      "groupBlocks": "Blocchi",
+      "groupMedia": "Media",
+      "groupAdvanced": "Avanzato"
     }
   },
   "admin": {
