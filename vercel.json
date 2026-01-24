@@ -7,12 +7,4 @@
     "src/app/api/**/*.ts": {
       "maxDuration": 30
     }
-  },
-  "env": {
-    "DATABASE_URL": "@database_url",
-    "NEXTAUTH_SECRET": "@nextauth_secret",
-    "NEXTAUTH_URL": "@nextauth_url",
-    "NEXT_PUBLIC_APP_URL": "@next_public_app_url",
-    "OPENAI_API_KEY": "@openai_api_key"
-  }
-}
+  }}
